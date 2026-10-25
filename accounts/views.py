@@ -10,5 +10,6 @@ class CustomLoginView(LoginView):
 
 class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = "dashboard.html"
+    login_url = "/accounts/login/"
 
 
