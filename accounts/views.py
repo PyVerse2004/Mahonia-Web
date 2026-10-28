@@ -5,7 +5,7 @@ from django.views.generic import TemplateView
 
 
 class CustomLoginView(LoginView):
-    template_name = "login.html"
+    template_name = "accounts/login.html"
     redirect_authenticated_user = True
 
 class DashboardView(LoginRequiredMixin, TemplateView):

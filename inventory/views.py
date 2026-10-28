@@ -9,7 +9,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 # Create your views here.
 class ProductListView(LoginRequiredMixin, ListView):
     model = Product
-    template_name = "product_list.html"
+    template_name = "inventory/product_list.html"
     context_object_name = "products"
     paginate_by = 20
     login_url = "accounts:login"
@@ -21,7 +21,7 @@ class ProductListView(LoginRequiredMixin, ListView):
 class ProductCreateView(LoginRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
-    template_name = "product_form.html"
+    template_name = "inventory/product_form.html"
     success_url = reverse_lazy("product_list")
     login_url = "accounts:login"
     
@@ -29,14 +29,14 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
 class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
-    template_name = "product_form.html"
+    template_name = "inventory/product_form.html"
     success_url = reverse_lazy("product_list")
     login_url = "accounts:login"
 
 
 class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
-    template_name = "product_confirm_delete.html"
+    template_name = "inventory/product_confirm_delete.html"
     success_url = reverse_lazy("product_list")
     login_url = "accounts:login"
 
