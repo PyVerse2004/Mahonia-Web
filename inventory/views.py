@@ -12,7 +12,7 @@ class ProductListView(LoginRequiredMixin, ListView):
     template_name = "inventory/product_list.html"
     context_object_name = "products"
     paginate_by = 20
-    login_url = "accounts:login"
+    
 
     def get_queryset(self):
         return Product.objects.filter(is_active= True).only( "id","name","stock_quantity","sale_price","is_active",).order_by("name")
@@ -22,23 +22,23 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
     template_name = "inventory/product_form.html"
-    success_url = reverse_lazy("product_list")
-    login_url = "accounts:login"
+    success_url = reverse_lazy("inventory:product_list")
+    
     
 
 class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
     template_name = "inventory/product_form.html"
-    success_url = reverse_lazy("product_list")
-    login_url = "accounts:login"
+    success_url = reverse_lazy("inventory:product_list")
+    
 
 
 class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
     template_name = "inventory/product_confirm_delete.html"
-    success_url = reverse_lazy("product_list")
-    login_url = "accounts:login"
+    success_url = reverse_lazy("inventory:product_list")
+    
 
     def form_valid(self, form):
         self.object = self.get_object()
