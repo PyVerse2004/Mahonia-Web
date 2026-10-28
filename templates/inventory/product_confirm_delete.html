@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}غیرفعال کردن محصول{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4" dir="rtl">
+
+    <h2>غیرفعال کردن محصول</h2>
+
+    <p>
+        آیا می‌خواهی محصول «{{ object.name }}» را غیرفعال کنی؟
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <button type="submit" class="btn btn-danger">
+            تأیید
+        </button>
+
+        <a href="{% url 'inventory:product_list' %}"
+           class="btn btn-secondary">
+            انصراف
+        </a>
+    </form>
+
+</div>
+
+{% endblock %}

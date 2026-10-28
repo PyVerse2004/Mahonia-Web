@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}ثبت یا ویرایش محصول{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4" dir="rtl">
+
+    <h2>
+        {% if object %}
+            ویرایش محصول
+        {% else %}
+            افزودن محصول جدید
+        {% endif %}
+    </h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit" class="btn btn-success">
+            ذخیره
+        </button>
+
+        <a href="{% url 'inventory:product_list' %}"
+           class="btn btn-secondary">
+            بازگشت
+        </a>
+    </form>
+
+</div>
+
+{% endblock %}
