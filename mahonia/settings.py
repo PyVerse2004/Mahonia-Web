@@ -53,11 +53,13 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'mahonia.urls'
 
-SESSION_COOKIE_AGE = 50
+SESSION_COOKIE_AGE = 500
 
 SESSION_SAVE_EVERY_REQUEST = True
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
+
 
 LOGIN_URL = "/accounts/login/"
 LOGIN_REDIRECT_URL = "/accounts/dashboard/"

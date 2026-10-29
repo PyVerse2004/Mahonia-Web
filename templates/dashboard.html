@@ -9,5 +9,9 @@
     <a href="{% url 'inventory:product_list' %}">
     لیست کالا و انبار
 </a>
+<form method="post" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button type="submit">خروج از حساب</button>
+</form>
 </body>
 </html>
