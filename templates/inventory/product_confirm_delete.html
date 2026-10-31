@@ -1,30 +1,19 @@
 {% extends "base.html" %}
 
-{% block title %}غیرفعال کردن محصول{% endblock %}
+{% block title %}حذف محصول{% endblock %}
 
 {% block content %}
+<div class="col-12 col-md-8 col-lg-6 px-0">
+    <h2 class="mb-4">حذف محصول</h2>
 
-<div class="container mt-4" dir="rtl">
-
-    <h2>غیرفعال کردن محصول</h2>
-
-    <p>
-        آیا می‌خواهی محصول «{{ object.name }}» را غیرفعال کنی؟
-    </p>
+    <div class="alert alert-warning">
+        محصول «{{ object.name }}» برای همیشه از سیستم حذف می‌شود و این کار قابل بازگشت نیست.
+    </div>
 
     <form method="post">
         {% csrf_token %}
-
-        <button type="submit" class="btn btn-danger">
-            تأیید
-        </button>
-
-        <a href="{% url 'inventory:product_list' %}"
-           class="btn btn-secondary">
-            انصراف
-        </a>
+        <button type="submit" class="btn btn-danger">بله، حذف شود</button>
+        <a href="{% url 'inventory:product_list' %}" class="btn btn-secondary">انصراف</a>
     </form>
-
 </div>
-
 {% endblock %}

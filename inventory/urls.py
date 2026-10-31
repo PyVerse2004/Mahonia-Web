@@ -1,5 +1,11 @@
 from django.urls import path
-from .views import *
+
+from .views import (
+    ProductCreateView,
+    ProductDeleteView,
+    ProductListView,
+    ProductUpdateView,
+)
 
 app_name = "inventory"
 

@@ -1,17 +1,17 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <p>Hello Mr.Login !!!</p>
-    <a href="{% url 'inventory:product_list' %}">
-    لیست کالا و انبار
-</a>
-<form method="post" action="{% url 'logout' %}">
-    {% csrf_token %}
-    <button type="submit">خروج از حساب</button>
-</form>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}داشبورد{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">داشبورد</h2>
+
+<div class="list-group">
+    {% if perms.inventory.view_product %}
+    <a href="{% url 'inventory:product_list' %}" class="list-group-item list-group-item-action">
+        لیست کالا و انبار
+    </a>
+    {% else %}
+    <div class="list-group-item text-muted">دسترسی‌ای برای شما تعریف نشده است.</div>
+    {% endif %}
+</div>
+{% endblock %}

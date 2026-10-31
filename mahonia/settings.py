@@ -10,22 +10,32 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
+import os
 from pathlib import Path
+
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
+# مقادیر حساس از متغیر محیطی خوانده می‌شوند.
+# در توسعه بدون تنظیم چیزی هم اجرا می‌شود؛ در production حتماً باید تنظیم شوند:
+#   DJANGO_SECRET_KEY, DJANGO_DEBUG=0, DJANGO_ALLOWED_HOSTS=example.com,www.example.com
+_DEV_SECRET_KEY = "django-insecure-dev-only-do-not-use-in-production"
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-!pib#cqm6b&4ntymq#+6gdxmqn)aaqq3xxl=pn_l@elrxbi+1_'
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", _DEV_SECRET_KEY)
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DJANGO_DEBUG", "1") == "1"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",")
+    if host.strip()
+]
+
+if not DEBUG and SECRET_KEY == _DEV_SECRET_KEY:
+    raise ImproperlyConfigured("DJANGO_SECRET_KEY must be set when DEBUG is off.")
 
 
 # Application definition
@@ -37,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'accounts',
     'inventory',
 ]
@@ -53,17 +64,20 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'mahonia.urls'
 
-SESSION_COOKIE_AGE = 500
+# بعد از یک ساعت بی‌فعالیتی از حساب خارج می‌شود (با هر درخواست تمدید می‌شود).
+SESSION_COOKIE_AGE = 60 * 60
 
 SESSION_SAVE_EVERY_REQUEST = True
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "dashboard"
+LOGOUT_REDIRECT_URL = "login"
 
-
-LOGIN_URL = "/accounts/login/"
-LOGIN_REDIRECT_URL = "/accounts/dashboard/"
-LOGOUT_REDIRECT_URL = "/accounts/login/"
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
 TEMPLATES = [
     {
@@ -116,9 +130,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fa'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Tehran'
 
 USE_I18N = True
 
@@ -129,6 +143,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
 
 
 # Email
