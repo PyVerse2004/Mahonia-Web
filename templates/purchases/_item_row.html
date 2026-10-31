@@ -1,0 +1,21 @@
+<tr class="item-row{% if form.DELETE.value %} d-none{% endif %}">
+    <td>
+        {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+        {{ form.product }}
+        {% for error in form.product.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+        {% for error in form.non_field_errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+    </td>
+    <td>
+        {{ form.quantity }}
+        {% for error in form.quantity.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+    </td>
+    <td>
+        {{ form.unit_price }}
+        {% for error in form.unit_price.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+    </td>
+    <td class="line-total text-nowrap">0</td>
+    <td class="text-center">
+        <span class="d-none">{{ form.DELETE }}</span>
+        <button type="button" class="btn btn-sm btn-outline-danger remove-row">حذف ردیف</button>
+    </td>
+</tr>

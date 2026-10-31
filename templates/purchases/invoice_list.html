@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}فاکتورهای خرید{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">فاکتورهای خرید</h2>
+
+    {% if perms.purchases.add_purchaseinvoice %}
+    <a href="{% url 'purchases:invoice_create' %}" class="btn btn-primary">ثبت فاکتور جدید</a>
+    {% endif %}
+</div>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover bg-white">
+        <thead>
+            <tr>
+                <th>شماره</th>
+                <th>تاریخ</th>
+                <th>تامین‌کننده</th>
+                <th>تعداد کل</th>
+                <th>جمع کل</th>
+                <th>عملیات</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for invoice in invoices %}
+            <tr>
+                <td>{{ invoice.pk }}</td>
+                <td>{{ invoice.date|date:"Y/m/d" }}</td>
+                <td>{{ invoice.supplier.name }}</td>
+                <td>{{ invoice.total_quantity|intcomma:False }}</td>
+                <td>{{ invoice.total_amount|intcomma:False }}</td>
+                <td>
+                    {% if perms.purchases.change_purchaseinvoice %}
+                    <a href="{% url 'purchases:invoice_update' invoice.pk %}" class="btn btn-sm btn-warning">ویرایش</a>
+                    {% endif %}
+                    {% if perms.purchases.delete_purchaseinvoice %}
+                    <a href="{% url 'purchases:invoice_delete' invoice.pk %}" class="btn btn-sm btn-danger">حذف</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center text-muted">هنوز فاکتوری ثبت نشده است.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if is_paginated %}
+<nav class="d-flex justify-content-center align-items-center gap-3 mt-3" aria-label="صفحه‌بندی">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">صفحه قبل</a>
+    {% endif %}
+
+    <span>صفحه {{ page_obj.number }} از {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">صفحه بعد</a>
+    {% endif %}
+</nav>
+{% endif %}
+{% endblock %}

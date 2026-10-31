@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}حذف فاکتور خرید{% endblock %}
+
+{% block content %}
+<div class="col-12 col-md-8 col-lg-6 px-0">
+    <h2 class="mb-4">حذف فاکتور خرید شماره {{ object.pk }}</h2>
+
+    <div class="alert alert-warning">
+        فاکتور {{ object.supplier.name }} به تاریخ {{ object.date|date:"Y/m/d" }} با جمع کل
+        {{ object.total_amount|intcomma:False }} حذف می‌شود. تعداد این فاکتور از موجودی انبار کم
+        و میانگین قیمت خرید محصولات دوباره محاسبه می‌شود. این کار قابل بازگشت نیست.
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">بله، حذف شود</button>
+        <a href="{% url 'purchases:invoice_list' %}" class="btn btn-secondary">انصراف</a>
+    </form>
+</div>
+{% endblock %}

@@ -10,7 +10,18 @@
     <a href="{% url 'inventory:product_list' %}" class="list-group-item list-group-item-action">
         لیست کالا و انبار
     </a>
-    {% else %}
+    {% endif %}
+    {% if perms.purchases.view_purchaseinvoice %}
+    <a href="{% url 'purchases:invoice_list' %}" class="list-group-item list-group-item-action">
+        فاکتورهای خرید
+    </a>
+    {% endif %}
+    {% if perms.purchases.view_supplier %}
+    <a href="{% url 'purchases:supplier_list' %}" class="list-group-item list-group-item-action">
+        تامین‌کنندگان
+    </a>
+    {% endif %}
+    {% if not perms.inventory.view_product and not perms.purchases.view_purchaseinvoice and not perms.purchases.view_supplier %}
     <div class="list-group-item text-muted">دسترسی‌ای برای شما تعریف نشده است.</div>
     {% endif %}
 </div>

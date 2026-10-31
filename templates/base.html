@@ -19,6 +19,16 @@
                     <a class="nav-link" href="{% url 'inventory:product_list' %}">کالا و انبار</a>
                 </li>
                 {% endif %}
+                {% if perms.purchases.view_purchaseinvoice %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'purchases:invoice_list' %}">فاکتورهای خرید</a>
+                </li>
+                {% endif %}
+                {% if perms.purchases.view_supplier %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'purchases:supplier_list' %}">تامین‌کنندگان</a>
+                </li>
+                {% endif %}
             </ul>
             <form method="post" action="{% url 'logout' %}" class="d-flex align-items-center gap-2 mb-0">
                 {% csrf_token %}

@@ -18,6 +18,7 @@
             <tr>
                 <th>نام محصول</th>
                 <th>موجودی</th>
+                <th>قیمت خرید (میانگین)</th>
                 <th>قیمت فروش</th>
                 <th>عملیات</th>
             </tr>
@@ -27,6 +28,7 @@
             <tr>
                 <td>{{ product.name }}</td>
                 <td>{{ product.stock_quantity|intcomma:False }}</td>
+                <td>{{ product.purchase_price|intcomma:False }}</td>
                 <td>{{ product.sale_price|intcomma:False }}</td>
                 <td>
                     {% if perms.inventory.change_product %}
@@ -39,7 +41,7 @@
             </tr>
             {% empty %}
             <tr>
-                <td colspan="4" class="text-center text-muted">هنوز محصولی ثبت نشده است.</td>
+                <td colspan="5" class="text-center text-muted">هنوز محصولی ثبت نشده است.</td>
             </tr>
             {% endfor %}
         </tbody>

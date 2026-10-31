@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}تامین‌کنندگان{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">تامین‌کنندگان</h2>
+
+    {% if perms.purchases.add_supplier %}
+    <a href="{% url 'purchases:supplier_create' %}" class="btn btn-primary">افزودن تامین‌کننده</a>
+    {% endif %}
+</div>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover bg-white">
+        <thead>
+            <tr>
+                <th>نام شرکت</th>
+                <th>عملیات</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for supplier in suppliers %}
+            <tr>
+                <td>{{ supplier.name }}</td>
+                <td>
+                    {% if perms.purchases.change_supplier %}
+                    <a href="{% url 'purchases:supplier_update' supplier.pk %}" class="btn btn-sm btn-warning">ویرایش</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2" class="text-center text-muted">هنوز تامین‌کننده‌ای ثبت نشده است.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if is_paginated %}
+<nav class="d-flex justify-content-center align-items-center gap-3 mt-3" aria-label="صفحه‌بندی">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">صفحه قبل</a>
+    {% endif %}
+
+    <span>صفحه {{ page_obj.number }} از {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">صفحه بعد</a>
+    {% endif %}
+</nav>
+{% endif %}
+{% endblock %}

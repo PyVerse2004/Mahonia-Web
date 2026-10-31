@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}{% if object %}ویرایش فاکتور خرید {{ object.pk }}{% else %}ثبت فاکتور خرید{% endif %}{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">{% if object %}ویرایش فاکتور خرید شماره {{ object.pk }}{% else %}ثبت فاکتور خرید{% endif %}</h2>
+
+<form method="post" id="invoice-form">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+    {% endif %}
+    {% if formset.non_form_errors %}
+        <div class="alert alert-danger">{{ formset.non_form_errors }}</div>
+    {% endif %}
+
+    {# بالای فاکتور: تاریخ و تامین‌کننده #}
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-4">
+            <label for="{{ form.date.id_for_label }}" class="form-label">{{ form.date.label }}</label>
+            {{ form.date }}
+            {% for error in form.date.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+        </div>
+        <div class="col-12 col-md-5">
+            <label for="{{ form.supplier.id_for_label }}" class="form-label">{{ form.supplier.label }}</label>
+            {{ form.supplier }}
+            {% for error in form.supplier.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+        </div>
+    </div>
+
+    {# ردیف‌های فاکتور #}
+    {{ formset.management_form }}
+    <div class="table-responsive">
+        <table class="table table-bordered bg-white align-middle">
+            <thead>
+                <tr>
+                    <th style="width: 40%">محصول</th>
+                    <th>تعداد</th>
+                    <th>قیمت خرید</th>
+                    <th>جمع ردیف</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="item-rows">
+                {% for item_form in formset %}
+                    {% include "purchases/_item_row.html" with form=item_form %}
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr class="table-light fw-bold">
+                    <td>
+                        <button type="button" class="btn btn-sm btn-outline-primary" id="add-row">افزودن ردیف</button>
+                    </td>
+                    <td id="total-quantity">0</td>
+                    <td class="text-muted">جمع کل فاکتور</td>
+                    <td id="total-amount" colspan="2">0</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <button type="submit" class="btn btn-success">ذخیره فاکتور</button>
+    <a href="{% url 'purchases:invoice_list' %}" class="btn btn-secondary">بازگشت</a>
+</form>
+
+{# قالب ردیف خالی که دکمه‌ی «افزودن ردیف» کپی می‌کند #}
+<template id="empty-row">
+    {% include "purchases/_item_row.html" with form=formset.empty_form %}
+</template>
+
+<script>
+(function () {
+    const prefix = "{{ formset.prefix }}";
+    const rows = document.getElementById("item-rows");
+    const totalForms = document.getElementById("id_" + prefix + "-TOTAL_FORMS");
+    const format = (n) => n.toLocaleString("en-US");
+
+    // فقط برای نمایش؛ مقدار نهایی را سرور دوباره حساب می‌کند.
+    function recalc() {
+        let quantity = 0;
+        let amount = 0;
+        rows.querySelectorAll("tr.item-row:not(.d-none)").forEach((row) => {
+            const q = parseFloat(row.querySelector('input[name$="-quantity"]').value) || 0;
+            const p = parseFloat(row.querySelector('input[name$="-unit_price"]').value) || 0;
+            row.querySelector(".line-total").textContent = format(q * p);
+            quantity += q;
+            amount += q * p;
+        });
+        document.getElementById("total-quantity").textContent = format(quantity);
+        document.getElementById("total-amount").textContent = format(amount);
+    }
+
+    document.getElementById("add-row").addEventListener("click", () => {
+        const index = parseInt(totalForms.value, 10);
+        const html = document.getElementById("empty-row").innerHTML.replace(/__prefix__/g, index);
+        rows.insertAdjacentHTML("beforeend", html);
+        totalForms.value = index + 1;
+        recalc();
+    });
+
+    rows.addEventListener("click", (event) => {
+        if (!event.target.classList.contains("remove-row")) return;
+        const row = event.target.closest("tr");
+        row.querySelector('input[name$="-DELETE"]').checked = true;
+        row.classList.add("d-none");
+        recalc();
+    });
+
+    rows.addEventListener("input", recalc);
+    recalc();
+})();
+</script>
+{% endblock %}
