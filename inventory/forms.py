@@ -25,9 +25,14 @@ class ProductForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # موجودی فقط هنگام ساخت محصول وارد می‌شود. بعد از آن باید فقط از مسیر
-        # فاکتور خرید و فروش تغییر کند تا دو منبع حقیقت پیدا نشود.
+        # موجودی و قیمت خرید فقط هنگام ساخت محصول (به‌عنوان مقدار اولیه) وارد
+        # می‌شوند. بعد از آن موجودی با فاکتور خرید و فروش تغییر می‌کند و قیمت خرید
+        # میانگین فاکتورهای خرید است.
         if self.instance.pk:
             stock = self.fields["stock_quantity"]
             stock.disabled = True
             stock.help_text = "موجودی از طریق فاکتور خرید و فروش تغییر می‌کند."
+
+            price = self.fields["purchase_price"]
+            price.disabled = True
+            price.help_text = "میانگین قیمت خرید در فاکتورهای خرید است."

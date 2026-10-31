@@ -35,6 +35,8 @@ class ProductUpdateView(PermissionRequiredMixin, SuccessMessageMixin, UpdateView
 
 
 class ProductDeleteView(PermissionRequiredMixin, DeleteView):
+    """محصول را برای همیشه از دیتابیس حذف می‌کند."""
+
     permission_required = "inventory.delete_product"
     model = Product
     template_name = "inventory/product_confirm_delete.html"

@@ -109,8 +109,8 @@ class ProductCrudTests(TestCase):
         self.assertContains(response, "قبلاً ثبت شده")
         self.assertEqual(Product.objects.count(), 1)
 
-    def test_update_changes_price_but_not_stock(self):
-        product = make_product(stock=5, sale=100)
+    def test_update_changes_sale_price_but_not_stock_or_purchase_price(self):
+        product = make_product(stock=5, buy=300, sale=100)
         response = self.client.post(
             reverse("inventory:product_update", args=[product.pk]),
             {
@@ -124,6 +124,7 @@ class ProductCrudTests(TestCase):
         product.refresh_from_db()
         self.assertEqual(product.sale_price, 200)
         self.assertEqual(product.stock_quantity, 5)
+        self.assertEqual(product.purchase_price, 300)
 
     def test_update_allows_keeping_same_name(self):
         product = make_product("Legend")
