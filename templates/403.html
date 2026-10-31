@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}دسترسی ندارید{% endblock %}
+
+{% block content %}
+<h2>دسترسی ندارید</h2>
+<p class="text-muted">برای انجام این کار مجوز لازم را ندارید. با مدیر سیستم تماس بگیرید.</p>
+<a href="{% url 'dashboard' %}" class="btn btn-secondary">بازگشت به داشبورد</a>
+{% endblock %}
