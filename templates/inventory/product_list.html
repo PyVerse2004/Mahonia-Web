@@ -29,7 +29,10 @@
                 <td>{{ product.name }}</td>
                 <td>{{ product.stock_quantity|intcomma:False }}</td>
                 <td>{{ product.purchase_price|intcomma:False }}</td>
-                <td>{{ product.sale_price|intcomma:False }}</td>
+                <td>
+                    {{ product.sale_price|intcomma:False }}
+                    {% if product.sale_price == 0 %}<span class="badge text-bg-warning">تعیین نشده</span>{% endif %}
+                </td>
                 <td>
                     {% if perms.inventory.change_product %}
                     <a href="{% url 'inventory:product_update' product.pk %}" class="btn btn-sm btn-warning">ویرایش</a>

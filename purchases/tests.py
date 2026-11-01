@@ -23,7 +23,7 @@ def make_product(name="Legend", stock=0, price=0):
 def invoice_data(supplier, rows, existing=None, date="2026-10-31"):
     """داده‌ی POST برای فرم فاکتور و formset ردیف‌ها.
 
-    rows: لیست (product, quantity, unit_price)
+    rows: لیست (product یا نام محصول، quantity, unit_price)
     existing: برای ویرایش، فاکتوری که ردیف‌هایش به همین ترتیب قبلاً ثبت شده‌اند.
     """
     data = {
@@ -36,7 +36,7 @@ def invoice_data(supplier, rows, existing=None, date="2026-10-31"):
     }
     old_items = list(existing.items.all()) if existing else []
     for i, (product, quantity, price) in enumerate(rows):
-        data[f"items-{i}-product"] = product.pk
+        data[f"items-{i}-product_text"] = getattr(product, "name", product)
         data[f"items-{i}-quantity"] = quantity
         data[f"items-{i}-unit_price"] = price
         if i < len(old_items):
@@ -245,6 +245,112 @@ class DeleteInvoiceTests(PurchaseTestCase):
         response = self.client.post(reverse("purchases:invoice_delete", args=[invoice.pk]))
         self.assertRedirects(response, reverse("purchases:invoice_list"))
         self.assertEqual(PurchaseInvoice.objects.count(), 0)
+
+
+class NewProductFromInvoiceTests(PurchaseTestCase):
+    def test_new_name_creates_product_with_stock_and_price(self):
+        response = self.post_new([("Lalique", 8, 5000000)])
+        self.assertRedirects(response, reverse("purchases:invoice_list"))
+
+        product = Product.objects.get(name="Lalique")
+        self.assertEqual(product.stock_quantity, 8)
+        self.assertEqual(product.purchase_price, Decimal(5000000))
+        self.assertEqual(product.sale_price, 0)
+
+        item = PurchaseInvoice.objects.get().items.get()
+        self.assertEqual(item.product, product)
+        self.assertEqual(item.product_name, "Lalique")
+
+    def test_existing_name_matches_ignoring_case_and_spaces(self):
+        self.post_new([("  legend ", 3, 100)])
+        self.assertEqual(Product.objects.filter(name__iexact="legend").count(), 1)
+        self.assertEqual(self.refresh(self.legend).stock_quantity, 3)
+
+    def test_same_new_name_on_two_rows_creates_one_product(self):
+        self.post_new([("Lalique", 2, 100), ("lalique", 3, 300)])
+        product = Product.objects.get(name="Lalique")
+        self.assertEqual(Product.objects.filter(name__iexact="lalique").count(), 1)
+        self.assertEqual(product.stock_quantity, 5)
+        self.assertEqual(product.purchase_price, Decimal(200))
+
+    def test_failed_invoice_does_not_create_product(self):
+        before = Product.objects.count()
+        self.post_new([("Lalique", 5, 100), (self.legend, 0, 100)])
+        self.assertEqual(Product.objects.count(), before)
+        self.assertEqual(PurchaseInvoice.objects.count(), 0)
+
+    def test_blank_product_name_is_rejected(self):
+        response = self.post_new([("", 5, 100)])
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(PurchaseInvoice.objects.count(), 0)
+
+    def test_editing_row_to_new_name_creates_product_and_moves_stock(self):
+        self.post_new([(self.legend, 10, 4000000)])
+        invoice = PurchaseInvoice.objects.get()
+        self.client.post(
+            reverse("purchases:invoice_update", args=[invoice.pk]),
+            invoice_data(self.supplier, [("Lalique", 10, 4000000)], existing=invoice),
+        )
+        self.assertEqual(self.refresh(self.legend).stock_quantity, 0)
+        self.assertEqual(Product.objects.get(name="Lalique").stock_quantity, 10)
+
+    def test_editing_row_of_deleted_product_does_not_recreate_it(self):
+        self.post_new([(self.legend, 10, 4000000), (self.hawas, 5, 3000000)])
+        invoice = PurchaseInvoice.objects.get()
+        self.legend.delete()
+
+        response = self.client.post(
+            reverse("purchases:invoice_update", args=[invoice.pk]),
+            invoice_data(
+                self.supplier,
+                [("Legend", 12, 4000000), (self.hawas, 5, 3000000)],
+                existing=invoice,
+            ),
+        )
+        self.assertRedirects(response, reverse("purchases:invoice_list"))
+        self.assertFalse(Product.objects.filter(name="Legend").exists())
+        invoice.refresh_from_db()
+        self.assertEqual(invoice.total_quantity, 17)
+
+    def test_form_page_lists_existing_products_as_suggestions(self):
+        response = self.client.get(reverse("purchases:invoice_create"))
+        self.assertContains(response, 'id="product-options"')
+        self.assertContains(response, '<option value="Legend">')
+
+    def test_update_page_shows_product_name_in_row(self):
+        self.post_new([(self.legend, 10, 4000000)])
+        invoice = PurchaseInvoice.objects.get()
+        response = self.client.get(reverse("purchases:invoice_update", args=[invoice.pk]))
+        self.assertContains(response, 'value="Legend"')
+
+
+class NewProductPermissionTests(PurchaseTestCase):
+    def login_with(self, *codenames):
+        user = User.objects.create_user("clerk", password="pass12345")
+        for codename in codenames:
+            user.user_permissions.add(Permission.objects.get(codename=codename))
+        self.client.force_login(user)
+
+    def test_user_without_add_product_cannot_create_new_product(self):
+        self.login_with("add_purchaseinvoice")
+        response = self.post_new([("Lalique", 5, 100)])
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "اجازه‌ی ثبت محصول جدید")
+        self.assertFalse(Product.objects.filter(name="Lalique").exists())
+        self.assertEqual(PurchaseInvoice.objects.count(), 0)
+
+    def test_user_without_add_product_can_use_existing_products(self):
+        self.login_with("add_purchaseinvoice")
+        response = self.post_new([(self.legend, 5, 100)])
+        self.assertRedirects(
+            response, reverse("purchases:invoice_list"), fetch_redirect_response=False
+        )
+        self.assertEqual(self.refresh(self.legend).stock_quantity, 5)
+
+    def test_user_with_add_product_can_create_new_product(self):
+        self.login_with("add_purchaseinvoice", "add_product")
+        self.post_new([("Lalique", 5, 100)])
+        self.assertTrue(Product.objects.filter(name="Lalique").exists())
 
 
 class StockServiceTests(TestCase):

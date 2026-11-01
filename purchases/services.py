@@ -1,7 +1,11 @@
 from django.db import transaction
 from django.db.models import Sum
 
-from inventory.services import change_stock, recalculate_purchase_price
+from inventory.services import (
+    change_stock,
+    get_or_create_product,
+    recalculate_purchase_price,
+)
 
 
 def _quantities(invoice):
@@ -23,6 +27,14 @@ def _sync_inventory(before, after):
         recalculate_purchase_price(product_id)
 
 
+def _assign_new_products(formset):
+    """برای ردیف‌هایی که نام محصول جدید دارند، محصول را می‌سازد (یا پیدا می‌کند)."""
+    deleted = formset.deleted_forms
+    for item_form in formset.forms:
+        if item_form.new_product_name and item_form not in deleted:
+            item_form.instance.product = get_or_create_product(item_form.new_product_name)
+
+
 @transaction.atomic
 def save_invoice(form, formset):
     """فاکتور و ردیف‌هایش را ذخیره می‌کند و انبار را به‌روز می‌کند.
@@ -33,6 +45,7 @@ def save_invoice(form, formset):
 
     invoice = form.save()
     formset.instance = invoice
+    _assign_new_products(formset)
     formset.save()
 
     invoice.recalculate_totals()

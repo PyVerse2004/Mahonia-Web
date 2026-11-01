@@ -35,7 +35,7 @@
         <table class="table table-bordered bg-white align-middle">
             <thead>
                 <tr>
-                    <th style="width: 40%">محصول</th>
+                    <th style="width: 40%">محصول (انتخاب یا نام محصول جدید)</th>
                     <th>تعداد</th>
                     <th>قیمت خرید</th>
                     <th>جمع ردیف</th>
@@ -64,6 +64,11 @@
     <a href="{% url 'purchases:invoice_list' %}" class="btn btn-secondary">بازگشت</a>
 </form>
 
+{# پیشنهاد نام محصولات موجود برای فیلد محصول #}
+<datalist id="product-options">
+    {% for name in product_names %}<option value="{{ name }}">{% endfor %}
+</datalist>
+
 {# قالب ردیف خالی که دکمه‌ی «افزودن ردیف» کپی می‌کند #}
 <template id="empty-row">
     {% include "purchases/_item_row.html" with form=formset.empty_form %}
@@ -76,11 +81,32 @@
     const totalForms = document.getElementById("id_" + prefix + "-TOTAL_FORMS");
     const format = (n) => n.toLocaleString("en-US");
 
+    const knownProducts = new Set(
+        Array.from(document.querySelectorAll("#product-options option")).map((option) =>
+            option.value.trim().replace(/\s+/g, " ").toLowerCase()
+        )
+    );
+
+    // اگر نام وارد‌شده بین محصولات موجود نباشد، پیام «محصول جدید» نشان داده می‌شود
+    // تا اشتباه تایپی قبل از ذخیره دیده شود.
+    function updateProductHint(row) {
+        const name = row
+            .querySelector('input[name$="-product_text"]')
+            .value.trim()
+            .replace(/\s+/g, " ")
+            .toLowerCase();
+        row.querySelector(".new-product-hint").classList.toggle(
+            "d-none",
+            name === "" || knownProducts.has(name)
+        );
+    }
+
     // فقط برای نمایش؛ مقدار نهایی را سرور دوباره حساب می‌کند.
     function recalc() {
         let quantity = 0;
         let amount = 0;
         rows.querySelectorAll("tr.item-row:not(.d-none)").forEach((row) => {
+            updateProductHint(row);
             const q = parseFloat(row.querySelector('input[name$="-quantity"]').value) || 0;
             const p = parseFloat(row.querySelector('input[name$="-unit_price"]').value) || 0;
             row.querySelector(".line-total").textContent = format(q * p);

@@ -1,8 +1,11 @@
 <tr class="item-row{% if form.DELETE.value %} d-none{% endif %}">
     <td>
         {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
-        {{ form.product }}
-        {% for error in form.product.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+        {{ form.product_text }}
+        <div class="form-text new-product-hint d-none {% if can_create_products %}text-success{% else %}text-danger{% endif %}">
+            {% if can_create_products %}محصول جدید است و بعد از ذخیره‌ی فاکتور به انبار اضافه می‌شود.{% else %}این محصول وجود ندارد و اجازه‌ی ثبت محصول جدید را ندارید.{% endif %}
+        </div>
+        {% for error in form.product_text.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
         {% for error in form.non_field_errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
     </td>
     <td>

@@ -5,6 +5,7 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
+from inventory.models import Product
 from inventory.services import StockError
 
 from . import services
@@ -59,15 +60,27 @@ class InvoiceEditMixin(PermissionRequiredMixin):
     form_class = PurchaseInvoiceForm
     template_name = "purchases/invoice_form.html"
 
+    def can_create_products(self):
+        return self.request.user.has_perm("inventory.add_product")
+
+    def get_formset(self, data=None, instance=None):
+        return PurchaseItemFormSet(
+            data,
+            instance=instance,
+            form_kwargs={"can_create_products": self.can_create_products()},
+        )
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.setdefault("formset", PurchaseItemFormSet(instance=self.object))
+        context.setdefault("formset", self.get_formset(instance=self.object))
+        context["product_names"] = Product.objects.values_list("name", flat=True)
+        context["can_create_products"] = self.can_create_products()
         return context
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object() if "pk" in self.kwargs else None
         form = self.get_form()
-        formset = PurchaseItemFormSet(request.POST, instance=form.instance)
+        formset = self.get_formset(request.POST, instance=form.instance)
 
         if form.is_valid() and formset.is_valid():
             try:

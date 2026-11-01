@@ -81,6 +81,11 @@ class ProductCrudTests(TestCase):
         response = self.client.get(reverse("inventory:product_list"))
         self.assertContains(response, "5,600,000")
 
+    def test_unset_sale_price_is_flagged_in_list(self):
+        make_product("Legend", sale=0)
+        response = self.client.get(reverse("inventory:product_list"))
+        self.assertContains(response, "تعیین نشده")
+
     def test_create_product(self):
         response = self.client.post(
             reverse("inventory:product_create"),

@@ -1,6 +1,6 @@
 from decimal import ROUND_HALF_UP, Decimal
 
-from django.db.models import F, Avg
+from django.db.models import Avg, F
 from django.utils import timezone
 
 from .models import Product
@@ -47,3 +47,15 @@ def recalculate_purchase_price(product_id):
     Product.objects.filter(pk=product_id).update(
         purchase_price=average, updated_at=timezone.now()
     )
+
+
+def get_or_create_product(name):
+    """محصولی با این نام (بدون حساسیت به بزرگی و کوچکی حروف) را برمی‌گرداند؛ اگر نبود می‌سازد.
+
+    محصول تازه با موجودی و قیمت صفر ساخته می‌شود. موجودی و قیمت خرید را فاکتور
+    خرید تعیین می‌کند و قیمت فروش را بعداً از صفحه‌ی ویرایش محصول می‌گذاری.
+    """
+    product = Product.objects.filter(name__iexact=name).first()
+    if product:
+        return product
+    return Product.objects.create(name=name)
