@@ -1,6 +1,6 @@
 from decimal import ROUND_HALF_UP, Decimal
 
-from django.db.models import Avg, F
+from django.db.models import F, Sum, DecimalField
 from django.utils import timezone
 
 from .models import Product
@@ -33,20 +33,31 @@ def change_stock(product_id, delta):
 
 
 def recalculate_purchase_price(product_id):
-    """قیمت خرید محصول را برابر میانگین ساده‌ی قیمت خرید ردیف‌های فاکتور می‌گذارد.
+    """قیمت خرید محصول را برابر میانگین موزون همه‌ی ردیف‌های فاکتور خرید می‌گذارد.
 
-    فقط قیمت‌ها در میانگین حساب می‌شوند؛ تعداد خریداری‌شده روی آن اثری ندارد.
+        میانگین = مجموع (تعداد × قیمت) / مجموع تعداد
+
     اگر محصول هیچ ردیف فاکتوری نداشته باشد، قیمت فعلی بدون تغییر می‌ماند.
     """
     product = Product.objects.get(pk=product_id)
-    average = product.purchase_items.aggregate(average=Avg("unit_price"))["average"]
-    if average is None:
+
+    totals = product.purchase_items.aggregate(
+        total_quantity=Sum("quantity"),
+        total_cost=Sum(
+            F("quantity") * F("unit_price"),
+            output_field=DecimalField(max_digits=20, decimal_places=0),
+        ),
+    )
+    if not totals["total_quantity"]:
         return
 
-    average = Decimal(str(average)).quantize(Decimal("1"), rounding=ROUND_HALF_UP)
+    average = (totals["total_cost"] / totals["total_quantity"]).quantize(
+        Decimal("1"), rounding=ROUND_HALF_UP
+    )
     Product.objects.filter(pk=product_id).update(
         purchase_price=average, updated_at=timezone.now()
     )
+
 
 
 def get_or_create_product(name):
