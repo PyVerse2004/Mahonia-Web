@@ -20,10 +20,15 @@ def _quantities(invoice):
     return {row["product_id"]: row["total"] for row in rows}
 
 
-def _sync_inventory(before, after):
+def _sync_inventory(before, after, reason, reference):
     """اختلاف تعداد قبل و بعد را روی موجودی اعمال و قیمت خرید را دوباره محاسبه می‌کند."""
     for product_id in before.keys() | after.keys():
-        change_stock(product_id, after.get(product_id, 0) - before.get(product_id, 0))
+        change_stock(
+            product_id,
+            after.get(product_id, 0) - before.get(product_id, 0),
+            reason=reason,
+            reference=reference,
+        )
         recalculate_purchase_price(product_id)
 
 
@@ -41,6 +46,7 @@ def save_invoice(form, formset):
 
     همه‌ی مراحل در یک تراکنش‌اند؛ اگر StockError پیش بیاید هیچ تغییری ذخیره نمی‌شود.
     """
+    is_new = form.instance.pk is None
     before = _quantities(form.instance)
 
     invoice = form.save()
@@ -49,12 +55,18 @@ def save_invoice(form, formset):
     formset.save()
 
     invoice.recalculate_totals()
-    _sync_inventory(before, _quantities(invoice))
+    _sync_inventory(
+        before,
+        _quantities(invoice),
+        reason="ثبت فاکتور خرید" if is_new else "ویرایش فاکتور خرید",
+        reference=f"فاکتور خرید شماره {invoice.pk}",
+    )
     return invoice
 
 
 @transaction.atomic
 def delete_invoice(invoice):
+    reference = f"فاکتور خرید شماره {invoice.pk}"
     before = _quantities(invoice)
     invoice.delete()  # ردیف‌ها با CASCADE حذف می‌شوند
-    _sync_inventory(before, {})
+    _sync_inventory(before, {}, reason="حذف فاکتور خرید", reference=reference)

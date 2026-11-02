@@ -4,7 +4,7 @@ from django.contrib.auth.models import Permission, User
 from django.test import TestCase
 from django.urls import reverse
 
-from .models import Product
+from .models import Product, StockMovement
 
 
 def make_user(username="user", perms=(), superuser=False):
@@ -44,6 +44,7 @@ class ProductAccessTests(TestCase):
     def test_anonymous_is_redirected_to_login(self):
         urls = [
             reverse("inventory:product_list"),
+            reverse("inventory:stock_movement_list"),
             reverse("inventory:product_create"),
             reverse("inventory:product_update", args=[self.product.pk]),
             reverse("inventory:product_delete", args=[self.product.pk]),
@@ -98,6 +99,46 @@ class ProductCrudTests(TestCase):
         )
         self.assertRedirects(response, reverse("inventory:product_list"))
         self.assertEqual(Product.objects.get().stock_quantity, 8)
+        movement = StockMovement.objects.get()
+        self.assertEqual(movement.quantity_change, 8)
+        self.assertEqual(movement.stock_before, 0)
+        self.assertEqual(movement.stock_after, 8)
+        self.assertEqual(movement.reason, "ثبت موجودی اولیه")
+
+    def test_stock_card_shows_and_filters_movements(self):
+        legend = make_product("Legend", stock=5)
+        hawas = make_product("Hawas", stock=7)
+        StockMovement.objects.create(
+            product=legend,
+            product_name=legend.name,
+            quantity_change=3,
+            stock_before=2,
+            stock_after=5,
+            reason="ثبت فاکتور خرید",
+            reference="فاکتور خرید شماره ۱",
+        )
+        StockMovement.objects.create(
+            product=hawas,
+            product_name=hawas.name,
+            quantity_change=-1,
+            stock_before=8,
+            stock_after=7,
+            reason="ثبت فروش",
+        )
+
+        response = self.client.get(
+            reverse("inventory:stock_movement_list"), {"product": legend.pk}
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(list(response.context["movements"]), [StockMovement.objects.get(product=legend)])
+        self.assertContains(response, "فاکتور خرید شماره ۱")
+        self.assertNotContains(response, "ثبت فروش")
+
+    def test_stock_card_requires_inventory_view_permission(self):
+        self.client.force_login(make_user())
+        response = self.client.get(reverse("inventory:stock_movement_list"))
+        self.assertEqual(response.status_code, 403)
 
     def test_create_rejects_duplicate_name(self):
         make_product("Legend")

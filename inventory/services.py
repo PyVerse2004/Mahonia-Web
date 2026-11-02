@@ -1,35 +1,52 @@
 from decimal import ROUND_HALF_UP, Decimal
 
+from django.db import transaction
 from django.db.models import F, Sum, DecimalField
 from django.utils import timezone
 
-from .models import Product
+from .models import Product, StockMovement
 
 
 class StockError(Exception):
     """موجودی انبار برای انجام عملیات کافی نیست."""
 
 
-def change_stock(product_id, delta):
+@transaction.atomic
+def change_stock(product_id, delta, reason="اصلاح موجودی", reference=""):
     """موجودی محصول را به اندازه‌ی delta زیاد (یا کم) می‌کند.
 
-    کاهش فقط وقتی انجام می‌شود که موجودی کافی باشد. شرط و تغییر در یک دستور
-    UPDATE انجام می‌شوند، پس بین بررسی و ثبت، موجودی عوض نمی‌شود.
+    کاهش فقط وقتی انجام می‌شود که موجودی کافی باشد. تغییر موجودی و ثبت کاردکس
+    در یک تراکنش انجام می‌شوند تا گزارش با موجودی واقعی هماهنگ بماند.
     """
     if not delta:
         return
 
+    product = Product.objects.select_for_update().filter(pk=product_id).first()
+    if product is None:
+        raise StockError("محصول موردنظر برای تغییر موجودی پیدا نشد.")
+
+    before = product.stock_quantity
+    after = before + delta
+    if after < 0:
+        raise StockError(f"موجودی محصول «{product.name}» برای این تغییر کافی نیست.")
+
     updated = Product.objects.filter(
         pk=product_id, stock_quantity__gte=-delta
-    ).update(stock_quantity=F("stock_quantity") + delta, updated_at=timezone.now())
-
+    ).update(
+        stock_quantity=F("stock_quantity") + delta, updated_at=timezone.now()
+    )
     if not updated:
-        name = (
-            Product.objects.filter(pk=product_id)
-            .values_list("name", flat=True)
-            .first()
-        )
-        raise StockError(f"موجودی محصول «{name}» برای این تغییر کافی نیست.")
+        raise StockError(f"موجودی محصول «{product.name}» برای این تغییر کافی نیست.")
+
+    StockMovement.objects.create(
+        product=product,
+        product_name=product.name,
+        quantity_change=delta,
+        stock_before=before,
+        stock_after=after,
+        reason=reason,
+        reference=reference,
+    )
 
 
 def recalculate_purchase_price(product_id):

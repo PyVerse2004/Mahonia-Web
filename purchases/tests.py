@@ -4,7 +4,7 @@ from django.contrib.auth.models import Permission, User
 from django.test import TestCase
 from django.urls import reverse
 
-from inventory.models import Product
+from inventory.models import Product, StockMovement
 from inventory.services import StockError, change_stock
 
 from .models import PurchaseInvoice, Supplier
@@ -77,19 +77,25 @@ class CreateInvoiceTests(PurchaseTestCase):
         self.assertEqual(self.refresh(self.legend).stock_quantity, 10)
         self.assertEqual(self.refresh(self.legend).purchase_price, Decimal(4000000))
         self.assertEqual(self.refresh(self.hawas).stock_quantity, 5)
+        movement = StockMovement.objects.get(product=self.legend)
+        self.assertEqual(movement.quantity_change, 10)
+        self.assertEqual(movement.stock_before, 0)
+        self.assertEqual(movement.stock_after, 10)
+        self.assertEqual(movement.reason, "ثبت فاکتور خرید")
+        self.assertEqual(movement.reference, f"فاکتور خرید شماره {invoice.pk}")
 
-    def test_price_is_simple_average_across_invoices(self):
+    def test_price_is_weighted_average_across_invoices(self):
         self.post_new([(self.legend, 10, 4000000)])
         self.post_new([(self.legend, 30, 5000000)])
         legend = self.refresh(self.legend)
-        # (4,000,000 + 5,000,000) / 2 = 4,500,000
-        self.assertEqual(legend.purchase_price, Decimal(4500000))
+        # (10 * 4,000,000 + 30 * 5,000,000) / 40 = 4,750,000
+        self.assertEqual(legend.purchase_price, Decimal(4750000))
         self.assertEqual(legend.stock_quantity, 40)
 
-    def test_quantity_does_not_affect_average(self):
+    def test_quantity_affects_average(self):
         self.post_new([(self.legend, 1, 100)])
         self.post_new([(self.legend, 1000, 200)])
-        self.assertEqual(self.refresh(self.legend).purchase_price, Decimal(150))
+        self.assertEqual(self.refresh(self.legend).purchase_price, Decimal(200))
 
     def test_average_is_rounded_half_up_to_whole_number(self):
         self.post_new([(self.legend, 1, 100)])
@@ -162,6 +168,16 @@ class UpdateInvoiceTests(PurchaseTestCase):
         self.assertEqual(legend.purchase_price, Decimal(5000000))
         self.assertEqual(self.refresh(self.hawas).stock_quantity, 5)
 
+    def test_edit_records_stock_change_in_cardex(self):
+        self.post_update([(self.legend, 20, 5000000), (self.hawas, 5, 3000000)])
+
+        movements = list(
+            StockMovement.objects.filter(product=self.legend).order_by("id")
+        )
+        self.assertEqual([movement.quantity_change for movement in movements], [10, 10])
+        self.assertEqual(movements[1].reason, "ویرایش فاکتور خرید")
+        self.assertEqual(movements[1].reference, f"فاکتور خرید شماره {self.invoice.pk}")
+
     def test_changing_product_moves_stock_between_products(self):
         self.post_update([(self.hawas, 10, 4000000), (self.hawas, 5, 3000000)])
         self.assertEqual(self.refresh(self.legend).stock_quantity, 0)
@@ -212,6 +228,9 @@ class DeleteInvoiceTests(PurchaseTestCase):
         self.assertEqual(legend.stock_quantity, 10)
         self.assertEqual(legend.purchase_price, Decimal(4000000))
         self.assertEqual(PurchaseInvoice.objects.count(), 1)
+        movement = StockMovement.objects.filter(product=self.legend).order_by("id").last()
+        self.assertEqual(movement.quantity_change, -30)
+        self.assertEqual(movement.reason, "حذف فاکتور خرید")
 
     def test_delete_blocked_when_stock_was_used(self):
         self.post_new([(self.legend, 10, 4000000)])
@@ -271,7 +290,7 @@ class NewProductFromInvoiceTests(PurchaseTestCase):
         product = Product.objects.get(name="Lalique")
         self.assertEqual(Product.objects.filter(name__iexact="lalique").count(), 1)
         self.assertEqual(product.stock_quantity, 5)
-        self.assertEqual(product.purchase_price, Decimal(200))
+        self.assertEqual(product.purchase_price, Decimal(220))
 
     def test_failed_invoice_does_not_create_product(self):
         before = Product.objects.count()

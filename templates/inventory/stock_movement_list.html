@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}کاردکس انبار{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">کاردکس انبار</h2>
+    <a href="{% url 'inventory:product_list' %}" class="btn btn-outline-secondary">بازگشت به کالا و انبار</a>
+</div>
+
+<form method="get" class="row g-2 align-items-end mb-3">
+    <div class="col-sm-6 col-md-4">
+        <label for="product-filter" class="form-label">محصول</label>
+        <select id="product-filter" name="product" class="form-select">
+            <option value="">همه محصولات</option>
+            {% for product in products %}
+            <option value="{{ product.pk }}" {% if selected_product == product.pk|stringformat:"s" %}selected{% endif %}>
+                {{ product.name }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">اعمال فیلتر</button>
+        <a href="{% url 'inventory:stock_movement_list' %}" class="btn btn-outline-secondary">پاک‌کردن</a>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover bg-white">
+        <thead>
+            <tr>
+                <th>تاریخ و ساعت</th>
+                <th>محصول</th>
+                <th>شرح</th>
+                <th>مرجع</th>
+                <th>ورودی</th>
+                <th>خروجی</th>
+                <th>موجودی قبل</th>
+                <th>موجودی بعد</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for movement in movements %}
+            <tr>
+                <td>{{ movement.created_at|date:"Y/m/d H:i" }}</td>
+                <td>{{ movement.product_name }}</td>
+                <td>{{ movement.reason }}</td>
+                <td>{{ movement.reference|default:"—" }}</td>
+                <td>{% if movement.quantity_change > 0 %}{{ movement.quantity_change|intcomma:False }}{% else %}—{% endif %}</td>
+                <td>{% if movement.quantity_change < 0 %}{{ movement.quantity_change|stringformat:"d"|cut:"-"|intcomma:False }}{% else %}—{% endif %}</td>
+                <td>{{ movement.stock_before|intcomma:False }}</td>
+                <td>{{ movement.stock_after|intcomma:False }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8" class="text-center text-muted">تاکنون گردش انباری ثبت نشده است.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if is_paginated %}
+<nav class="d-flex justify-content-center align-items-center gap-3 mt-3" aria-label="صفحه‌بندی">
+    {% if page_obj.has_previous %}
+        <a href="?{% if selected_product %}product={{ selected_product }}&amp;{% endif %}page={{ page_obj.previous_page_number }}">صفحه قبل</a>
+    {% endif %}
+    <span>صفحه {{ page_obj.number }} از {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+        <a href="?{% if selected_product %}product={{ selected_product }}&amp;{% endif %}page={{ page_obj.next_page_number }}">صفحه بعد</a>
+    {% endif %}
+</nav>
+{% endif %}
+{% endblock %}

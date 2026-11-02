@@ -39,3 +39,28 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class StockMovement(models.Model):
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="stock_movements",
+        verbose_name="محصول",
+    )
+    product_name = models.CharField(max_length=200, verbose_name="نام محصول")
+    quantity_change = models.IntegerField(verbose_name="تغییر موجودی")
+    stock_before = models.PositiveIntegerField(verbose_name="موجودی قبل")
+    stock_after = models.PositiveIntegerField(verbose_name="موجودی بعد")
+    reason = models.CharField(max_length=160, verbose_name="شرح")
+    reference = models.CharField(max_length=100, blank=True, verbose_name="مرجع")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ و ساعت")
+
+    class Meta:
+        ordering = ["-created_at", "-id"]
+        verbose_name = "گردش انبار"
+        verbose_name_plural = "گردش‌های انبار"
+
+    def __str__(self):
+        return f"{self.product_name} ({self.quantity_change:+})"

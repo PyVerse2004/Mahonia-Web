@@ -10,6 +10,9 @@
     <a href="{% url 'inventory:product_list' %}" class="list-group-item list-group-item-action">
         لیست کالا و انبار
     </a>
+    <a href="{% url 'inventory:stock_movement_list' %}" class="list-group-item list-group-item-action">
+        کاردکس انبار
+    </a>
     {% endif %}
     {% if perms.purchases.view_purchaseinvoice %}
     <a href="{% url 'purchases:invoice_list' %}" class="list-group-item list-group-item-action">
