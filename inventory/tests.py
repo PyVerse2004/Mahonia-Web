@@ -1,8 +1,11 @@
 from decimal import Decimal
+from datetime import datetime
 
 from django.contrib.auth.models import Permission, User
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
+from jalali_date import datetime2jalali
 
 from .models import Product, StockMovement
 
@@ -125,6 +128,11 @@ class ProductCrudTests(TestCase):
             stock_after=7,
             reason="ثبت فروش",
         )
+        movement = StockMovement.objects.get(product=legend)
+        movement.created_at = timezone.make_aware(
+            datetime(2026, 11, 3, 10, 25), timezone.get_current_timezone()
+        )
+        movement.save(update_fields=["created_at"])
 
         response = self.client.get(
             reverse("inventory:stock_movement_list"), {"product": legend.pk}
@@ -133,6 +141,8 @@ class ProductCrudTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(list(response.context["movements"]), [StockMovement.objects.get(product=legend)])
         self.assertContains(response, "فاکتور خرید شماره ۱")
+        jalali_timestamp = datetime2jalali(movement.created_at).strftime("%Y/%m/%d %H:%M")
+        self.assertContains(response, jalali_timestamp)
         self.assertNotContains(response, "ثبت فروش")
 
     def test_stock_card_requires_inventory_view_permission(self):

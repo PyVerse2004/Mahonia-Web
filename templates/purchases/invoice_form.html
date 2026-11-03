@@ -2,6 +2,8 @@
 
 {% block title %}{% if object %}ویرایش فاکتور خرید {{ object.pk }}{% else %}ثبت فاکتور خرید{% endif %}{% endblock %}
 
+{% block head %}{{ form.media }}{% endblock %}
+
 {% block content %}
 <h2 class="mb-4">{% if object %}ویرایش فاکتور خرید شماره {{ object.pk }}{% else %}ثبت فاکتور خرید{% endif %}</h2>
 
@@ -19,7 +21,10 @@
     <div class="row g-3 mb-4">
         <div class="col-12 col-md-4">
             <label for="{{ form.date.id_for_label }}" class="form-label">{{ form.date.label }}</label>
-            {{ form.date }}
+            <div class="d-flex align-items-start gap-2">
+                {{ form.date }}
+                <button type="button" class="btn btn-outline-secondary" id="invoice-date-today">امروز</button>
+            </div>
             {% for error in form.date.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
         </div>
         <div class="col-12 col-md-5">
@@ -79,6 +84,7 @@
     const prefix = "{{ formset.prefix }}";
     const rows = document.getElementById("item-rows");
     const totalForms = document.getElementById("id_" + prefix + "-TOTAL_FORMS");
+    const invoiceDate = document.getElementById("id_date");
     const format = (n) => n.toLocaleString("en-US");
 
     const knownProducts = new Set(
@@ -123,6 +129,11 @@
         rows.insertAdjacentHTML("beforeend", html);
         totalForms.value = index + 1;
         recalc();
+    });
+
+    document.getElementById("invoice-date-today").addEventListener("click", () => {
+        invoiceDate.value = invoiceDate.dataset.today;
+        invoiceDate.dispatchEvent(new Event("change", { bubbles: true }));
     });
 
     rows.addEventListener("click", (event) => {

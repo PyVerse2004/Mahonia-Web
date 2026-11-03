@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load humanize %}
+{% load jalali_tags %}
 
 {% block title %}حذف فاکتور خرید{% endblock %}
 
@@ -8,7 +9,7 @@
     <h2 class="mb-4">حذف فاکتور خرید شماره {{ object.pk }}</h2>
 
     <div class="alert alert-warning">
-        فاکتور {{ object.supplier.name }} به تاریخ {{ object.date|date:"Y/m/d" }} با جمع کل
+        فاکتور {{ object.supplier.name }} به تاریخ {{ object.date|to_jalali:"%Y/%m/%d" }} با جمع کل
         {{ object.total_amount|intcomma:False }} حذف می‌شود. تعداد این فاکتور از موجودی انبار کم
         و میانگین قیمت خرید محصولات دوباره محاسبه می‌شود. این کار قابل بازگشت نیست.
     </div>

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load humanize %}
+{% load jalali_tags %}
 
 {% block title %}کاردکس انبار{% endblock %}
 
@@ -44,7 +45,7 @@
         <tbody>
             {% for movement in movements %}
             <tr>
-                <td>{{ movement.created_at|date:"Y/m/d H:i" }}</td>
+                <td>{{ movement.created_at|to_jalali:"%Y/%m/%d %H:%M" }}</td>
                 <td>{{ movement.product_name }}</td>
                 <td>{{ movement.reason }}</td>
                 <td>{{ movement.reference|default:"—" }}</td>

@@ -1,5 +1,9 @@
 from django import forms
 from django.forms import inlineformset_factory
+from django.utils import timezone
+from jalali_date import date2jalali
+from jalali_date.fields import JalaliDateField
+from jalali_date.widgets import AdminJalaliDateWidget
 
 from inventory.models import Product
 
@@ -18,20 +22,31 @@ class SupplierForm(forms.ModelForm):
 
 
 class PurchaseInvoiceForm(forms.ModelForm):
+    date = JalaliDateField(
+        input_formats=["%Y-%m-%d", "%Y/%m/%d"],
+        label="تاریخ فاکتور",
+        widget=AdminJalaliDateWidget(
+            attrs={
+                "class": "form-control",
+                "placeholder": "۱۴۰۵-۰۸-۱۲",
+                "autocomplete": "off",
+            }
+        ),
+    )
+
     class Meta:
         model = PurchaseInvoice
         fields = ["date", "supplier"]
         widgets = {
-            "date": forms.DateInput(
-                format="%Y-%m-%d",
-                attrs={"type": "date", "class": "form-control"},
-            ),
             "supplier": forms.Select(attrs={"class": "form-select"}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["supplier"].empty_label = "انتخاب تامین‌کننده"
+        self.fields["date"].widget.attrs["data-today"] = date2jalali(
+            timezone.localdate()
+        ).strftime("%Y-%m-%d")
 
 
 class PurchaseItemForm(forms.ModelForm):

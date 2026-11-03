@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load humanize %}
+{% load jalali_tags %}
 
 {% block title %}فاکتورهای خرید{% endblock %}
 
@@ -28,7 +29,7 @@
             {% for invoice in invoices %}
             <tr>
                 <td>{{ invoice.pk }}</td>
-                <td>{{ invoice.date|date:"Y/m/d" }}</td>
+                <td>{{ invoice.date|to_jalali:"%Y/%m/%d" }}</td>
                 <td>{{ invoice.supplier.name }}</td>
                 <td>{{ invoice.total_quantity|intcomma:False }}</td>
                 <td>{{ invoice.total_amount|intcomma:False }}</td>

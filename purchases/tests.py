@@ -20,7 +20,7 @@ def make_product(name="Legend", stock=0, price=0):
     )
 
 
-def invoice_data(supplier, rows, existing=None, date="2026-10-31"):
+def invoice_data(supplier, rows, existing=None, date="1405-08-09"):
     """داده‌ی POST برای فرم فاکتور و formset ردیف‌ها.
 
     rows: لیست (product یا نام محصول، quantity, unit_price)
@@ -63,6 +63,14 @@ class PurchaseTestCase(TestCase):
 
 
 class CreateInvoiceTests(PurchaseTestCase):
+    def test_jalali_invoice_date_is_converted_and_shown_in_list(self):
+        response = self.post_new([(self.legend, 1, 100)], date="۱۴۰۵/۰۸/۱۲")
+
+        self.assertRedirects(response, reverse("purchases:invoice_list"))
+        invoice = PurchaseInvoice.objects.get()
+        self.assertEqual(invoice.date.isoformat(), "2026-11-03")
+        self.assertContains(self.client.get(reverse("purchases:invoice_list")), "1405/08/12")
+
     def test_totals_stock_and_price_after_create(self):
         response = self.post_new(
             [(self.legend, 10, 4000000), (self.hawas, 5, 3000000)]
@@ -141,6 +149,10 @@ class CreateInvoiceTests(PurchaseTestCase):
         response = self.client.get(reverse("purchases:invoice_create"))
         self.assertContains(response, "items-TOTAL_FORMS")
         self.assertContains(response, "__prefix__")
+        self.assertContains(response, 'id="invoice-date-today"')
+        self.assertContains(response, "data-jdp")
+        self.assertContains(response, "django_jalali.min.js")
+        self.assertContains(response, "django_jalali.min.css")
 
 
 class UpdateInvoiceTests(PurchaseTestCase):
