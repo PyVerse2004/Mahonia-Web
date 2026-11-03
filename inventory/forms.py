@@ -1,6 +1,40 @@
 from django import forms
+from django.utils import timezone
+from jalali_date import date2jalali
+from jalali_date.fields import JalaliDateField
+from jalali_date.widgets import AdminJalaliDateWidget
 
 from .models import Product
+
+
+class StockMovementFilterForm(forms.Form):
+    product = forms.ModelChoiceField(
+        queryset=Product.objects.none(),
+        required=False,
+        empty_label="همه محصولات",
+        label="محصول",
+        widget=forms.Select(attrs={"class": "form-select"}),
+    )
+    date = JalaliDateField(
+        input_formats=["%Y-%m-%d", "%Y/%m/%d"],
+        required=False,
+        label="تاریخ",
+        error_messages={"invalid": "تاریخ را به شکل سال/ماه/روز شمسی وارد کنید."},
+        widget=AdminJalaliDateWidget(
+            attrs={
+                "class": "form-control",
+                "placeholder": "۱۴۰۵-۰۸-۱۲",
+                "autocomplete": "off",
+            }
+        ),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["product"].queryset = Product.objects.order_by("name", "id")
+        self.fields["date"].widget.attrs["data-today"] = date2jalali(
+            timezone.localdate()
+        ).strftime("%Y-%m-%d")
 
 
 class ProductForm(forms.ModelForm):

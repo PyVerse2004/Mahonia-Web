@@ -1,11 +1,14 @@
+from datetime import datetime, time, timedelta
+
 from django.contrib import messages
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db import transaction
+from django.utils import timezone
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
-from .forms import ProductForm
+from .forms import ProductForm, StockMovementFilterForm
 from .models import Product, StockMovement
 from .services import change_stock
 
@@ -71,15 +74,34 @@ class StockMovementListView(PermissionRequiredMixin, ListView):
     context_object_name = "movements"
     paginate_by = 50
 
+    def get_filter_form(self):
+        if not hasattr(self, "_filter_form"):
+            self._filter_form = StockMovementFilterForm(self.request.GET)
+        return self._filter_form
+
     def get_queryset(self):
         queryset = super().get_queryset().select_related("product")
-        product_id = self.request.GET.get("product")
-        if product_id:
-            queryset = queryset.filter(product_id=product_id)
+        form = self.get_filter_form()
+        if not form.is_valid():
+            return queryset.none()
+
+        product = form.cleaned_data.get("product")
+        if product:
+            queryset = queryset.filter(product=product)
+
+        selected_date = form.cleaned_data.get("date")
+        if selected_date:
+            local_start = timezone.make_aware(
+                datetime.combine(selected_date, time.min)
+            )
+            local_end = local_start + timedelta(days=1)
+            queryset = queryset.filter(
+                created_at__gte=local_start,
+                created_at__lt=local_end,
+            )
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["products"] = Product.objects.order_by("name", "id")
-        context["selected_product"] = self.request.GET.get("product", "")
+        context["filter_form"] = self.get_filter_form()
         return context

@@ -133,6 +133,11 @@ class ProductCrudTests(TestCase):
             datetime(2026, 11, 3, 10, 25), timezone.get_current_timezone()
         )
         movement.save(update_fields=["created_at"])
+        hawas_movement = StockMovement.objects.get(product=hawas)
+        hawas_movement.created_at = timezone.make_aware(
+            datetime(2026, 11, 2, 10, 25), timezone.get_current_timezone()
+        )
+        hawas_movement.save(update_fields=["created_at"])
 
         response = self.client.get(
             reverse("inventory:stock_movement_list"), {"product": legend.pk}
@@ -144,6 +149,56 @@ class ProductCrudTests(TestCase):
         jalali_timestamp = datetime2jalali(movement.created_at).strftime("%Y/%m/%d %H:%M")
         self.assertContains(response, jalali_timestamp)
         self.assertNotContains(response, "ثبت فروش")
+
+    def test_stock_history_filters_by_jalali_date(self):
+        legend = make_product("Legend")
+        hawas = make_product("Hawas")
+        movement = StockMovement.objects.create(
+            product=legend,
+            product_name=legend.name,
+            quantity_change=3,
+            stock_before=2,
+            stock_after=5,
+            reason="ثبت فاکتور خرید",
+        )
+        movement.created_at = timezone.make_aware(
+            datetime(2026, 11, 3, 10, 25), timezone.get_current_timezone()
+        )
+        movement.save(update_fields=["created_at"])
+        other_movement = StockMovement.objects.create(
+            product=hawas,
+            product_name=hawas.name,
+            quantity_change=2,
+            stock_before=0,
+            stock_after=2,
+            reason="ثبت فاکتور خرید",
+        )
+        other_movement.created_at = timezone.make_aware(
+            datetime(2026, 11, 2, 10, 25), timezone.get_current_timezone()
+        )
+        other_movement.save(update_fields=["created_at"])
+
+        response = self.client.get(
+            reverse("inventory:stock_movement_list"), {"date": "۱۴۰۵/۰۸/۱۲"}
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(list(response.context["movements"]), [movement])
+        self.assertContains(response, "Legend")
+        self.assertContains(response, "تاریخچه انبار")
+        self.assertContains(response, 'id="history-date-today"')
+        self.assertContains(response, "data-jdp")
+        self.assertContains(response, "django_jalali.min.js")
+        self.assertContains(response, "django_jalali.min.css")
+
+    def test_stock_history_invalid_date_shows_error_without_movements(self):
+        response = self.client.get(
+            reverse("inventory:stock_movement_list"), {"date": "۱۴۰۵/۱۳/۴۰"}
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(list(response.context["movements"]), [])
+        self.assertContains(response, "تاریخ را به شکل سال/ماه/روز شمسی وارد کنید.")
 
     def test_stock_card_requires_inventory_view_permission(self):
         self.client.force_login(make_user())
