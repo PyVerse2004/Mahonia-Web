@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     'accounts',
     'inventory',
     'purchases',
+    'daily_sales',
+    'jalali_date',
 ]
 
 MIDDLEWARE = [

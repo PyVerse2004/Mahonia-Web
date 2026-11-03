@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}ثبت فروش{% endblock %}
+
+{% block head %}{{ form.media }}{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">ثبت فروش</h2>
+
+<form method="post" class="bg-white border rounded p-3 p-md-4">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <div class="row g-3">
+        {% for field in form %}
+        <div class="col-12 col-md-6 {% if field.name == 'debtor_name' %}d-none{% endif %}" {% if field.name == "debtor_name" %}id="debtor-field"{% endif %}>
+            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+            {% if field.name == "date" %}
+            <div class="d-flex align-items-start gap-2">
+                {{ field }}
+                <button type="button" class="btn btn-outline-secondary" id="date-today">امروز</button>
+            </div>
+            {% else %}
+            {{ field }}
+            {% endif %}
+            {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+        </div>
+        {% endfor %}
+        <div class="col-12 col-md-6">
+            <label class="form-label" for="id_total_amount">مبلغ کل</label>
+            <input id="id_total_amount" type="text" class="form-control" value="0" readonly>
+            <div class="form-text">تعداد × مبلغ هر واحد</div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <button type="submit" class="btn btn-success">ثبت فروش</button>
+        <a href="{% url 'daily_sales:sale_list' %}" class="btn btn-secondary">بازگشت</a>
+    </div>
+</form>
+
+<script>
+(function () {
+    const status = document.getElementById("id_status");
+    const debtorField = document.getElementById("debtor-field");
+    const debtorName = document.getElementById("id_debtor_name");
+    const quantity = document.getElementById("id_quantity");
+    const unitPrice = document.getElementById("id_unit_price");
+    const total = document.getElementById("id_total_amount");
+    const saleDate = document.getElementById("id_date");
+    const todayButton = document.getElementById("date-today");
+
+    function updateStatusFields() {
+        const isDebt = status.value === "debt";
+        debtorField.classList.toggle("d-none", !isDebt);
+        debtorName.required = isDebt;
+    }
+
+    function updateTotal() {
+        const count = Number(quantity.value) || 0;
+        const price = Number(unitPrice.value) || 0;
+        total.value = (count * price).toLocaleString("en-US");
+    }
+
+    todayButton.addEventListener("click", () => {
+        saleDate.value = saleDate.dataset.today;
+        saleDate.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+
+    status.addEventListener("change", updateStatusFields);
+    quantity.addEventListener("input", updateTotal);
+    unitPrice.addEventListener("input", updateTotal);
+    updateStatusFields();
+    updateTotal();
+})();
+</script>
+{% endblock %}

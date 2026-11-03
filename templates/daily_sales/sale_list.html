@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}فروش‌ها{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">فروش‌ها</h2>
+
+    {% if perms.daily_sales.add_sale %}
+    <a href="{% url 'daily_sales:sale_create' %}" class="btn btn-primary">ثبت فروش جدید</a>
+    {% endif %}
+</div>
+
+<form method="get" class="row g-2 align-items-end mb-3">
+    <div class="col-12 col-md-6">
+        <label for="id_q" class="form-label">جستجو</label>
+        <input id="id_q" type="search" name="q" value="{{ search_query }}" class="form-control" placeholder="نام محصول یا بدهکار">
+    </div>
+    <div class="col-12 col-md-3">
+        <label for="id_status" class="form-label">وضعیت حساب</label>
+        <select id="id_status" name="status" class="form-select">
+            <option value="">همه وضعیت‌ها</option>
+            {% for value, label in status_choices %}
+            <option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-outline-primary">جستجو</button>
+        <a href="{% url 'daily_sales:sale_list' %}" class="btn btn-outline-secondary">پاک‌کردن</a>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover bg-white align-middle">
+        <thead>
+            <tr>
+                <th>تاریخ</th>
+                <th>نام محصول</th>
+                <th>تعداد</th>
+                <th>مبلغ هر واحد</th>
+                <th>مبلغ کل</th>
+                <th>وضعیت حساب</th>
+                <th>نام بدهکار</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sale in sales %}
+            <tr>
+                <td>{{ sale.jalali_date }}</td>
+                <td>{{ sale.product_name }}</td>
+                <td>{{ sale.quantity|intcomma:False }}</td>
+                <td>{{ sale.unit_price|intcomma:False }}</td>
+                <td>{{ sale.total_amount|intcomma:False }}</td>
+                <td>
+                    {% if sale.status == "debt" %}
+                    <span class="badge text-bg-warning">بدهکار</span>
+                    {% else %}
+                    <span class="badge text-bg-success">تسویه‌شده</span>
+                    {% endif %}
+                </td>
+                <td>{{ sale.debtor_name|default:"—" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center text-muted">فروشی برای نمایش وجود ندارد.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if is_paginated %}
+<nav class="d-flex justify-content-center align-items-center gap-3 mt-3" aria-label="صفحه‌بندی">
+    {% if page_obj.has_previous %}
+        <a href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&amp;{% endif %}page={{ page_obj.previous_page_number }}">صفحه قبل</a>
+    {% endif %}
+
+    <span>صفحه {{ page_obj.number }} از {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+        <a href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&amp;{% endif %}page={{ page_obj.next_page_number }}">صفحه بعد</a>
+    {% endif %}
+</nav>
+{% endif %}
+{% endblock %}

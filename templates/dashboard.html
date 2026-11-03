@@ -19,12 +19,17 @@
         فاکتورهای خرید
     </a>
     {% endif %}
+    {% if perms.daily_sales.view_sale %}
+    <a href="{% url 'daily_sales:sale_list' %}" class="list-group-item list-group-item-action">
+        فروش‌ها
+    </a>
+    {% endif %}
     {% if perms.purchases.view_supplier %}
     <a href="{% url 'purchases:supplier_list' %}" class="list-group-item list-group-item-action">
         تامین‌کنندگان
     </a>
     {% endif %}
-    {% if not perms.inventory.view_product and not perms.purchases.view_purchaseinvoice and not perms.purchases.view_supplier %}
+    {% if not perms.inventory.view_product and not perms.purchases.view_purchaseinvoice and not perms.purchases.view_supplier and not perms.daily_sales.view_sale %}
     <div class="list-group-item text-muted">دسترسی‌ای برای شما تعریف نشده است.</div>
     {% endif %}
 </div>
