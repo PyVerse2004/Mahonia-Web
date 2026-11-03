@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.urls import reverse
 
-from inventory.models import Product
+from inventory.models import Product, StockMovement
 
 from .forms import SaleForm
 from .models import Sale
@@ -13,7 +13,7 @@ from .models import Sale
 
 class SaleFormTests(TestCase):
     def setUp(self):
-        self.product = Product.objects.create(name="محصول نمونه")
+        self.product = Product.objects.create(name="محصول نمونه", stock_quantity=10)
 
     def test_jalali_date_is_converted_and_debt_name_is_required(self):
         form = SaleForm(
@@ -72,8 +72,14 @@ class SaleListTests(TestCase):
         user.user_permissions.add(
             Permission.objects.get(content_type__app_label="daily_sales", codename="add_sale")
         )
+        user.user_permissions.add(
+            Permission.objects.get(content_type__app_label="daily_sales", codename="change_sale")
+        )
+        user.user_permissions.add(
+            Permission.objects.get(content_type__app_label="daily_sales", codename="delete_sale")
+        )
         self.client.force_login(user)
-        self.product = Product.objects.create(name="محصول نمونه")
+        self.product = Product.objects.create(name="محصول نمونه", stock_quantity=10)
 
     def test_create_page_renders_jalali_calendar_and_today_button(self):
         response = self.client.get(reverse("daily_sales:sale_create"))
@@ -83,6 +89,165 @@ class SaleListTests(TestCase):
         self.assertContains(response, "data-jdp")
         self.assertContains(response, "django_jalali.min.js")
         self.assertContains(response, "django_jalali.min.css")
+
+    def test_creating_sale_decreases_stock_and_records_stock_movement(self):
+        response = self.client.post(
+            reverse("daily_sales:sale_create"),
+            {
+                "date": "1405-08-12",
+                "product": self.product.pk,
+                "quantity": "3",
+                "unit_price": "12000",
+                "status": Sale.AccountStatus.SETTLED,
+                "debtor_name": "",
+            },
+        )
+
+        self.assertRedirects(response, reverse("daily_sales:sale_list"))
+        self.product.refresh_from_db()
+        self.assertEqual(self.product.stock_quantity, 7)
+        self.assertEqual(Sale.objects.count(), 1)
+        movement = StockMovement.objects.get()
+        self.assertEqual(movement.quantity_change, -3)
+        self.assertEqual(movement.stock_before, 10)
+        self.assertEqual(movement.stock_after, 7)
+        self.assertEqual(movement.reason, "ثبت فروش")
+
+    def test_sale_with_insufficient_stock_is_not_saved(self):
+        response = self.client.post(
+            reverse("daily_sales:sale_create"),
+            {
+                "date": "1405-08-12",
+                "product": self.product.pk,
+                "quantity": "11",
+                "unit_price": "12000",
+                "status": Sale.AccountStatus.SETTLED,
+                "debtor_name": "",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "موجودی محصول")
+        self.product.refresh_from_db()
+        self.assertEqual(self.product.stock_quantity, 10)
+        self.assertEqual(Sale.objects.count(), 0)
+        self.assertEqual(StockMovement.objects.count(), 0)
+
+    def post_sale(self, quantity=3, status=Sale.AccountStatus.DEBT, debtor_name="مشتری"):
+        response = self.client.post(
+            reverse("daily_sales:sale_create"),
+            {
+                "date": "1405-08-12",
+                "product": self.product.pk,
+                "quantity": str(quantity),
+                "unit_price": "12000",
+                "status": status,
+                "debtor_name": debtor_name,
+            },
+        )
+        self.assertRedirects(response, reverse("daily_sales:sale_list"))
+        return Sale.objects.latest("pk")
+
+    def test_editing_sale_updates_stock_and_account_status(self):
+        sale = self.post_sale()
+
+        response = self.client.post(
+            reverse("daily_sales:sale_update", args=[sale.pk]),
+            {
+                "date": "1405-08-13",
+                "product": self.product.pk,
+                "quantity": "5",
+                "unit_price": "12000",
+                "status": Sale.AccountStatus.SETTLED,
+                "debtor_name": "",
+            },
+        )
+
+        self.assertRedirects(response, reverse("daily_sales:sale_list"))
+        sale.refresh_from_db()
+        self.product.refresh_from_db()
+        self.assertEqual(sale.status, Sale.AccountStatus.SETTLED)
+        self.assertEqual(sale.debtor_name, "")
+        self.assertEqual(sale.quantity, 5)
+        self.assertEqual(self.product.stock_quantity, 5)
+        self.assertEqual(StockMovement.objects.count(), 2)
+        self.assertEqual(StockMovement.objects.latest("pk").quantity_change, -2)
+
+    def test_editing_sale_to_another_product_restores_old_and_decreases_new_stock(self):
+        sale = self.post_sale(quantity=3, status=Sale.AccountStatus.SETTLED, debtor_name="")
+        other_product = Product.objects.create(name="محصول دیگر", stock_quantity=8)
+
+        response = self.client.post(
+            reverse("daily_sales:sale_update", args=[sale.pk]),
+            {
+                "date": "1405-08-13",
+                "product": other_product.pk,
+                "quantity": "4",
+                "unit_price": "15000",
+                "status": Sale.AccountStatus.SETTLED,
+                "debtor_name": "",
+            },
+        )
+
+        self.assertRedirects(response, reverse("daily_sales:sale_list"))
+        sale.refresh_from_db()
+        self.product.refresh_from_db()
+        other_product.refresh_from_db()
+        self.assertEqual(sale.product_id, other_product.pk)
+        self.assertEqual(self.product.stock_quantity, 10)
+        self.assertEqual(other_product.stock_quantity, 4)
+        self.assertEqual(StockMovement.objects.count(), 3)
+
+    def test_editing_sale_with_insufficient_stock_keeps_sale_and_stock_unchanged(self):
+        sale = self.post_sale(quantity=3)
+        other_product = Product.objects.create(name="محصول دیگر", stock_quantity=2)
+
+        response = self.client.post(
+            reverse("daily_sales:sale_update", args=[sale.pk]),
+            {
+                "date": "1405-08-13",
+                "product": other_product.pk,
+                "quantity": "4",
+                "unit_price": "15000",
+                "status": Sale.AccountStatus.SETTLED,
+                "debtor_name": "",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "موجودی محصول")
+        sale.refresh_from_db()
+        self.product.refresh_from_db()
+        other_product.refresh_from_db()
+        self.assertEqual(sale.product_id, self.product.pk)
+        self.assertEqual(sale.quantity, 3)
+        self.assertEqual(self.product.stock_quantity, 7)
+        self.assertEqual(other_product.stock_quantity, 2)
+        self.assertEqual(StockMovement.objects.count(), 1)
+
+    def test_deleting_sale_restores_stock(self):
+        sale = self.post_sale(quantity=3)
+
+        response = self.client.post(reverse("daily_sales:sale_delete", args=[sale.pk]))
+
+        self.assertRedirects(response, reverse("daily_sales:sale_list"))
+        self.product.refresh_from_db()
+        self.assertEqual(self.product.stock_quantity, 10)
+        self.assertFalse(Sale.objects.filter(pk=sale.pk).exists())
+        self.assertEqual(StockMovement.objects.count(), 2)
+        self.assertEqual(StockMovement.objects.latest("pk").quantity_change, 3)
+        self.assertEqual(StockMovement.objects.latest("pk").reason, "حذف فروش")
+
+    def test_debt_sale_can_be_settled_from_sales_list(self):
+        sale = self.post_sale()
+
+        response = self.client.post(reverse("daily_sales:sale_settle", args=[sale.pk]))
+
+        self.assertRedirects(response, reverse("daily_sales:sale_list"))
+        sale.refresh_from_db()
+        self.assertEqual(sale.status, Sale.AccountStatus.SETTLED)
+        self.assertEqual(sale.debtor_name, "")
+        self.assertEqual(StockMovement.objects.count(), 1)
 
     def create_sale(self, date, status, debtor_name=""):
         return Sale.objects.create(

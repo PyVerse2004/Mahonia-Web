@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}حذف فروش{% endblock %}
+
+{% block content %}
+<div class="col-12 col-md-8 col-lg-6 px-0">
+    <h2 class="mb-4">حذف فروش شماره {{ object.pk }}</h2>
+
+    <div class="alert alert-warning">
+        فروش «{{ object.product_name }}» به تعداد {{ object.quantity }} حذف می‌شود و این تعداد به موجودی انبار بازمی‌گردد. این کار قابل بازگشت نیست.
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">بله، حذف شود</button>
+        <a href="{% url 'daily_sales:sale_list' %}" class="btn btn-secondary">انصراف</a>
+    </form>
+</div>
+{% endblock %}

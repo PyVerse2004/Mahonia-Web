@@ -43,6 +43,7 @@
                 <th>مبلغ کل</th>
                 <th>وضعیت حساب</th>
                 <th>نام بدهکار</th>
+                <th>عملیات</th>
             </tr>
         </thead>
         <tbody>
@@ -61,10 +62,24 @@
                     {% endif %}
                 </td>
                 <td>{{ sale.debtor_name|default:"—" }}</td>
+                <td class="text-nowrap">
+                    {% if perms.daily_sales.change_sale %}
+                    <a href="{% url 'daily_sales:sale_update' sale.pk %}" class="btn btn-sm btn-warning">ویرایش</a>
+                    {% if sale.status == "debt" %}
+                    <form method="post" action="{% url 'daily_sales:sale_settle' sale.pk %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-success">تسویه شد</button>
+                    </form>
+                    {% endif %}
+                    {% endif %}
+                    {% if perms.daily_sales.delete_sale %}
+                    <a href="{% url 'daily_sales:sale_delete' sale.pk %}" class="btn btn-sm btn-danger">حذف</a>
+                    {% endif %}
+                </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="7" class="text-center text-muted">فروشی برای نمایش وجود ندارد.</td>
+                <td colspan="8" class="text-center text-muted">فروشی برای نمایش وجود ندارد.</td>
             </tr>
             {% endfor %}
         </tbody>

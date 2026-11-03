@@ -47,6 +47,7 @@ class SaleForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["product"].empty_label = "انتخاب محصول"
+        self.fields["product"].required = True
         self.fields["debtor_name"].required = False
         self.fields["date"].widget.attrs["data-today"] = date2jalali(
             timezone.localdate()
