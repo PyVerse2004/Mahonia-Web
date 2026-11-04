@@ -70,11 +70,11 @@
 {% if is_paginated %}
 <nav class="d-flex justify-content-center align-items-center gap-3 mt-3" aria-label="صفحه‌بندی">
     {% if page_obj.has_previous %}
-        <a href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&amp;{% endif %}page={{ page_obj.previous_page_number }}">صفحه قبل</a>
+        <a href="?{% url_replace page=page_obj.previous_page_number %}">صفحه قبل</a>
     {% endif %}
     <span>صفحه {{ page_obj.number }} از {{ page_obj.paginator.num_pages }}</span>
     {% if page_obj.has_next %}
-        <a href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&amp;{% endif %}page={{ page_obj.next_page_number }}">صفحه بعد</a>
+        <a href="?{% url_replace page=page_obj.next_page_number %}">صفحه بعد</a>
     {% endif %}
 </nav>
 {% endif %}

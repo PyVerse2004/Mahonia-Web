@@ -40,3 +40,25 @@ class AccountsTests(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(reverse("dashboard"))
         self.assertContains(response, "داشبورد")
+
+
+class TemplateTagsTests(TestCase):
+    def test_url_replace_updates_and_preserves_query_params(self):
+        from django.template import Context, Template
+        from django.test import RequestFactory
+
+        rf = RequestFactory()
+        request = rf.get('/test/?q=apple&page=1')
+        t = Template('?{% url_replace page=2 %}')
+        rendered = t.render(Context({'request': request}))
+        self.assertEqual(rendered, '?q=apple&amp;page=2')
+
+    def test_url_replace_removes_none_values(self):
+        from django.template import Context, Template
+        from django.test import RequestFactory
+
+        rf = RequestFactory()
+        request = rf.get('/test/?q=apple&page=1')
+        t = Template('?{% url_replace page=None %}')
+        rendered = t.render(Context({'request': request}))
+        self.assertEqual(rendered, '?q=apple')
