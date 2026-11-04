@@ -70,6 +70,15 @@ class ProductAccessTests(TestCase):
 
 
 class ProductCrudTests(TestCase):
+    def test_product_list_search_by_name(self):
+        legend = make_product("Legend Test")
+        hawas = make_product("Hawas Test")
+
+        response = self.client.get(reverse("inventory:product_list"), {"q": "legend"})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(legend, response.context["products"])
+        self.assertNotIn(hawas, response.context["products"])
+
     def setUp(self):
         self.client.force_login(make_user("admin", superuser=True))
 

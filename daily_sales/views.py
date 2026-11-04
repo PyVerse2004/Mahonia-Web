@@ -9,7 +9,7 @@ from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
 from inventory.services import StockError
 
-from .forms import SaleForm
+from .forms import SaleFilterForm, SaleForm
 from .models import Sale
 from .services import create_sale, delete_sale, settle_sale, update_sale
 
@@ -20,20 +20,35 @@ class SaleListView(PermissionRequiredMixin, ListView):
     context_object_name = "sales"
     paginate_by = 20
 
+    def get_filter_form(self):
+        if not hasattr(self, "_filter_form"):
+            self._filter_form = SaleFilterForm(self.request.GET)
+        return self._filter_form
+
     def get_queryset(self):
         sales = Sale.objects.select_related("product")
-        query = self.request.GET.get("q", "").strip()
-        status = self.request.GET.get("status", "")
+        form = self.get_filter_form()
+        if not form.is_valid():
+            return sales.none()
+
+        query = (form.cleaned_data.get("q") or "").strip()
+        status = form.cleaned_data.get("status")
+        selected_date = form.cleaned_data.get("date")
+
         if query:
             sales = sales.filter(
                 Q(product_name__icontains=query) | Q(debtor_name__icontains=query)
             )
         if status in Sale.AccountStatus.values:
             sales = sales.filter(status=status)
+        if selected_date:
+            sales = sales.filter(date=selected_date)
         return sales
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        form = self.get_filter_form()
+        context["filter_form"] = form
         context["search_query"] = self.request.GET.get("q", "").strip()
         context["selected_status"] = self.request.GET.get("status", "")
         context["status_choices"] = Sale.AccountStatus.choices

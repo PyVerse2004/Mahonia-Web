@@ -64,6 +64,18 @@ class SaleFormTests(TestCase):
 
 
 class SaleListTests(TestCase):
+    def test_filter_by_jalali_date(self):
+        s1 = self.create_sale("2026-11-03", Sale.AccountStatus.SETTLED)
+        s2 = self.create_sale("2026-11-02", Sale.AccountStatus.SETTLED)
+
+        response = self.client.get(
+            reverse("daily_sales:sale_list"),
+            {"date": "1405-08-12"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(s1, response.context["sales"])
+        self.assertNotIn(s2, response.context["sales"])
+
     def setUp(self):
         user = get_user_model().objects.create_user(username="sales-user", password="test")
         user.user_permissions.add(
@@ -154,7 +166,7 @@ class SaleListTests(TestCase):
         response = self.client.post(
             reverse("daily_sales:sale_update", args=[sale.pk]),
             {
-                "date": "1405-08-13",
+                "date": "1405-08-12",
                 "product": self.product.pk,
                 "quantity": "5",
                 "unit_price": "12000",
@@ -180,7 +192,7 @@ class SaleListTests(TestCase):
         response = self.client.post(
             reverse("daily_sales:sale_update", args=[sale.pk]),
             {
-                "date": "1405-08-13",
+                "date": "1405-08-12",
                 "product": other_product.pk,
                 "quantity": "4",
                 "unit_price": "15000",
@@ -205,7 +217,7 @@ class SaleListTests(TestCase):
         response = self.client.post(
             reverse("daily_sales:sale_update", args=[sale.pk]),
             {
-                "date": "1405-08-13",
+                "date": "1405-08-12",
                 "product": other_product.pk,
                 "quantity": "4",
                 "unit_price": "15000",

@@ -7,6 +7,42 @@ from jalali_date.widgets import AdminJalaliDateWidget
 from .models import Sale
 
 
+class SaleFilterForm(forms.Form):
+    q = forms.CharField(
+        required=False,
+        label="جستجو",
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "نام محصول یا بدهکار", "id": "id_q"}
+        ),
+    )
+    status = forms.ChoiceField(
+        choices=[("", "همه وضعیت‌ها")] + list(Sale.AccountStatus.choices),
+        required=False,
+        label="وضعیت حساب",
+        widget=forms.Select(attrs={"class": "form-select", "id": "id_status"}),
+    )
+    date = JalaliDateField(
+        input_formats=["%Y-%m-%d", "%Y/%m/%d"],
+        required=False,
+        label="تاریخ فروش",
+        error_messages={"invalid": "تاریخ را به شکل سال/ماه/روز شمسی وارد کنید."},
+        widget=AdminJalaliDateWidget(
+            attrs={
+                "class": "form-control",
+                "placeholder": "۱۴۰۵-۰۸-۱۲",
+                "autocomplete": "off",
+                "id": "id_date",
+            }
+        ),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["date"].widget.attrs["data-today"] = date2jalali(
+            timezone.localdate()
+        ).strftime("%Y-%m-%d")
+
+
 class SaleForm(forms.ModelForm):
     date = JalaliDateField(
         input_formats=["%Y-%m-%d", "%Y/%m/%d"],

@@ -20,6 +20,18 @@ class ProductListView(PermissionRequiredMixin, ListView):
     context_object_name = "products"
     paginate_by = 20
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        query = self.request.GET.get("q", "").strip()
+        if query:
+            queryset = queryset.filter(name__icontains=query)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["search_query"] = self.request.GET.get("q", "").strip()
+        return context
+
 
 class ProductCreateView(PermissionRequiredMixin, SuccessMessageMixin, CreateView):
     permission_required = "inventory.add_product"
