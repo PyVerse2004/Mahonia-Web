@@ -279,3 +279,25 @@ class SaleListTests(TestCase):
         )
 
         self.assertEqual(list(response.context["sales"]), [matching])
+
+
+class SaleAdminTests(TestCase):
+    def setUp(self):
+        self.product = Product.objects.create(name='محصول ادمین', stock_quantity=10)
+        self.sale = Sale.objects.create(
+            date='2026-01-01',
+            product=self.product,
+            product_name=self.product.name,
+            quantity=2,
+            unit_price=5000,
+            status=Sale.AccountStatus.SETTLED,
+        )
+
+    def test_sale_cannot_be_added_changed_or_deleted_in_admin(self):
+        from django.contrib.admin.sites import site
+        from .admin import SaleAdmin
+
+        model_admin = SaleAdmin(Sale, site)
+        self.assertFalse(model_admin.has_add_permission(None))
+        self.assertFalse(model_admin.has_change_permission(None, self.sale))
+        self.assertFalse(model_admin.has_delete_permission(None, self.sale))
