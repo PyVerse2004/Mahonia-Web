@@ -59,8 +59,5 @@ class SaleForm(forms.ModelForm):
         debtor_name = (cleaned_data.get("debtor_name") or "").strip()
         if status == Sale.AccountStatus.DEBT and not debtor_name:
             self.add_error("debtor_name", "برای حساب بدهکار، نام بدهکار را وارد کنید.")
-        elif status == Sale.AccountStatus.SETTLED:
-            cleaned_data["debtor_name"] = ""
-        else:
-            cleaned_data["debtor_name"] = debtor_name
+        cleaned_data["debtor_name"] = debtor_name
         return cleaned_data

@@ -84,6 +84,5 @@ def settle_sale(sale):
     if sale.status != Sale.AccountStatus.DEBT:
         return False
     sale.status = Sale.AccountStatus.SETTLED
-    sale.debtor_name = ""
-    sale.save(update_fields=["status", "debtor_name"])
+    sale.save(update_fields=["status"])
     return True

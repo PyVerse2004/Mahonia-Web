@@ -47,7 +47,7 @@ class SaleFormTests(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn("debtor_name", form.errors)
 
-    def test_settled_sale_does_not_keep_debtor_name(self):
+    def test_settled_sale_can_keep_debtor_name(self):
         form = SaleForm(
             data={
                 "date": "۱۴۰۵/۰۸/۱۲",
@@ -55,12 +55,12 @@ class SaleFormTests(TestCase):
                 "quantity": "1",
                 "unit_price": "1000",
                 "status": Sale.AccountStatus.SETTLED,
-                "debtor_name": "نام اضافه",
+                "debtor_name": "نام خریدار",
             }
         )
 
         self.assertTrue(form.is_valid(), form.errors)
-        self.assertEqual(form.cleaned_data["debtor_name"], "")
+        self.assertEqual(form.cleaned_data["debtor_name"], "نام خریدار")
 
 
 class SaleListTests(TestCase):
@@ -239,14 +239,14 @@ class SaleListTests(TestCase):
         self.assertEqual(StockMovement.objects.latest("pk").reason, "حذف فروش")
 
     def test_debt_sale_can_be_settled_from_sales_list(self):
-        sale = self.post_sale()
+        sale = self.post_sale(debtor_name="مشتری نمونه")
 
         response = self.client.post(reverse("daily_sales:sale_settle", args=[sale.pk]))
 
         self.assertRedirects(response, reverse("daily_sales:sale_list"))
         sale.refresh_from_db()
         self.assertEqual(sale.status, Sale.AccountStatus.SETTLED)
-        self.assertEqual(sale.debtor_name, "")
+        self.assertEqual(sale.debtor_name, "مشتری نمونه")
         self.assertEqual(StockMovement.objects.count(), 1)
 
     def create_sale(self, date, status, debtor_name=""):
