@@ -295,6 +295,9 @@ class SaleListTests(TestCase):
 
 class SaleAdminTests(TestCase):
     def setUp(self):
+        self.admin_user = get_user_model().objects.create_superuser(
+            username="admin-user", password="password", email="admin@example.com"
+        )
         self.product = Product.objects.create(name='محصول ادمین', stock_quantity=10)
         self.sale = Sale.objects.create(
             date='2026-01-01',
@@ -305,11 +308,44 @@ class SaleAdminTests(TestCase):
             status=Sale.AccountStatus.SETTLED,
         )
 
-    def test_sale_cannot_be_added_changed_or_deleted_in_admin(self):
+    def test_sale_admin_allows_full_access_and_fields_are_editable(self):
+        from django.contrib.admin.sites import site
+        from django.test import RequestFactory
+        from .admin import SaleAdmin
+
+        rf = RequestFactory()
+        request = rf.get("/")
+        request.user = self.admin_user
+
+        model_admin = SaleAdmin(Sale, site)
+        self.assertTrue(model_admin.has_add_permission(request))
+        self.assertTrue(model_admin.has_change_permission(request, self.sale))
+        self.assertTrue(model_admin.has_delete_permission(request, self.sale))
+        self.assertEqual(model_admin.get_readonly_fields(request, self.sale), ("created_at",))
+
+    def test_sale_admin_save_and_delete_syncs_inventory(self):
         from django.contrib.admin.sites import site
         from .admin import SaleAdmin
 
         model_admin = SaleAdmin(Sale, site)
-        self.assertFalse(model_admin.has_add_permission(None))
-        self.assertFalse(model_admin.has_change_permission(None, self.sale))
-        self.assertFalse(model_admin.has_delete_permission(None, self.sale))
+
+        new_sale = Sale(
+            date='2026-01-02',
+            product=self.product,
+            product_name=self.product.name,
+            quantity=3,
+            unit_price=4000,
+            status=Sale.AccountStatus.SETTLED,
+        )
+        model_admin.save_model(None, new_sale, None, change=False)
+        self.product.refresh_from_db()
+        self.assertEqual(self.product.stock_quantity, 7)
+
+        new_sale.quantity = 5
+        model_admin.save_model(None, new_sale, None, change=True)
+        self.product.refresh_from_db()
+        self.assertEqual(self.product.stock_quantity, 5)
+
+        model_admin.delete_model(None, new_sale)
+        self.product.refresh_from_db()
+        self.assertEqual(self.product.stock_quantity, 10)

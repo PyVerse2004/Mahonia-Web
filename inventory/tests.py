@@ -278,3 +278,26 @@ class ProductCrudTests(TestCase):
         self.assertEqual(len(response.context["products"]), 20)
         response = self.client.get(reverse("inventory:product_list") + "?page=2")
         self.assertEqual(len(response.context["products"]), 5)
+
+class ProductAdminTests(TestCase):
+    def test_product_admin_allows_editing_stock_and_records_movement(self):
+        from django.contrib.admin.sites import site
+        from .admin import ProductAdmin
+
+        model_admin = ProductAdmin(Product, site)
+        product = make_product("Admin Prod", stock=10)
+
+        # stock_quantity should not be in readonly_fields
+        self.assertEqual(model_admin.get_readonly_fields(None, product), ())
+
+        # Editing stock_quantity from 10 to 15
+        product.stock_quantity = 15
+        fake_form = type("FakeForm", (), {"changed_data": ["stock_quantity"]})()
+        model_admin.save_model(None, product, fake_form, change=True)
+
+        product.refresh_from_db()
+        self.assertEqual(product.stock_quantity, 15)
+        movement = StockMovement.objects.filter(product=product).latest("pk")
+        self.assertEqual(movement.quantity_change, 5)
+        self.assertEqual(movement.stock_before, 10)
+        self.assertEqual(movement.stock_after, 15)
