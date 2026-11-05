@@ -64,6 +64,14 @@
                 <td>
                     {% if sale.status == "debt" %}
                     <span class="badge text-bg-warning">بدهکار</span>
+                    <div class="small fw-bold text-danger mt-1">
+                        مانده: {{ sale.remaining_debt|intcomma:False }} تومان
+                    </div>
+                    {% if sale.paid_amount > 0 %}
+                    <div class="small text-muted">
+                        پرداخت‌شده: {{ sale.paid_amount|intcomma:False }}
+                    </div>
+                    {% endif %}
                     {% else %}
                     <span class="badge text-bg-success">تسویه‌شده</span>
                     {% endif %}

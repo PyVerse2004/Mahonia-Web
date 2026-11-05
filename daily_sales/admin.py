@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django import forms
 from django.contrib import admin
 from django.db import transaction
@@ -15,12 +17,33 @@ class SaleAdminForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         product = cleaned_data.get("product")
-        quantity = cleaned_data.get("quantity")
+        quantity = cleaned_data.get("quantity") or 0
+        unit_price = cleaned_data.get("unit_price") or Decimal("0")
+        total_amount = quantity * unit_price
+        paid_amount = cleaned_data.get("paid_amount")
+        if paid_amount is None:
+            paid_amount = Decimal("0")
         status = cleaned_data.get("status")
         debtor_name = (cleaned_data.get("debtor_name") or "").strip()
 
         if status == Sale.AccountStatus.DEBT and not debtor_name:
             self.add_error("debtor_name", "برای حساب بدهکار، نام بدهکار را وارد کنید.")
+
+        if status == Sale.AccountStatus.SETTLED:
+            paid_amount = total_amount
+        elif total_amount > 0 and paid_amount >= total_amount:
+            status = Sale.AccountStatus.SETTLED
+            paid_amount = total_amount
+            cleaned_data["status"] = status
+
+        if total_amount > 0 and paid_amount > total_amount:
+            self.add_error(
+                "paid_amount",
+                f"مبلغ پرداخت‌شده نمی‌تواند بیشتر از مبلغ کل ({total_amount:,.0f} تومان) باشد.",
+            )
+
+        cleaned_data["debtor_name"] = debtor_name
+        cleaned_data["paid_amount"] = paid_amount
 
         if product and quantity:
             current_stock = product.stock_quantity
@@ -44,6 +67,9 @@ class SaleAdmin(admin.ModelAdmin):
         "product_name",
         "quantity",
         "unit_price",
+        "total_amount_display",
+        "paid_amount",
+        "remaining_debt_display",
         "status",
         "debtor_name",
         "created_at",
@@ -51,6 +77,14 @@ class SaleAdmin(admin.ModelAdmin):
     list_filter = ("status", "date")
     search_fields = ("product_name", "debtor_name")
     readonly_fields = ("created_at",)
+
+    @admin.display(description="مبلغ کل")
+    def total_amount_display(self, obj):
+        return f"{obj.total_amount:,.0f}"
+
+    @admin.display(description="مانده بدهی")
+    def remaining_debt_display(self, obj):
+        return f"{obj.remaining_debt:,.0f}"
 
     @transaction.atomic
     def save_model(self, request, obj, form, change):

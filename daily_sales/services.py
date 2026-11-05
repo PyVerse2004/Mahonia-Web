@@ -33,6 +33,7 @@ def update_sale(form):
     sale.product = form.cleaned_data["product"]
     sale.quantity = form.cleaned_data["quantity"]
     sale.unit_price = form.cleaned_data["unit_price"]
+    sale.paid_amount = form.cleaned_data["paid_amount"]
     sale.status = form.cleaned_data["status"]
     sale.debtor_name = form.cleaned_data["debtor_name"]
     updated_sale = sale
@@ -84,5 +85,6 @@ def settle_sale(sale):
     if sale.status != Sale.AccountStatus.DEBT:
         return False
     sale.status = Sale.AccountStatus.SETTLED
-    sale.save(update_fields=["status"])
+    sale.paid_amount = sale.total_amount
+    sale.save(update_fields=["status", "paid_amount"])
     return True

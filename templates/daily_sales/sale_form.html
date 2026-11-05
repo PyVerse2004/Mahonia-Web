@@ -16,24 +16,100 @@
     {% endif %}
 
     <div class="row g-3">
-        {% for field in form %}
-        <div class="col-12 col-md-6 {% if field.name == 'debtor_name' %}d-none{% endif %}" {% if field.name == "debtor_name" %}id="debtor-field"{% endif %}>
-            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-            {% if field.name == "date" %}
+        {# تاریخ #}
+        <div class="col-12 col-md-6">
+            <label for="{{ form.date.id_for_label }}" class="form-label">{{ form.date.label }}</label>
             <div class="d-flex align-items-start gap-2">
-                {{ field }}
+                {{ form.date }}
                 <button type="button" class="btn btn-outline-secondary" id="date-today">امروز</button>
             </div>
-            {% else %}
-            {{ field }}
-            {% endif %}
-            {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+            {% for error in form.date.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
         </div>
-        {% endfor %}
+
+        {# محصول #}
         <div class="col-12 col-md-6">
-            <label class="form-label" for="id_total_amount">مبلغ کل</label>
-            <input id="id_total_amount" type="text" class="form-control" value="0" readonly>
+            <label for="{{ form.product.id_for_label }}" class="form-label">{{ form.product.label }}</label>
+            {{ form.product }}
+            {% for error in form.product.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+        </div>
+
+        {# تعداد #}
+        <div class="col-12 col-md-4">
+            <label for="{{ form.quantity.id_for_label }}" class="form-label">{{ form.quantity.label }}</label>
+            {{ form.quantity }}
+            {% for error in form.quantity.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+        </div>
+
+        {# مبلغ هر واحد #}
+        <div class="col-12 col-md-4">
+            <label for="{{ form.unit_price.id_for_label }}" class="form-label">{{ form.unit_price.label }}</label>
+            {{ form.unit_price }}
+            {% for error in form.unit_price.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+        </div>
+
+        {# مبلغ کل #}
+        <div class="col-12 col-md-4">
+            <label class="form-label" for="id_total_amount">مبلغ کل (تومان)</label>
+            <input id="id_total_amount" type="text" class="form-control bg-light fw-bold" value="0" readonly>
             <div class="form-text">تعداد × مبلغ هر واحد</div>
+        </div>
+
+        {# وضعیت حساب #}
+        <div class="col-12 col-md-6">
+            <label for="{{ form.status.id_for_label }}" class="form-label">{{ form.status.label }}</label>
+            {{ form.status }}
+            {% for error in form.status.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+        </div>
+
+        {# نام بدهکار #}
+        <div class="col-12 col-md-6" id="debtor-field">
+            <label for="{{ form.debtor_name.id_for_label }}" class="form-label">{{ form.debtor_name.label }}</label>
+            {{ form.debtor_name }}
+            {% for error in form.debtor_name.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+        </div>
+
+        {# بخش کسر از بدهی و پرداخت #}
+        <div class="col-12" id="debt-box">
+            <div class="card bg-light border-warning">
+                <div class="card-body">
+                    <h6 class="card-title text-dark fw-bold mb-3">وضعیت پرداخت و مانده بدهی</h6>
+                    <div class="row g-3 align-items-end">
+                        {% if object %}
+                        <div class="col-12 col-md-3">
+                            <label class="form-label text-muted small">پرداخت‌شده قبلی</label>
+                            <input type="text" id="id_previous_paid_display" class="form-control" value="{{ object.paid_amount|default:0|intcomma:False }}" readonly>
+                            <input type="hidden" name="paid_amount" id="id_paid_amount" value="{{ object.paid_amount|default:0 }}">
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <label class="form-label text-muted small">مانده بدهی فعلی</label>
+                            <input type="text" id="id_current_debt_display" class="form-control text-danger fw-bold" value="{{ object.remaining_debt|default:0|intcomma:False }}" readonly>
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <label for="{{ form.payment_amount.id_for_label }}" class="form-label fw-bold text-primary">{{ form.payment_amount.label }}</label>
+                            {{ form.payment_amount }}
+                            {% for error in form.payment_amount.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <label class="form-label fw-bold text-success small">مانده بدهی پس از پرداخت</label>
+                            <input type="text" id="id_remaining_display" class="form-control bg-white fw-bold" value="0" readonly>
+                        </div>
+                        {% else %}
+                        <div class="col-12 col-md-6">
+                            <label for="{{ form.paid_amount.id_for_label }}" class="form-label">مبلغ پیش‌پرداخت / واریز اولیه (اختیاری)</label>
+                            {{ form.paid_amount }}
+                            {% for error in form.paid_amount.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-bold text-danger">مانده بدهی اولیه</label>
+                            <input type="text" id="id_remaining_display" class="form-control bg-white fw-bold text-danger" value="0" readonly>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div id="settled-alert" class="alert alert-success mt-3 mb-0 d-none">
+                        بدهی به طور کامل تسویه می‌شود و وضعیت حساب به «تسویه‌شده» تغییر خواهد کرد.
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -45,37 +121,79 @@
 
 <script>
 (function () {
-    const status = document.getElementById("id_status");
+    const statusSelect = document.getElementById("id_status");
     const debtorField = document.getElementById("debtor-field");
     const debtorName = document.getElementById("id_debtor_name");
+    const debtBox = document.getElementById("debt-box");
     const quantity = document.getElementById("id_quantity");
     const unitPrice = document.getElementById("id_unit_price");
-    const total = document.getElementById("id_total_amount");
+    const totalInput = document.getElementById("id_total_amount");
     const saleDate = document.getElementById("id_date");
     const todayButton = document.getElementById("date-today");
+    const paidAmountInput = document.getElementById("id_paid_amount");
+    const paymentAmountInput = document.getElementById("id_payment_amount");
+    const remainingDisplay = document.getElementById("id_remaining_display");
+    const settledAlert = document.getElementById("settled-alert");
 
-    function updateStatusFields() {
-        const isDebt = status.value === "debt";
-        debtorField.classList.toggle("d-none", !isDebt);
-        debtorName.required = isDebt;
+    const isEdit = {% if object %}true{% else %}false{% endif %};
+    const initialPrevPaid = {% if object %}{{ object.paid_amount|default:0 }}{% else %}0{% endif %};
+
+    function formatNumber(n) {
+        return Math.round(n).toLocaleString("en-US");
     }
 
-    function updateTotal() {
+    function recalculate() {
         const count = Number(quantity.value) || 0;
         const price = Number(unitPrice.value) || 0;
-        total.value = (count * price).toLocaleString("en-US");
+        const total = count * price;
+        totalInput.value = formatNumber(total);
+
+        const isDebt = statusSelect.value === "debt";
+        debtorField.classList.toggle("d-none", !isDebt);
+        debtBox.classList.toggle("d-none", !isDebt);
+        debtorName.required = isDebt;
+
+        if (!isDebt) {
+            settledAlert.classList.add("d-none");
+            return;
+        }
+
+        let newPaid = 0;
+        if (isEdit) {
+            const addPay = Number(paymentAmountInput ? paymentAmountInput.value : 0) || 0;
+            newPaid = initialPrevPaid + addPay;
+        } else {
+            newPaid = Number(paidAmountInput ? paidAmountInput.value : 0) || 0;
+        }
+
+        const remaining = Math.max(0, total - newPaid);
+        remainingDisplay.value = formatNumber(remaining) + " تومان";
+
+        if (total > 0 && newPaid >= total) {
+            settledAlert.classList.remove("d-none");
+        } else {
+            settledAlert.classList.add("d-none");
+        }
     }
 
-    todayButton.addEventListener("click", () => {
-        saleDate.value = saleDate.dataset.today;
-        saleDate.dispatchEvent(new Event("change", { bubbles: true }));
-    });
+    if (todayButton && saleDate) {
+        todayButton.addEventListener("click", () => {
+            saleDate.value = saleDate.dataset.today;
+            saleDate.dispatchEvent(new Event("change", { bubbles: true }));
+        });
+    }
 
-    status.addEventListener("change", updateStatusFields);
-    quantity.addEventListener("input", updateTotal);
-    unitPrice.addEventListener("input", updateTotal);
-    updateStatusFields();
-    updateTotal();
+    statusSelect.addEventListener("change", recalculate);
+    quantity.addEventListener("input", recalculate);
+    unitPrice.addEventListener("input", recalculate);
+    if (paymentAmountInput) {
+        paymentAmountInput.addEventListener("input", recalculate);
+    }
+    if (paidAmountInput && !isEdit) {
+        paidAmountInput.addEventListener("input", recalculate);
+    }
+
+    recalculate();
 })();
 </script>
 {% endblock %}

@@ -63,6 +63,46 @@ class SaleFormTests(TestCase):
         self.assertEqual(form.cleaned_data["debtor_name"], "نام خریدار")
 
 
+
+    def test_partial_payment_deducts_from_debt_and_leaves_remaining(self):
+        form = SaleForm(
+            data={
+                "date": "۱۴۰۵/۰۸/۱۲",
+                "product": self.product.pk,
+                "quantity": "2",
+                "unit_price": "10000",
+                "status": Sale.AccountStatus.DEBT,
+                "debtor_name": "علی رضایی",
+                "paid_amount": "5000",
+                "payment_amount": "5000",
+            }
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+        sale = form.save()
+        self.assertEqual(sale.paid_amount, 10000)
+        self.assertEqual(sale.remaining_debt, 10000)
+        self.assertEqual(sale.status, Sale.AccountStatus.DEBT)
+
+    def test_full_payment_automatically_settles_account(self):
+        form = SaleForm(
+            data={
+                "date": "۱۴۰۵/۰۸/۱۲",
+                "product": self.product.pk,
+                "quantity": "1",
+                "unit_price": "10000",
+                "status": Sale.AccountStatus.DEBT,
+                "debtor_name": "علی رضایی",
+                "paid_amount": "0",
+                "payment_amount": "10000",
+            }
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+        sale = form.save()
+        self.assertEqual(sale.paid_amount, 10000)
+        self.assertEqual(sale.remaining_debt, 0)
+        self.assertEqual(sale.status, Sale.AccountStatus.SETTLED)
+
+
 class SaleListTests(TestCase):
     def test_filter_by_jalali_date(self):
         s1 = self.create_sale("2026-11-03", Sale.AccountStatus.SETTLED)
@@ -291,6 +331,50 @@ class SaleListTests(TestCase):
         )
 
         self.assertEqual(list(response.context["sales"]), [matching])
+
+
+
+    def test_editing_debt_sale_with_partial_payment_updates_remaining_debt(self):
+        sale = self.post_sale(quantity=2)
+        self.assertEqual(sale.remaining_debt, 24000)
+
+        response = self.client.post(
+            reverse("daily_sales:sale_update", args=[sale.pk]),
+            {
+                "date": "1405-08-12",
+                "product": self.product.pk,
+                "quantity": "2",
+                "unit_price": "12000",
+                "status": Sale.AccountStatus.DEBT,
+                "debtor_name": "مشتری",
+                "paid_amount": "0",
+                "payment_amount": "10000",
+            },
+        )
+        self.assertRedirects(response, reverse("daily_sales:sale_list"))
+        sale.refresh_from_db()
+        self.assertEqual(sale.paid_amount, 10000)
+        self.assertEqual(sale.remaining_debt, 14000)
+        self.assertEqual(sale.status, Sale.AccountStatus.DEBT)
+
+        response = self.client.post(
+            reverse("daily_sales:sale_update", args=[sale.pk]),
+            {
+                "date": "1405-08-12",
+                "product": self.product.pk,
+                "quantity": "2",
+                "unit_price": "12000",
+                "status": Sale.AccountStatus.DEBT,
+                "debtor_name": "مشتری",
+                "paid_amount": "10000",
+                "payment_amount": "14000",
+            },
+        )
+        self.assertRedirects(response, reverse("daily_sales:sale_list"))
+        sale.refresh_from_db()
+        self.assertEqual(sale.paid_amount, 24000)
+        self.assertEqual(sale.remaining_debt, 0)
+        self.assertEqual(sale.status, Sale.AccountStatus.SETTLED)
 
 
 class SaleAdminTests(TestCase):

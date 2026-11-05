@@ -29,6 +29,13 @@ class Sale(models.Model):
         validators=[MinValueValidator(Decimal("0"))],
         verbose_name="مبلغ هر واحد",
     )
+    paid_amount = models.DecimalField(
+        max_digits=12,
+        decimal_places=0,
+        default=Decimal("0"),
+        validators=[MinValueValidator(Decimal("0"))],
+        verbose_name="مبلغ پرداخت‌شده",
+    )
     status = models.CharField(
         max_length=10,
         choices=AccountStatus.choices,
@@ -53,10 +60,22 @@ class Sale(models.Model):
         return self.quantity * self.unit_price
 
     @property
+    def remaining_debt(self):
+        if self.status == self.AccountStatus.SETTLED:
+            return Decimal("0")
+        remaining = self.total_amount - self.paid_amount
+        return max(Decimal("0"), remaining)
+
+    @property
     def jalali_date(self):
         return date2jalali(self.date).strftime("%Y/%m/%d")
 
     def save(self, *args, **kwargs):
         if self.product_id:
             self.product_name = self.product.name
+        if self.status == self.AccountStatus.SETTLED:
+            if self.total_amount > 0 and self.paid_amount < self.total_amount:
+                self.paid_amount = self.total_amount
+        elif self.total_amount > 0 and self.paid_amount >= self.total_amount:
+            self.status = self.AccountStatus.SETTLED
         super().save(*args, **kwargs)
