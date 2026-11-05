@@ -24,12 +24,17 @@
         فاکتورهای فروش
     </a>
     {% endif %}
+    {% if perms.persons.view_person %}
+    <a href="{% url 'persons:person_list' %}" class="list-group-item list-group-item-action">
+        اشخاص
+    </a>
+    {% endif %}
     {% if perms.purchases.view_supplier %}
     <a href="{% url 'purchases:supplier_list' %}" class="list-group-item list-group-item-action">
         تامین‌کنندگان
     </a>
     {% endif %}
-    {% if not perms.inventory.view_product and not perms.purchases.view_purchaseinvoice and not perms.purchases.view_supplier and not perms.daily_sales.view_sale %}
+    {% if not perms.inventory.view_product and not perms.purchases.view_purchaseinvoice and not perms.purchases.view_supplier and not perms.daily_sales.view_sale and not perms.persons.view_person %}
     <div class="list-group-item text-muted">دسترسی‌ای برای شما تعریف نشده است.</div>
     {% endif %}
 </div>

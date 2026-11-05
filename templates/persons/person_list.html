@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}اشخاص{% endblock %}
+
+{% block head %}{{ filter_form.media }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">لیست اشخاص</h2>
+
+    {% if perms.persons.add_person %}
+    <a href="{% url 'persons:person_create' %}" class="btn btn-primary">ثبت شخص جدید</a>
+    {% endif %}
+</div>
+
+<form method="get" class="row g-2 align-items-end mb-3">
+    <div class="col-12 col-md-5">
+        <label for="{{ filter_form.q.id_for_label }}" class="form-label">{{ filter_form.q.label }}</label>
+        {{ filter_form.q }}
+        {% for error in filter_form.q.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+    </div>
+    <div class="col-12 col-md-3">
+        <label for="{{ filter_form.status.id_for_label }}" class="form-label">{{ filter_form.status.label }}</label>
+        {{ filter_form.status }}
+        {% for error in filter_form.status.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+    </div>
+    <div class="col-12 col-md-4">
+        <label for="{{ filter_form.date.id_for_label }}" class="form-label">{{ filter_form.date.label }}</label>
+        <div class="d-flex align-items-start gap-2">
+            {{ filter_form.date }}
+            <button type="button" class="btn btn-outline-secondary text-nowrap" id="person-date-today">امروز</button>
+        </div>
+        {% for error in filter_form.date.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+    </div>
+    <div class="col-12 mt-2">
+        <button type="submit" class="btn btn-primary">اعمال فیلتر</button>
+        <a href="{% url 'persons:person_list' %}" class="btn btn-outline-secondary">پاک‌کردن</a>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover bg-white align-middle">
+        <thead>
+            <tr>
+                <th>تاریخ</th>
+                <th>نام بدهکار</th>
+                <th>شماره تماس</th>
+                <th>نام محصول</th>
+                <th>مبلغ بدهکاری</th>
+                <th>وضعیت حساب</th>
+                <th>عملیات</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for person in persons %}
+            <tr>
+                <td>{{ person.jalali_date }}</td>
+                <td class="fw-bold">{{ person.debtor_name }}</td>
+                <td dir="ltr" class="text-end">{{ person.phone_number|default:"—" }}</td>
+                <td>{{ person.product_name }}</td>
+                <td>{{ person.debt_amount|intcomma:False }} تومان</td>
+                <td>
+                    {% if person.status == "debtor" %}
+                        <span class="badge text-bg-warning">بدهکار</span>
+                        <div class="small fw-bold text-danger mt-1">
+                            مانده بدهی: {{ person.remaining_debt|intcomma:False }} تومان
+                        </div>
+                        {% if person.paid_amount > 0 %}
+                        <div class="small text-muted">
+                            پرداخت‌شده: {{ person.paid_amount|intcomma:False }} تومان
+                        </div>
+                        {% endif %}
+                    {% elif person.status == "creditor" %}
+                        <span class="badge text-bg-info text-dark">بستانکار</span>
+                    {% else %}
+                        <span class="badge text-bg-success">تسویه شده</span>
+                    {% endif %}
+                </td>
+                <td class="text-nowrap">
+                    {% if perms.persons.change_person %}
+                    <a href="{% url 'persons:person_update' person.pk %}" class="btn btn-sm btn-warning">ویرایش</a>
+                    {% if person.status == "debtor" %}
+                    <form method="post" action="{% url 'persons:person_settle' person.pk %}" class="d-inline" onsubmit="return confirm('آیا از تسویه حساب این شخص اطمینان دارید؟');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-success">تسویه شد</button>
+                    </form>
+                    {% endif %}
+                    {% endif %}
+                    {% if perms.persons.delete_person %}
+                    <a href="{% url 'persons:person_delete' person.pk %}" class="btn btn-sm btn-danger">حذف</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center text-muted">هیچ رکوردی برای این فیلترها پیدا نشد.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if is_paginated %}
+<nav class="d-flex justify-content-center align-items-center gap-3 mt-3" aria-label="صفحه‌بندی">
+    {% if page_obj.has_previous %}
+        <a href="?{% url_replace page=page_obj.previous_page_number %}">صفحه قبل</a>
+    {% endif %}
+
+    <span>صفحه {{ page_obj.number }} از {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+        <a href="?{% url_replace page=page_obj.next_page_number %}">صفحه بعد</a>
+    {% endif %}
+</nav>
+{% endif %}
+
+<script>
+(function () {
+    const dateField = document.getElementById("id_filter_date");
+    const todayButton = document.getElementById("person-date-today");
+    if (dateField && todayButton) {
+        todayButton.addEventListener("click", () => {
+            dateField.value = dateField.dataset.today;
+            dateField.dispatchEvent(new Event("change", { bubbles: true }));
+        });
+    }
+})();
+</script>
+{% endblock %}

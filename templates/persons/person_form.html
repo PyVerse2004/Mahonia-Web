@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}{% if object %}ویرایش شخص{% else %}ثبت شخص جدید{% endif %}{% endblock %}
+
+{% block head %}{{ form.media }}{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">{% if object %}ویرایش شخص: {{ object.debtor_name }}{% else %}ثبت شخص جدید{% endif %}</h2>
+
+<form method="post" class="bg-white border rounded p-3 p-md-4">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <div class="row g-3">
+        {# تاریخ #}
+        <div class="col-12 col-md-6">
+            <label for="{{ form.date.id_for_label }}" class="form-label">{{ form.date.label }}</label>
+            <div class="d-flex align-items-start gap-2">
+                {{ form.date }}
+                <button type="button" class="btn btn-outline-secondary" id="date-today">امروز</button>
+            </div>
+            {% for error in form.date.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+        </div>
+
+        {# نام بدهکار #}
+        <div class="col-12 col-md-6">
+            <label for="{{ form.debtor_name.id_for_label }}" class="form-label">{{ form.debtor_name.label }}</label>
+            {{ form.debtor_name }}
+            {% for error in form.debtor_name.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+        </div>
+
+        {# شماره تماس #}
+        <div class="col-12 col-md-6">
+            <label for="{{ form.phone_number.id_for_label }}" class="form-label">{{ form.phone_number.label }}</label>
+            {{ form.phone_number }}
+            {% for error in form.phone_number.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+        </div>
+
+        {# نام محصول #}
+        <div class="col-12 col-md-6">
+            <label for="{{ form.product_name.id_for_label }}" class="form-label">{{ form.product_name.label }}</label>
+            {{ form.product_name }}
+            {% for error in form.product_name.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+        </div>
+
+        {# مبلغ بدهکاری #}
+        <div class="col-12 col-md-6">
+            <label for="{{ form.debt_amount.id_for_label }}" class="form-label">{{ form.debt_amount.label }} (تومان)</label>
+            {{ form.debt_amount }}
+            {% for error in form.debt_amount.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+        </div>
+
+        {# وضعیت حساب #}
+        <div class="col-12 col-md-6">
+            <label for="{{ form.status.id_for_label }}" class="form-label">{{ form.status.label }}</label>
+            {{ form.status }}
+            {% for error in form.status.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+        </div>
+
+        {# وضعیت پرداخت و مانده بدهی #}
+        <div class="col-12" id="debt-box">
+            <div class="card bg-light border-warning">
+                <div class="card-body">
+                    <h6 class="card-title text-dark fw-bold mb-3">محاسبه و کسر پرداختی از بدهی</h6>
+                    <div class="row g-3 align-items-end">
+                        {% if object %}
+                        <div class="col-12 col-md-3">
+                            <label class="form-label text-muted small">پرداخت‌شده قبلی</label>
+                            <input type="text" id="id_previous_paid_display" class="form-control" value="{{ object.paid_amount|default:0|intcomma:False }} تومان" readonly>
+                            <input type="hidden" name="paid_amount" id="id_paid_amount" value="{{ object.paid_amount|default:0 }}">
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <label class="form-label text-muted small">مانده بدهی فعلی</label>
+                            <input type="text" id="id_current_debt_display" class="form-control text-danger fw-bold" value="{{ object.remaining_debt|default:0|intcomma:False }} تومان" readonly>
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <label for="{{ form.payment_amount.id_for_label }}" class="form-label fw-bold text-primary">{{ form.payment_amount.label }}</label>
+                            {{ form.payment_amount }}
+                            {% for error in form.payment_amount.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <label class="form-label fw-bold text-success small">مانده بدهی پس از پرداخت</label>
+                            <input type="text" id="id_remaining_display" class="form-control bg-white fw-bold" value="0 تومان" readonly>
+                        </div>
+                        {% else %}
+                        <div class="col-12 col-md-6">
+                            <label for="{{ form.paid_amount.id_for_label }}" class="form-label">مبلغ پیش‌پرداخت / واریز اولیه (اختیاری)</label>
+                            {{ form.paid_amount }}
+                            {% for error in form.paid_amount.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-bold text-danger">مانده بدهی اولیه</label>
+                            <input type="text" id="id_remaining_display" class="form-control bg-white fw-bold text-danger" value="0 تومان" readonly>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div id="settled-alert" class="alert alert-success mt-3 mb-0 d-none">
+                        مبلغ پرداختی کل بدهی را پوشش می‌دهد و وضعیت حساب به «تسویه شده» تغییر خواهد کرد.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <button type="submit" class="btn btn-success">{% if object %}ذخیره تغییرات{% else %}ثبت شخص جدید{% endif %}</button>
+        <a href="{% url 'persons:person_list' %}" class="btn btn-secondary">بازگشت</a>
+    </div>
+</form>
+
+<script>
+(function () {
+    const statusSelect = document.getElementById("id_status");
+    const debtAmountInput = document.getElementById("id_debt_amount");
+    const paidAmountInput = document.getElementById("id_paid_amount");
+    const paymentAmountInput = document.getElementById("id_payment_amount");
+    const remainingDisplay = document.getElementById("id_remaining_display");
+    const settledAlert = document.getElementById("settled-alert");
+    const debtBox = document.getElementById("debt-box");
+    const personDate = document.getElementById("id_date");
+    const todayButton = document.getElementById("date-today");
+
+    const isEdit = {% if object %}true{% else %}false{% endif %};
+    const initialPrevPaid = {% if object %}{{ object.paid_amount|default:0 }}{% else %}0{% endif %};
+
+    function formatNumber(n) {
+        return Math.round(n).toLocaleString("en-US");
+    }
+
+    function recalculate() {
+        const debt = Number(debtAmountInput.value) || 0;
+        const status = statusSelect.value;
+
+        // Show/hide debt box based on status
+        if (status === "creditor") {
+            debtBox.classList.add("d-none");
+            settledAlert.classList.add("d-none");
+            return;
+        } else {
+            debtBox.classList.remove("d-none");
+        }
+
+        let totalPaid = 0;
+        if (isEdit) {
+            const addPayment = Number(paymentAmountInput ? paymentAmountInput.value : 0) || 0;
+            totalPaid = initialPrevPaid + addPayment;
+        } else {
+            totalPaid = Number(paidAmountInput ? paidAmountInput.value : 0) || 0;
+        }
+
+        if (status === "settled") {
+            remainingDisplay.value = "۰ تومان (تسویه شده)";
+            settledAlert.classList.remove("d-none");
+            return;
+        }
+
+        const remaining = Math.max(0, debt - totalPaid);
+        remainingDisplay.value = formatNumber(remaining) + " تومان";
+
+        if (debt > 0 && totalPaid >= debt) {
+            settledAlert.classList.remove("d-none");
+            statusSelect.value = "settled";
+        } else {
+            settledAlert.classList.add("d-none");
+        }
+    }
+
+    if (todayButton && personDate) {
+        todayButton.addEventListener("click", () => {
+            personDate.value = personDate.dataset.today;
+            personDate.dispatchEvent(new Event("change", { bubbles: true }));
+        });
+    }
+
+    statusSelect.addEventListener("change", recalculate);
+    debtAmountInput.addEventListener("input", recalculate);
+    if (paymentAmountInput) {
+        paymentAmountInput.addEventListener("input", recalculate);
+    }
+    if (paidAmountInput && !isEdit) {
+        paidAmountInput.addEventListener("input", recalculate);
+    }
+
+    recalculate();
+})();
+</script>
+{% endblock %}

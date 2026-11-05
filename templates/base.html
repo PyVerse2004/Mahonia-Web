@@ -32,6 +32,11 @@
                     <a class="nav-link" href="{% url 'daily_sales:sale_list' %}">فاکتورهای فروش</a>
                 </li>
                 {% endif %}
+                {% if perms.persons.view_person %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'persons:person_list' %}">اشخاص</a>
+                </li>
+                {% endif %}
                 {% if perms.purchases.view_supplier %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'purchases:supplier_list' %}">تامین‌کنندگان</a>
