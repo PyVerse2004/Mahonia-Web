@@ -7,11 +7,7 @@ from jalali_date import date2jalali
 
 
 class Sale(models.Model):
-    class AccountStatus(models.TextChoices):
-        DEBT = "debt", "بدهکار"
-        SETTLED = "settled", "تسویه‌شده"
-
-    date = models.DateField(default=timezone.localdate, verbose_name="تاریخ فروش")
+    date = models.DateField(default=timezone.localdate, verbose_name="تاریخ فاکتور")
     product = models.ForeignKey(
         "inventory.Product",
         on_delete=models.SET_NULL,
@@ -29,42 +25,20 @@ class Sale(models.Model):
         validators=[MinValueValidator(Decimal("0"))],
         verbose_name="مبلغ هر واحد",
     )
-    paid_amount = models.DecimalField(
-        max_digits=12,
-        decimal_places=0,
-        default=Decimal("0"),
-        validators=[MinValueValidator(Decimal("0"))],
-        verbose_name="مبلغ پرداخت‌شده",
-    )
-    status = models.CharField(
-        max_length=10,
-        choices=AccountStatus.choices,
-        default=AccountStatus.SETTLED,
-        verbose_name="وضعیت حساب",
-    )
-    debtor_name = models.CharField(
-        max_length=200, blank=True, verbose_name="نام بدهکار"
-    )
+    is_active = models.BooleanField(default=True, verbose_name="فعال")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ ثبت")
 
     class Meta:
         ordering = ["-date", "-id"]
-        verbose_name = "فروش"
-        verbose_name_plural = "فروش‌ها"
+        verbose_name = "فاکتور فروش"
+        verbose_name_plural = "فاکتورهای فروش"
 
     def __str__(self):
-        return f"{self.product_name} × {self.quantity}"
+        return f"فاکتور فروش شماره {self.pk} - {self.product_name}"
 
     @property
     def total_amount(self):
         return self.quantity * self.unit_price
-
-    @property
-    def remaining_debt(self):
-        if self.status == self.AccountStatus.SETTLED:
-            return Decimal("0")
-        remaining = self.total_amount - self.paid_amount
-        return max(Decimal("0"), remaining)
 
     @property
     def jalali_date(self):
@@ -73,9 +47,4 @@ class Sale(models.Model):
     def save(self, *args, **kwargs):
         if self.product_id:
             self.product_name = self.product.name
-        if self.status == self.AccountStatus.SETTLED:
-            if self.total_amount > 0 and self.paid_amount < self.total_amount:
-                self.paid_amount = self.total_amount
-        elif self.total_amount > 0 and self.paid_amount >= self.total_amount:
-            self.status = self.AccountStatus.SETTLED
         super().save(*args, **kwargs)

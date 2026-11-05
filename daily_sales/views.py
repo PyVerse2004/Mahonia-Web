@@ -1,17 +1,16 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import CreateView, DeleteView, ListView, UpdateView
+from django.views.generic import CreateView, ListView, UpdateView, TemplateView
 
 from inventory.services import StockError
 
 from .forms import SaleFilterForm, SaleForm
 from .models import Sale
-from .services import create_sale, delete_sale, settle_sale, update_sale
+from .services import create_sale, toggle_sale_active, update_sale
 
 
 class SaleListView(PermissionRequiredMixin, ListView):
@@ -32,26 +31,23 @@ class SaleListView(PermissionRequiredMixin, ListView):
             return sales.none()
 
         query = (form.cleaned_data.get("q") or "").strip()
-        status = form.cleaned_data.get("status")
         selected_date = form.cleaned_data.get("date")
+        is_active = form.cleaned_data.get("is_active")
 
         if query:
-            sales = sales.filter(
-                Q(product_name__icontains=query) | Q(debtor_name__icontains=query)
-            )
-        if status in Sale.AccountStatus.values:
-            sales = sales.filter(status=status)
+            sales = sales.filter(product_name__icontains=query)
         if selected_date:
             sales = sales.filter(date=selected_date)
+        if is_active == "1":
+            sales = sales.filter(is_active=True)
+        elif is_active == "0":
+            sales = sales.filter(is_active=False)
+
         return sales
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        form = self.get_filter_form()
-        context["filter_form"] = form
-        context["search_query"] = self.request.GET.get("q", "").strip()
-        context["selected_status"] = self.request.GET.get("status", "")
-        context["status_choices"] = Sale.AccountStatus.choices
+        context["filter_form"] = self.get_filter_form()
         return context
 
 
@@ -68,7 +64,7 @@ class SaleCreateView(PermissionRequiredMixin, CreateView):
             form.add_error(None, str(error))
             return self.form_invalid(form)
 
-        messages.success(self.request, "فروش با موفقیت ثبت شد و از موجودی انبار کسر شد.")
+        messages.success(self.request, "فاکتور فروش با موفقیت ثبت شد و از موجودی انبار کسر گردید.")
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -86,36 +82,33 @@ class SaleUpdateView(PermissionRequiredMixin, UpdateView):
             form.add_error(None, str(error))
             return self.form_invalid(form)
 
-        messages.success(self.request, "فروش و موجودی انبار با موفقیت ویرایش شدند.")
+        messages.success(self.request, "فاکتور فروش با موفقیت ویرایش شد.")
         return HttpResponseRedirect(self.get_success_url())
 
 
-class SaleDeleteView(PermissionRequiredMixin, DeleteView):
+class SaleToggleActiveView(PermissionRequiredMixin, View):
     permission_required = "daily_sales.delete_sale"
-    model = Sale
-    template_name = "daily_sales/sale_confirm_delete.html"
-    success_url = reverse_lazy("daily_sales:sale_list")
 
-    def form_valid(self, form):
-        sale_reference = self.object.pk
+    def get(self, request, pk):
+        sale = get_object_or_404(Sale, pk=pk)
+        return redirect("daily_sales:sale_list")
+
+    def post(self, request, pk):
+        sale = get_object_or_404(Sale, pk=pk)
         try:
-            delete_sale(self.object)
+            is_active = toggle_sale_active(sale)
         except StockError as error:
-            messages.error(self.request, f"حذف فروش انجام نشد. {error}")
-            return redirect(self.success_url)
+            messages.error(request, f"خطا در تغییر وضعیت فاکتور فروش: {error}")
+            return redirect("daily_sales:sale_list")
 
-        messages.success(
-            self.request,
-            f"فروش شماره {sale_reference} حذف و تعداد آن به موجودی انبار بازگردانده شد.",
-        )
-        return HttpResponseRedirect(self.get_success_url())
-
-
-class SaleSettleView(PermissionRequiredMixin, View):
-    permission_required = "daily_sales.change_sale"
-
-    def post(self, request, *args, **kwargs):
-        sale = get_object_or_404(Sale, pk=kwargs["pk"])
-        if settle_sale(sale):
-            messages.success(request, "وضعیت فروش به تسویه‌شده تغییر کرد.")
+        if is_active:
+            messages.success(
+                request,
+                f"فاکتور فروش شماره {sale.pk} مجدداً فعال شد و تعداد آن از انبار کسر گردید.",
+            )
+        else:
+            messages.success(
+                request,
+                f"فاکتور فروش شماره {sale.pk} غیرفعال شد و تعداد آن به موجودی انبار بازگردانده شد.",
+            )
         return redirect("daily_sales:sale_list")

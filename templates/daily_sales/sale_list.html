@@ -1,16 +1,16 @@
 {% extends "base.html" %}
 {% load humanize %}
 
-{% block title %}فروش‌ها{% endblock %}
+{% block title %}فاکتورهای فروش{% endblock %}
 
 {% block head %}{{ filter_form.media }}{% endblock %}
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">فروش‌ها</h2>
+    <h2 class="mb-0">فاکتورهای فروش</h2>
 
     {% if perms.daily_sales.add_sale %}
-    <a href="{% url 'daily_sales:sale_create' %}" class="btn btn-primary">ثبت فروش جدید</a>
+    <a href="{% url 'daily_sales:sale_create' %}" class="btn btn-primary">ثبت فاکتور فروش جدید</a>
     {% endif %}
 </div>
 
@@ -21,9 +21,9 @@
         {% for error in filter_form.q.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
     </div>
     <div class="col-12 col-md-3">
-        <label for="{{ filter_form.status.id_for_label }}" class="form-label">{{ filter_form.status.label }}</label>
-        {{ filter_form.status }}
-        {% for error in filter_form.status.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+        <label for="{{ filter_form.is_active.id_for_label }}" class="form-label">{{ filter_form.is_active.label }}</label>
+        {{ filter_form.is_active }}
+        {% for error in filter_form.is_active.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
     </div>
     <div class="col-12 col-md-4">
         <label for="{{ filter_form.date.id_for_label }}" class="form-label">{{ filter_form.date.label }}</label>
@@ -48,53 +48,44 @@
                 <th>تعداد</th>
                 <th>مبلغ هر واحد</th>
                 <th>مبلغ کل</th>
-                <th>وضعیت حساب</th>
-                <th>نام بدهکار</th>
+                <th>وضعیت</th>
                 <th>عملیات</th>
             </tr>
         </thead>
         <tbody>
             {% for sale in sales %}
-            <tr>
+            <tr class="{% if not sale.is_active %}table-secondary text-muted{% endif %}">
                 <td>{{ sale.jalali_date }}</td>
                 <td>{{ sale.product_name }}</td>
                 <td>{{ sale.quantity|intcomma:False }}</td>
-                <td>{{ sale.unit_price|intcomma:False }}</td>
-                <td>{{ sale.total_amount|intcomma:False }}</td>
+                <td>{{ sale.unit_price|intcomma:False }} تومان</td>
+                <td>{{ sale.total_amount|intcomma:False }} تومان</td>
                 <td>
-                    {% if sale.status == "debt" %}
-                    <span class="badge text-bg-warning">بدهکار</span>
-                    <div class="small fw-bold text-danger mt-1">
-                        مانده: {{ sale.remaining_debt|intcomma:False }} تومان
-                    </div>
-                    {% if sale.paid_amount > 0 %}
-                    <div class="small text-muted">
-                        پرداخت‌شده: {{ sale.paid_amount|intcomma:False }}
-                    </div>
-                    {% endif %}
+                    {% if sale.is_active %}
+                    <span class="badge text-bg-success">فعال</span>
                     {% else %}
-                    <span class="badge text-bg-success">تسویه‌شده</span>
+                    <span class="badge text-bg-secondary">غیرفعال</span>
                     {% endif %}
                 </td>
-                <td>{{ sale.debtor_name|default:"—" }}</td>
                 <td class="text-nowrap">
                     {% if perms.daily_sales.change_sale %}
                     <a href="{% url 'daily_sales:sale_update' sale.pk %}" class="btn btn-sm btn-warning">ویرایش</a>
-                    {% if sale.status == "debt" %}
-                    <form method="post" action="{% url 'daily_sales:sale_settle' sale.pk %}" class="d-inline">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-sm btn-success">تسویه شد</button>
-                    </form>
-                    {% endif %}
                     {% endif %}
                     {% if perms.daily_sales.delete_sale %}
-                    <a href="{% url 'daily_sales:sale_delete' sale.pk %}" class="btn btn-sm btn-danger">حذف</a>
+                    <form method="post" action="{% url 'daily_sales:sale_toggle_active' sale.pk %}" class="d-inline" onsubmit="return confirm('آیا از {% if sale.is_active %}غیرفعال‌کردن{% else %}فعال‌کردن{% endif %} این فاکتور اطمینان دارید؟');">
+                        {% csrf_token %}
+                        {% if sale.is_active %}
+                        <button type="submit" class="btn btn-sm btn-outline-danger">غیر فعال کردن</button>
+                        {% else %}
+                        <button type="submit" class="btn btn-sm btn-outline-success">فعال کردن</button>
+                        {% endif %}
+                    </form>
                     {% endif %}
                 </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="8" class="text-center text-muted">فروشی برای این فیلترها پیدا نشد.</td>
+                <td colspan="7" class="text-center text-muted">فاکتور فروشی برای این فیلترها پیدا نشد.</td>
             </tr>
             {% endfor %}
         </tbody>
