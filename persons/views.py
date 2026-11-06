@@ -6,6 +6,8 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
+from inventory.models import Product
+
 from .forms import PersonFilterForm, PersonForm
 from .models import Person
 
@@ -55,6 +57,11 @@ class PersonCreateView(PermissionRequiredMixin, CreateView):
     template_name = "persons/person_form.html"
     success_url = reverse_lazy("persons:person_list")
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["available_products"] = Product.objects.all().order_by("name")
+        return context
+
     def form_valid(self, form):
         response = super().form_valid(form)
         messages.success(self.request, "اطلاعات شخص با موفقیت ثبت شد.")
@@ -67,6 +74,11 @@ class PersonUpdateView(PermissionRequiredMixin, UpdateView):
     form_class = PersonForm
     template_name = "persons/person_form.html"
     success_url = reverse_lazy("persons:person_list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["available_products"] = Product.objects.all().order_by("name")
+        return context
 
     def form_valid(self, form):
         response = super().form_valid(form)

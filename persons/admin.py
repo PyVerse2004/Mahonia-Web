@@ -10,6 +10,8 @@ class PersonAdmin(admin.ModelAdmin):
         "debtor_name",
         "phone_number",
         "product_name",
+        "quantity",
+        "unit_price_display",
         "debt_amount_display",
         "paid_amount_display",
         "remaining_debt_display",
@@ -20,7 +22,11 @@ class PersonAdmin(admin.ModelAdmin):
     search_fields = ("debtor_name", "product_name", "phone_number")
     readonly_fields = ("created_at", "updated_at")
 
-    @admin.display(description="مبلغ بدهکاری")
+    @admin.display(description="مبلغ هر واحد")
+    def unit_price_display(self, obj):
+        return f"{obj.unit_price:,.0f}"
+
+    @admin.display(description="مبلغ کل بدهکاری")
     def debt_amount_display(self, obj):
         return f"{obj.debt_amount:,.0f}"
 

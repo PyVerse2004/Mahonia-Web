@@ -47,7 +47,9 @@
                 <th>نام بدهکار</th>
                 <th>شماره تماس</th>
                 <th>نام محصول</th>
-                <th>مبلغ بدهکاری</th>
+                <th>تعداد</th>
+                <th>مبلغ هر واحد</th>
+                <th>مبلغ کل</th>
                 <th>وضعیت حساب</th>
                 <th>عملیات</th>
             </tr>
@@ -59,6 +61,8 @@
                 <td class="fw-bold">{{ person.debtor_name }}</td>
                 <td dir="ltr" class="text-end">{{ person.phone_number|default:"—" }}</td>
                 <td>{{ person.product_name }}</td>
+                <td>{{ person.quantity|intcomma:False }}</td>
+                <td>{{ person.unit_price|intcomma:False }} تومان</td>
                 <td>{{ person.debt_amount|intcomma:False }} تومان</td>
                 <td>
                     {% if person.status == "debtor" %}
@@ -94,7 +98,7 @@
             </tr>
             {% empty %}
             <tr>
-                <td colspan="7" class="text-center text-muted">هیچ رکوردی برای این فیلترها پیدا نشد.</td>
+                <td colspan="9" class="text-center text-muted">هیچ رکوردی برای این فیلترها پیدا نشد.</td>
             </tr>
             {% endfor %}
         </tbody>

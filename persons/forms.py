@@ -81,6 +81,8 @@ class PersonForm(forms.ModelForm):
         fields = [
             "date",
             "product_name",
+            "quantity",
+            "unit_price",
             "debtor_name",
             "phone_number",
             "debt_amount",
@@ -89,16 +91,28 @@ class PersonForm(forms.ModelForm):
         ]
         widgets = {
             "product_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "نام محصول..."}
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "نام محصول...",
+                    "list": "products-list",
+                    "id": "id_product_name",
+                }
+            ),
+            "quantity": forms.NumberInput(
+                attrs={"class": "form-control", "min": 1, "step": 1, "id": "id_quantity"}
+            ),
+            "unit_price": forms.NumberInput(
+                attrs={"class": "form-control", "min": 0, "step": 1, "id": "id_unit_price"}
             ),
             "debtor_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "نام بدهکار..."}
+                attrs={"class": "form-control", "placeholder": "نام بدهکار...", "id": "id_debtor_name"}
             ),
             "phone_number": forms.TextInput(
                 attrs={
                     "class": "form-control",
                     "placeholder": "شماره تماس (اختیاری)...",
                     "dir": "ltr",
+                    "id": "id_phone_number",
                 }
             ),
             "debt_amount": forms.NumberInput(
@@ -114,18 +128,40 @@ class PersonForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields["phone_number"].required = False
         self.fields["paid_amount"].required = False
-        if not self.instance.pk and "paid_amount" not in self.initial:
-            self.initial["paid_amount"] = 0
+        self.fields["unit_price"].required = False
+        self.fields["debt_amount"].required = False
+        if not self.instance.pk:
+            if "paid_amount" not in self.initial:
+                self.initial["paid_amount"] = 0
+            if "quantity" not in self.initial:
+                self.initial["quantity"] = 1
+            if "unit_price" not in self.initial:
+                self.initial["unit_price"] = 0
+            if "debt_amount" not in self.initial:
+                self.initial["debt_amount"] = 0
         self.fields["date"].widget.attrs["data-today"] = date2jalali(
             timezone.localdate()
         ).strftime("%Y-%m-%d")
 
     def clean(self):
         cleaned_data = super().clean()
-        debt_amount = cleaned_data.get("debt_amount") or Decimal("0")
+        quantity = cleaned_data.get("quantity") or 1
+        unit_price = cleaned_data.get("unit_price") or Decimal("0")
+        debt_amount = cleaned_data.get("debt_amount")
+        if debt_amount is None:
+            debt_amount = Decimal("0")
         paid_amount = cleaned_data.get("paid_amount") or Decimal("0")
         payment_amount = cleaned_data.get("payment_amount") or Decimal("0")
         status = cleaned_data.get("status")
+
+        # Calculate debt_amount based on quantity and unit_price if provided
+        if unit_price > 0 and quantity > 0:
+            debt_amount = quantity * unit_price
+        elif debt_amount > 0 and quantity > 0 and unit_price == 0:
+            unit_price = debt_amount // quantity
+
+        cleaned_data["debt_amount"] = debt_amount
+        cleaned_data["unit_price"] = unit_price
 
         # If a payment was made, add it to paid_amount
         if payment_amount > 0:

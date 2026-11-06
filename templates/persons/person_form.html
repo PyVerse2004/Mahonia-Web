@@ -44,13 +44,33 @@
         <div class="col-12 col-md-6">
             <label for="{{ form.product_name.id_for_label }}" class="form-label">{{ form.product_name.label }}</label>
             {{ form.product_name }}
+            <datalist id="products-list">
+                {% for prod in available_products %}
+                <option value="{{ prod.name }}" data-price="{{ prod.sale_price }}">{{ prod.name }} (قیمت فروش: {{ prod.sale_price|intcomma:False }} تومان)</option>
+                {% endfor %}
+            </datalist>
             {% for error in form.product_name.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
         </div>
 
-        {# مبلغ بدهکاری #}
-        <div class="col-12 col-md-6">
-            <label for="{{ form.debt_amount.id_for_label }}" class="form-label">{{ form.debt_amount.label }} (تومان)</label>
+        {# تعداد محصول #}
+        <div class="col-12 col-md-4">
+            <label for="{{ form.quantity.id_for_label }}" class="form-label fw-bold text-primary">{{ form.quantity.label }}</label>
+            {{ form.quantity }}
+            {% for error in form.quantity.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+        </div>
+
+        {# مبلغ هر واحد #}
+        <div class="col-12 col-md-4">
+            <label for="{{ form.unit_price.id_for_label }}" class="form-label">{{ form.unit_price.label }} (تومان)</label>
+            {{ form.unit_price }}
+            {% for error in form.unit_price.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+        </div>
+
+        {# مبلغ کل بدهکاری #}
+        <div class="col-12 col-md-4">
+            <label for="{{ form.debt_amount.id_for_label }}" class="form-label fw-bold">{{ form.debt_amount.label }} (تومان)</label>
             {{ form.debt_amount }}
+            <div class="form-text small">تعداد محصول × مبلغ هر واحد</div>
             {% for error in form.debt_amount.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
         </div>
 
@@ -115,6 +135,9 @@
 <script>
 (function () {
     const statusSelect = document.getElementById("id_status");
+    const productNameInput = document.getElementById("id_product_name");
+    const quantityInput = document.getElementById("id_quantity");
+    const unitPriceInput = document.getElementById("id_unit_price");
     const debtAmountInput = document.getElementById("id_debt_amount");
     const paidAmountInput = document.getElementById("id_paid_amount");
     const paymentAmountInput = document.getElementById("id_payment_amount");
@@ -123,12 +146,38 @@
     const debtBox = document.getElementById("debt-box");
     const personDate = document.getElementById("id_date");
     const todayButton = document.getElementById("date-today");
+    const productsList = document.getElementById("products-list");
 
     const isEdit = {% if object %}true{% else %}false{% endif %};
     const initialPrevPaid = {% if object %}{{ object.paid_amount|default:0 }}{% else %}0{% endif %};
 
     function formatNumber(n) {
         return Math.round(n).toLocaleString("en-US");
+    }
+
+    function syncPriceFromProduct() {
+        if (!productsList || !productNameInput) return;
+        const currentName = productNameInput.value.trim();
+        const options = productsList.querySelectorAll("option");
+        for (let opt of options) {
+            if (opt.value.trim().toLowerCase() === currentName.toLowerCase()) {
+                const pPrice = opt.getAttribute("data-price");
+                if (pPrice && (!unitPriceInput.value || Number(unitPriceInput.value) === 0)) {
+                    unitPriceInput.value = Math.round(Number(pPrice));
+                    calculateTotalFromQuantity();
+                }
+                break;
+            }
+        }
+    }
+
+    function calculateTotalFromQuantity() {
+        const qty = Number(quantityInput.value) || 0;
+        const unitPrice = Number(unitPriceInput.value) || 0;
+        if (unitPrice > 0) {
+            debtAmountInput.value = qty * unitPrice;
+        }
+        recalculate();
     }
 
     function recalculate() {
@@ -176,8 +225,23 @@
         });
     }
 
+    if (productNameInput) {
+        productNameInput.addEventListener("input", syncPriceFromProduct);
+        productNameInput.addEventListener("change", syncPriceFromProduct);
+    }
+
+    quantityInput.addEventListener("input", calculateTotalFromQuantity);
+    unitPriceInput.addEventListener("input", calculateTotalFromQuantity);
+    debtAmountInput.addEventListener("input", () => {
+        const qty = Number(quantityInput.value) || 1;
+        const debt = Number(debtAmountInput.value) || 0;
+        if (qty > 0 && debt > 0) {
+            unitPriceInput.value = Math.round(debt / qty);
+        }
+        recalculate();
+    });
+
     statusSelect.addEventListener("change", recalculate);
-    debtAmountInput.addEventListener("input", recalculate);
     if (paymentAmountInput) {
         paymentAmountInput.addEventListener("input", recalculate);
     }
@@ -185,7 +249,13 @@
         paidAmountInput.addEventListener("input", recalculate);
     }
 
-    recalculate();
+    // Initial run
+    syncPriceFromProduct();
+    if (Number(unitPriceInput.value) > 0 && (!debtAmountInput.value || Number(debtAmountInput.value) === 0)) {
+        calculateTotalFromQuantity();
+    } else {
+        recalculate();
+    }
 })();
 </script>
 {% endblock %}

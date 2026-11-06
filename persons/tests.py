@@ -18,6 +18,8 @@ class PersonFormTests(TestCase):
                 "debtor_name": "علی رضایی",
                 "phone_number": "09123456789",
                 "product_name": "لپ‌تاپ",
+                "quantity": "2",
+                "unit_price": "12500000",
                 "debt_amount": "25000000",
                 "paid_amount": "0",
                 "status": Person.AccountStatus.DEBTOR,
@@ -29,10 +31,32 @@ class PersonFormTests(TestCase):
         self.assertEqual(person.debtor_name, "علی رضایی")
         self.assertEqual(person.phone_number, "09123456789")
         self.assertEqual(person.product_name, "لپ‌تاپ")
+        self.assertEqual(person.quantity, 2)
+        self.assertEqual(person.unit_price, 12500000)
         self.assertEqual(person.debt_amount, 25000000)
         self.assertEqual(person.paid_amount, 0)
         self.assertEqual(person.remaining_debt, 25000000)
         self.assertEqual(person.status, Person.AccountStatus.DEBTOR)
+
+    def test_total_debt_calculated_from_quantity_and_unit_price(self):
+        form = PersonForm(
+            data={
+                "date": "۱۴۰۵/۰۸/۱۲",
+                "debtor_name": "کامبیز نادری",
+                "phone_number": "",
+                "product_name": "کتاب",
+                "quantity": "5",
+                "unit_price": "20000",
+                "paid_amount": "0",
+                "status": Person.AccountStatus.DEBTOR,
+            }
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+        person = form.save()
+        self.assertEqual(person.quantity, 5)
+        self.assertEqual(person.unit_price, 20000)
+        self.assertEqual(person.debt_amount, 100000)
+        self.assertEqual(person.remaining_debt, 100000)
 
     def test_phone_number_is_optional(self):
         form = PersonForm(
@@ -41,6 +65,8 @@ class PersonFormTests(TestCase):
                 "debtor_name": "سارا محمدی",
                 "phone_number": "",
                 "product_name": "ماوس",
+                "quantity": "1",
+                "unit_price": "500000",
                 "debt_amount": "500000",
                 "paid_amount": "0",
                 "status": Person.AccountStatus.DEBTOR,
@@ -55,6 +81,8 @@ class PersonFormTests(TestCase):
             date="2026-11-03",
             debtor_name="محمد حسینی",
             product_name="مانیتور",
+            quantity=2,
+            unit_price=5000000,
             debt_amount=10000000,
             paid_amount=2000000,
             status=Person.AccountStatus.DEBTOR,
@@ -68,6 +96,8 @@ class PersonFormTests(TestCase):
                 "debtor_name": person.debtor_name,
                 "phone_number": "",
                 "product_name": person.product_name,
+                "quantity": "2",
+                "unit_price": "5000000",
                 "debt_amount": "10000000",
                 "paid_amount": "2000000",
                 "payment_amount": "3000000",
@@ -86,6 +116,8 @@ class PersonFormTests(TestCase):
             date="2026-11-03",
             debtor_name="رضا مرادی",
             product_name="کیبورد",
+            quantity=2,
+            unit_price=2000000,
             debt_amount=4000000,
             paid_amount=1000000,
             status=Person.AccountStatus.DEBTOR,
@@ -97,6 +129,8 @@ class PersonFormTests(TestCase):
                 "debtor_name": person.debtor_name,
                 "phone_number": "",
                 "product_name": person.product_name,
+                "quantity": "2",
+                "unit_price": "2000000",
                 "debt_amount": "4000000",
                 "paid_amount": "1000000",
                 "payment_amount": "3000000",
@@ -117,6 +151,8 @@ class PersonFormTests(TestCase):
                 "debtor_name": "احمد قاسمی",
                 "phone_number": "09121111111",
                 "product_name": "اسپیکر",
+                "quantity": "1",
+                "unit_price": "0",
                 "debt_amount": "0",
                 "paid_amount": "0",
                 "status": Person.AccountStatus.CREDITOR,
@@ -143,19 +179,24 @@ class PersonViewsTests(TestCase):
             date="2026-11-03",
             debtor_name="علی علوی",
             product_name="کالای ۱",
-            debt_amount=10000,
+            quantity=3,
+            unit_price=5000,
+            debt_amount=15000,
             status=Person.AccountStatus.DEBTOR,
         )
         response = self.client.get(reverse("persons:person_list"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "علی علوی")
         self.assertContains(response, "کالای ۱")
+        self.assertContains(response, "3")
 
     def test_filter_by_debtor_name_and_status_and_date(self):
         p_debtor = Person.objects.create(
             date="2026-11-03",
             debtor_name="حسین کاظمی",
             product_name="پاوربانک",
+            quantity=1,
+            unit_price=50000,
             debt_amount=50000,
             status=Person.AccountStatus.DEBTOR,
         )
@@ -163,6 +204,8 @@ class PersonViewsTests(TestCase):
             date="2026-11-03",
             debtor_name="حسین نوری",
             product_name="کابل",
+            quantity=2,
+            unit_price=10000,
             debt_amount=20000,
             status=Person.AccountStatus.SETTLED,
         )
@@ -170,6 +213,8 @@ class PersonViewsTests(TestCase):
             date="2026-11-02",
             debtor_name="حسین کاظمی",
             product_name="هندزفری",
+            quantity=1,
+            unit_price=10000,
             debt_amount=10000,
             status=Person.AccountStatus.DEBTOR,
         )
@@ -191,7 +236,7 @@ class PersonViewsTests(TestCase):
         self.assertIn(p_settled, res3.context["persons"])
         self.assertNotIn(p_other_date, res3.context["persons"])
 
-    def test_create_person_view(self):
+    def test_create_person_view_calculates_total_from_quantity(self):
         response = self.client.post(
             reverse("persons:person_create"),
             {
@@ -199,7 +244,8 @@ class PersonViewsTests(TestCase):
                 "debtor_name": "مریم احمدی",
                 "phone_number": "09191234567",
                 "product_name": "مودم",
-                "debt_amount": "1500000",
+                "quantity": "3",
+                "unit_price": "500000",
                 "paid_amount": "500000",
                 "status": Person.AccountStatus.DEBTOR,
             },
@@ -208,6 +254,9 @@ class PersonViewsTests(TestCase):
         self.assertEqual(Person.objects.count(), 1)
         person = Person.objects.first()
         self.assertEqual(person.debtor_name, "مریم احمدی")
+        self.assertEqual(person.quantity, 3)
+        self.assertEqual(person.unit_price, 500000)
+        self.assertEqual(person.debt_amount, 1500000)
         self.assertEqual(person.remaining_debt, 1000000)
 
     def test_edit_person_with_partial_payment(self):
@@ -215,6 +264,8 @@ class PersonViewsTests(TestCase):
             date="2026-11-03",
             debtor_name="جعفر صادقی",
             product_name="فلش",
+            quantity=2,
+            unit_price=300000,
             debt_amount=600000,
             paid_amount=100000,
             status=Person.AccountStatus.DEBTOR,
@@ -227,6 +278,8 @@ class PersonViewsTests(TestCase):
                 "debtor_name": "جعفر صادقی",
                 "phone_number": "",
                 "product_name": "فلش",
+                "quantity": "2",
+                "unit_price": "300000",
                 "debt_amount": "600000",
                 "paid_amount": "100000",
                 "payment_amount": "200000",
@@ -243,6 +296,8 @@ class PersonViewsTests(TestCase):
             date="2026-11-03",
             debtor_name="سعید عباسی",
             product_name="هارد",
+            quantity=1,
+            unit_price=2000000,
             debt_amount=2000000,
             paid_amount=0,
             status=Person.AccountStatus.DEBTOR,
@@ -259,6 +314,8 @@ class PersonViewsTests(TestCase):
             date="2026-11-03",
             debtor_name="شخص حذفی",
             product_name="تست",
+            quantity=1,
+            unit_price=100,
             debt_amount=100,
             status=Person.AccountStatus.DEBTOR,
         )
@@ -276,6 +333,8 @@ class PersonAdminTests(TestCase):
             date="2026-11-03",
             debtor_name="ادمین بدهکار",
             product_name="محصول ادمین",
+            quantity=5,
+            unit_price=100000,
             debt_amount=500000,
             paid_amount=100000,
             status=Person.AccountStatus.DEBTOR,
@@ -296,6 +355,7 @@ class PersonAdminTests(TestCase):
             model_admin.get_readonly_fields(req, self.person),
             ("created_at", "updated_at"),
         )
+        self.assertEqual(model_admin.unit_price_display(self.person), "100,000")
         self.assertEqual(model_admin.debt_amount_display(self.person), "500,000")
         self.assertEqual(model_admin.paid_amount_display(self.person), "100,000")
         self.assertEqual(model_admin.remaining_debt_display(self.person), "400,000")
