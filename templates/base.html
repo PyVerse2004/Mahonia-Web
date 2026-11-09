@@ -31,6 +31,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'daily_sales:sale_list' %}">فاکتورهای فروش</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'profit_loss:report' %}">سود و زیان</a>
+                </li>
                 {% endif %}
                 {% if perms.persons.view_person %}
                 <li class="nav-item">

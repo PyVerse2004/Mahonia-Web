@@ -39,6 +39,9 @@ def update_sale(form):
     if sale.product_id is None:
         raise StockError("برای ثبت فاکتور فروش باید محصولی انتخاب شود.")
 
+    if old_product_id != sale.product_id and sale.product:
+        sale.purchase_unit_price = sale.product.purchase_price
+
     sale.save()
     reference = _stock_reference(sale)
 

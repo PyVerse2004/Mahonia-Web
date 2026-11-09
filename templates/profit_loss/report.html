@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}گزارش سود و زیان{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h2 class="mb-1">گزارش سود و زیان</h2>
+        <div class="text-muted small">
+            {% if selected_year_val and selected_month_name %}
+                گزارش فروش و سود برای <strong>{{ selected_month_name }} {{ selected_year_val }}</strong>
+            {% elif selected_year_val %}
+                گزارش فروش و سود برای سال <strong>{{ selected_year_val }}</strong>
+            {% elif selected_month_name %}
+                گزارش فروش و سود برای <strong>{{ selected_month_name }}</strong>
+            {% else %}
+                گزارش جامع کلیه دوره‌های فروش
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{# کارت‌های جمع و خلاصه در بالای لیست گزارش #}
+<div class="row g-3 mb-4">
+    {# جمع کل فروش #}
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card shadow-sm border-primary h-100">
+            <div class="card-body">
+                <span class="text-muted small fw-bold">جمع کل فروش</span>
+                <h4 class="mt-2 mb-1 text-primary fw-bold">{{ summary.total_sales|intcomma:False }} <span class="fs-6 fw-normal text-muted">تومان</span></h4>
+                <div class="small text-muted mt-2">
+                    {{ summary.total_invoices|intcomma:False }} فاکتور فعال
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# جمع کل بهای تمام‌شده خرید #}
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card shadow-sm border-secondary h-100">
+            <div class="card-body">
+                <span class="text-muted small fw-bold">جمع بهای تمام‌شده خرید (COGS)</span>
+                <h4 class="mt-2 mb-1 text-dark fw-bold">{{ summary.total_cost|intcomma:False }} <span class="fs-6 fw-normal text-muted">تومان</span></h4>
+                <div class="small text-muted mt-2">
+                    بر اساس قیمت خرید زمان فروش
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# میزان سود یا زیان خالص #}
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card shadow-sm {% if summary.is_profitable %}border-success bg-success-subtle{% else %}border-danger bg-danger-subtle{% endif %} h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="{% if summary.is_profitable %}text-success{% else %}text-danger{% endif %} small fw-bold">
+                        {% if summary.is_profitable %}سود خالص کل{% else %}زیان خالص کل{% endif %}
+                    </span>
+                    <span class="badge {% if summary.is_profitable %}text-bg-success{% else %}text-bg-danger{% endif %}">
+                        {{ summary.profit_margin }}٪ حاشیه
+                    </span>
+                </div>
+                <h4 class="mt-2 mb-1 {% if summary.is_profitable %}text-success{% else %}text-danger{% endif %} fw-bold">
+                    {% if summary.is_profitable %}+{% endif %}{{ summary.net_profit|intcomma:False }} <span class="fs-6 fw-normal">تومان</span>
+                </h4>
+                <div class="small text-muted mt-2">
+                    تفاضل کل فروش و بهای خرید
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# تعداد اقلام فروخته‌شده #}
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card shadow-sm border-info h-100">
+            <div class="card-body">
+                <span class="text-muted small fw-bold">تعداد کل کالاهای فروخته‌شده</span>
+                <h4 class="mt-2 mb-1 text-info-emphasis fw-bold">{{ summary.total_quantity|intcomma:False }} <span class="fs-6 fw-normal text-muted">عدد</span></h4>
+                <div class="small text-muted mt-2">
+                    مجموع حجم فروش دوره
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# فرم فیلتر بر اساس ماه و سال و کالا #}
+<div class="card shadow-sm mb-4">
+    <div class="card-body p-3">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-12 col-sm-6 col-md-3">
+                <label for="{{ filter_form.year.id_for_label }}" class="form-label small fw-bold">{{ filter_form.year.label }} (شمسی)</label>
+                {{ filter_form.year }}
+                {% for error in filter_form.year.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+            </div>
+            <div class="col-12 col-sm-6 col-md-3">
+                <label for="{{ filter_form.month.id_for_label }}" class="form-label small fw-bold">{{ filter_form.month.label }} (شمسی)</label>
+                {{ filter_form.month }}
+                {% for error in filter_form.month.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+            </div>
+            <div class="col-12 col-sm-6 col-md-3">
+                <label for="{{ filter_form.product.id_for_label }}" class="form-label small fw-bold">{{ filter_form.product.label }}</label>
+                {{ filter_form.product }}
+                {% for error in filter_form.product.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+            </div>
+            <div class="col-12 col-sm-6 col-md-3">
+                <label for="{{ filter_form.q.id_for_label }}" class="form-label small fw-bold">{{ filter_form.q.label }}</label>
+                {{ filter_form.q }}
+                {% for error in filter_form.q.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+            </div>
+            <div class="col-12 mt-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">اعمال فیلتر</button>
+                <a href="{% url 'profit_loss:report' %}" class="btn btn-outline-secondary">پاک‌کردن فیلترها</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# جدول لیست فاکتورهای فروش و سود هر فاکتور #}
+<div class="table-responsive">
+    <table class="table table-bordered table-hover bg-white align-middle shadow-sm">
+        <thead class="table-light">
+            <tr>
+                <th style="width: 70px;">شماره</th>
+                <th>تاریخ</th>
+                <th>نام محصول</th>
+                <th>تعداد</th>
+                <th>قیمت واحد فروش</th>
+                <th>قیمت واحد خرید (زمان فروش)</th>
+                <th>جمع کل فروش</th>
+                <th>بهای تمام‌شده خرید</th>
+                <th>میزان سود / زیان</th>
+                <th>درصد سود</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sale in sales %}
+            <tr>
+                <td class="text-center text-muted fw-bold">#{{ sale.pk }}</td>
+                <td>{{ sale.jalali_date }}</td>
+                <td class="fw-bold">{{ sale.product_name }}</td>
+                <td>{{ sale.quantity|intcomma:False }}</td>
+                <td>{{ sale.unit_price|intcomma:False }} تومان</td>
+                <td class="text-muted">{{ sale.purchase_unit_price|intcomma:False }} تومان</td>
+                <td class="fw-bold text-primary">{{ sale.total_amount|intcomma:False }} تومان</td>
+                <td class="text-muted">{{ sale.total_cost|intcomma:False }} تومان</td>
+                <td>
+                    {% if sale.profit >= 0 %}
+                        <span class="badge text-bg-success">+{{ sale.profit|intcomma:False }} تومان</span>
+                    {% else %}
+                        <span class="badge text-bg-danger">{{ sale.profit|intcomma:False }} تومان</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if sale.profit >= 0 %}
+                        <span class="text-success fw-bold">+{{ sale.profit_margin_percent }}٪</span>
+                    {% else %}
+                        <span class="text-danger fw-bold">{{ sale.profit_margin_percent }}٪</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="10" class="text-center py-4 text-muted">
+                    فاکتور فروشی برای این بازه و فیلترها یافت نشد.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        {% if sales %}
+        <tfoot class="table-light fw-bold">
+            <tr>
+                <td colspan="3" class="text-center">جمع این صفحه</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td colspan="4" class="text-muted small">
+                    جمع کل فیلترها در کارت‌های بالای صفحه قابل مشاهده است.
+                </td>
+            </tr>
+        </tfoot>
+        {% endif %}
+    </table>
+</div>
+
+{% if is_paginated %}
+<nav class="d-flex justify-content-center align-items-center gap-3 mt-3" aria-label="صفحه‌بندی">
+    {% if page_obj.has_previous %}
+        <a href="?{% url_replace page=page_obj.previous_page_number %}" class="btn btn-sm btn-outline-secondary">صفحه قبل</a>
+    {% endif %}
+
+    <span>صفحه {{ page_obj.number }} از {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+        <a href="?{% url_replace page=page_obj.next_page_number %}" class="btn btn-sm btn-outline-secondary">صفحه بعد</a>
+    {% endif %}
+</nav>
+{% endif %}
+
+{% endblock %}

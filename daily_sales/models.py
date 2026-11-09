@@ -1,4 +1,4 @@
-from decimal import Decimal
+from decimal import ROUND_HALF_UP, Decimal
 
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -25,6 +25,13 @@ class Sale(models.Model):
         validators=[MinValueValidator(Decimal("0"))],
         verbose_name="مبلغ هر واحد",
     )
+    purchase_unit_price = models.DecimalField(
+        max_digits=12,
+        decimal_places=0,
+        default=Decimal("0"),
+        validators=[MinValueValidator(Decimal("0"))],
+        verbose_name="قیمت واحد خرید در زمان فروش",
+    )
     is_active = models.BooleanField(default=True, verbose_name="فعال")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ ثبت")
 
@@ -41,10 +48,28 @@ class Sale(models.Model):
         return self.quantity * self.unit_price
 
     @property
+    def total_cost(self):
+        return self.quantity * (self.purchase_unit_price or Decimal("0"))
+
+    @property
+    def profit(self):
+        return self.total_amount - self.total_cost
+
+    @property
+    def profit_margin_percent(self):
+        if self.total_amount > 0:
+            return ((self.profit / self.total_amount) * 100).quantize(
+                Decimal("0.1"), rounding=ROUND_HALF_UP
+            )
+        return Decimal("0")
+
+    @property
     def jalali_date(self):
         return date2jalali(self.date).strftime("%Y/%m/%d")
 
     def save(self, *args, **kwargs):
         if self.product_id:
             self.product_name = self.product.name
+            if (self.purchase_unit_price is None or self.purchase_unit_price == 0) and self.product.purchase_price:
+                self.purchase_unit_price = self.product.purchase_price
         super().save(*args, **kwargs)

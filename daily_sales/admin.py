@@ -42,7 +42,9 @@ class SaleAdmin(admin.ModelAdmin):
         "product_name",
         "quantity",
         "unit_price",
+        "purchase_unit_price",
         "total_amount_display",
+        "profit_display",
         "is_active",
         "created_at",
     )
@@ -53,6 +55,10 @@ class SaleAdmin(admin.ModelAdmin):
     @admin.display(description="مبلغ کل")
     def total_amount_display(self, obj):
         return f"{obj.total_amount:,.0f}"
+
+    @admin.display(description="سود / زیان")
+    def profit_display(self, obj):
+        return f"{obj.profit:,.0f} تومان"
 
     @transaction.atomic
     def save_model(self, request, obj, form, change):
