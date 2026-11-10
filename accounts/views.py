@@ -13,15 +13,16 @@ class CustomLoginView(LoginView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        selected_role = form.cleaned_data.get("role")
         user = self.request.user
-        profile = getattr(user, "profile", None)
-        effective_role = (
-            selected_role or (profile.role if profile else UserProfile.ROLE_SELLER)
+        profile, _ = UserProfile.objects.get_or_create(
+            user=user,
+            defaults={
+                "role": UserProfile.ROLE_MANAGER if user.is_superuser else UserProfile.ROLE_SELLER
+            },
         )
+        effective_role = UserProfile.ROLE_MANAGER if user.is_superuser else profile.role
         self.request.session["active_role"] = effective_role
-        if profile:
-            sync_user_role_permissions(user, effective_role)
+        sync_user_role_permissions(user, effective_role)
         return response
 
 

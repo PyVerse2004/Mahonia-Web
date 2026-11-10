@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 
-from accounts.forms import LoginForm
 from accounts.models import UserProfile, sync_user_role_permissions
 
 
@@ -27,20 +26,14 @@ class AccountsTests(TestCase):
     def test_login_success_goes_to_dashboard(self):
         response = self.client.post(
             reverse("login"),
-            {"username": "sina", "password": "pass12345", "role": "seller"},
+            {"username": "sina", "password": "pass12345"},
         )
         self.assertRedirects(response, reverse("dashboard"))
         self.assertEqual(self.client.session.get("active_role"), "seller")
 
-    def test_login_without_role_falls_back_to_profile_role(self):
-        response = self.client.post(
-            reverse("login"), {"username": "sina", "password": "pass12345"}
-        )
-        self.assertRedirects(response, reverse("dashboard"))
-
     def test_login_failure_shows_form_again(self):
         response = self.client.post(
-            reverse("login"), {"username": "sina", "password": "wrong", "role": "seller"}
+            reverse("login"), {"username": "sina", "password": "wrong"}
         )
         self.assertEqual(response.status_code, 200)
 
@@ -81,28 +74,33 @@ class RoleBasedAccessControlTests(TestCase):
         self.assertIn("manager1", str(self.manager_user.profile))
         self.assertIn("مدیر", str(self.manager_user.profile))
 
-    def test_seller_cannot_login_with_manager_role(self):
-        response = self.client.post(
-            reverse("login"),
-            {"username": "seller1", "password": "password123", "role": "manager"},
-        )
+    def test_login_page_does_not_contain_role_selection(self):
+        """
+        صفحه لاگین نباید فیلد انتخاب نقش داشته باشد.
+        """
+        response = self.client.get(reverse("login"))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "شما دسترسی ورود با نقش مدیر را ندارید.")
-        # User must not be logged in
-        self.assertNotIn("_auth_user_id", self.client.session)
+        self.assertNotContains(response, 'name="role"')
+        self.assertNotContains(response, "form-select")
 
-    def test_seller_can_login_with_seller_role(self):
+    def test_seller_login_automatically_assigns_seller_role(self):
+        """
+        فروشنده با لاگین عادی بر اساس نقش تعریف‌شده در ادمین وارد می‌شود.
+        """
         response = self.client.post(
             reverse("login"),
-            {"username": "seller1", "password": "password123", "role": "seller"},
+            {"username": "seller1", "password": "password123"},
         )
         self.assertRedirects(response, reverse("dashboard"))
         self.assertEqual(self.client.session.get("active_role"), "seller")
 
-    def test_manager_can_login_with_manager_role(self):
+    def test_manager_login_automatically_assigns_manager_role(self):
+        """
+        مدیر با لاگین عادی بر اساس نقش تعریف‌شده در ادمین وارد می‌شود.
+        """
         response = self.client.post(
             reverse("login"),
-            {"username": "manager1", "password": "password123", "role": "manager"},
+            {"username": "manager1", "password": "password123"},
         )
         self.assertRedirects(response, reverse("dashboard"))
         self.assertEqual(self.client.session.get("active_role"), "manager")

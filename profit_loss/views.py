@@ -14,8 +14,6 @@ class ProfitLossReportView(UserPassesTestMixin, ListView):
         user = self.request.user
         if not user.is_authenticated:
             return False
-        if self.request.session.get("active_role") == "seller":
-            return False
         if user.is_superuser:
             return True
         profile = getattr(user, "profile", None)
