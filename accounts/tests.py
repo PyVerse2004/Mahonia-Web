@@ -1,11 +1,17 @@
+from django.contrib.admin.sites import site
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
+
+from accounts.forms import LoginForm
+from accounts.models import UserProfile, sync_user_role_permissions
 
 
 class AccountsTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user("sina", password="pass12345")
+        self.user.profile.role = UserProfile.ROLE_SELLER
+        self.user.profile.save()
 
     def test_root_redirects_to_dashboard(self):
         response = self.client.get("/")
@@ -20,13 +26,21 @@ class AccountsTests(TestCase):
 
     def test_login_success_goes_to_dashboard(self):
         response = self.client.post(
+            reverse("login"),
+            {"username": "sina", "password": "pass12345", "role": "seller"},
+        )
+        self.assertRedirects(response, reverse("dashboard"))
+        self.assertEqual(self.client.session.get("active_role"), "seller")
+
+    def test_login_without_role_falls_back_to_profile_role(self):
+        response = self.client.post(
             reverse("login"), {"username": "sina", "password": "pass12345"}
         )
         self.assertRedirects(response, reverse("dashboard"))
 
     def test_login_failure_shows_form_again(self):
         response = self.client.post(
-            reverse("login"), {"username": "sina", "password": "wrong"}
+            reverse("login"), {"username": "sina", "password": "wrong", "role": "seller"}
         )
         self.assertEqual(response.status_code, 200)
 
@@ -40,6 +54,120 @@ class AccountsTests(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(reverse("dashboard"))
         self.assertContains(response, "داشبورد")
+
+
+class RoleBasedAccessControlTests(TestCase):
+    def setUp(self):
+        self.seller_user = User.objects.create_user("seller1", password="password123")
+        self.seller_user.profile.role = UserProfile.ROLE_SELLER
+        self.seller_user.profile.save()
+        sync_user_role_permissions(self.seller_user, UserProfile.ROLE_SELLER)
+
+        self.manager_user = User.objects.create_user("manager1", password="password123")
+        self.manager_user.profile.role = UserProfile.ROLE_MANAGER
+        self.manager_user.profile.save()
+        sync_user_role_permissions(self.manager_user, UserProfile.ROLE_MANAGER)
+
+    def test_user_profile_creation_and_string(self):
+        self.assertEqual(self.seller_user.profile.role, "seller")
+        self.assertTrue(self.seller_user.profile.is_seller)
+        self.assertFalse(self.seller_user.profile.is_manager)
+        self.assertIn("seller1", str(self.seller_user.profile))
+        self.assertIn("فروشنده", str(self.seller_user.profile))
+
+        self.assertEqual(self.manager_user.profile.role, "manager")
+        self.assertTrue(self.manager_user.profile.is_manager)
+        self.assertFalse(self.manager_user.profile.is_seller)
+        self.assertIn("manager1", str(self.manager_user.profile))
+        self.assertIn("مدیر", str(self.manager_user.profile))
+
+    def test_seller_cannot_login_with_manager_role(self):
+        response = self.client.post(
+            reverse("login"),
+            {"username": "seller1", "password": "password123", "role": "manager"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "شما دسترسی ورود با نقش مدیر را ندارید.")
+        # User must not be logged in
+        self.assertNotIn("_auth_user_id", self.client.session)
+
+    def test_seller_can_login_with_seller_role(self):
+        response = self.client.post(
+            reverse("login"),
+            {"username": "seller1", "password": "password123", "role": "seller"},
+        )
+        self.assertRedirects(response, reverse("dashboard"))
+        self.assertEqual(self.client.session.get("active_role"), "seller")
+
+    def test_manager_can_login_with_manager_role(self):
+        response = self.client.post(
+            reverse("login"),
+            {"username": "manager1", "password": "password123", "role": "manager"},
+        )
+        self.assertRedirects(response, reverse("dashboard"))
+        self.assertEqual(self.client.session.get("active_role"), "manager")
+
+    def test_seller_views_restrictions(self):
+        """
+        فروشنده نباید به فاکتورهای خرید، تامین‌کنندگان و سود و زیان دسترسی داشته باشد.
+        اما باید به فاکتور فروش، اشخاص و کالا و انبار دسترسی داشته باشد.
+        """
+        self.client.force_login(self.seller_user)
+
+        # Forbidden for seller (403):
+        self.assertEqual(self.client.get(reverse("purchases:invoice_list")).status_code, 403)
+        self.assertEqual(self.client.get(reverse("purchases:supplier_list")).status_code, 403)
+        self.assertEqual(self.client.get(reverse("profit_loss:report")).status_code, 403)
+
+        # Allowed for seller (200):
+        self.assertEqual(self.client.get(reverse("sales_invoice:sale_list")).status_code, 200)
+        self.assertEqual(self.client.get(reverse("persons:person_list")).status_code, 200)
+        self.assertEqual(self.client.get(reverse("inventory:product_list")).status_code, 200)
+
+    def test_manager_views_access(self):
+        """
+        مدیر به تمام بخش‌ها دسترسی دارد.
+        """
+        self.client.force_login(self.manager_user)
+        self.assertEqual(self.client.get(reverse("purchases:invoice_list")).status_code, 200)
+        self.assertEqual(self.client.get(reverse("purchases:supplier_list")).status_code, 200)
+        self.assertEqual(self.client.get(reverse("profit_loss:report")).status_code, 200)
+        self.assertEqual(self.client.get(reverse("sales_invoice:sale_list")).status_code, 200)
+        self.assertEqual(self.client.get(reverse("persons:person_list")).status_code, 200)
+        self.assertEqual(self.client.get(reverse("inventory:product_list")).status_code, 200)
+
+    def test_dashboard_and_navbar_elements_for_seller(self):
+        """
+        منوی فروشنده نباید فاکتورهای خرید، تامین‌کنندگان و سود و زیان را نمایش دهد.
+        """
+        self.client.force_login(self.seller_user)
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, "فاکتور فروش")
+        self.assertContains(response, "اشخاص")
+        self.assertContains(response, "کالا و انبار")
+        self.assertNotContains(response, "فاکتورهای خرید")
+        self.assertNotContains(response, "تامین‌کنندگان")
+        self.assertNotContains(response, "سود و زیان")
+        self.assertContains(response, "فروشنده")
+
+    def test_dashboard_and_navbar_elements_for_manager(self):
+        """
+        منوی مدیر تمامی موارد را نمایش می‌دهد.
+        """
+        self.client.force_login(self.manager_user)
+        response = self.client.get(reverse("dashboard"))
+        self.assertContains(response, "فاکتور فروش")
+        self.assertContains(response, "اشخاص")
+        self.assertContains(response, "کالا و انبار")
+        self.assertContains(response, "فاکتورهای خرید")
+        self.assertContains(response, "تامین‌کنندگان")
+        self.assertContains(response, "سود و زیان")
+        self.assertContains(response, "مدیر")
+
+    def test_user_admin_registration(self):
+        user_admin = site._registry[User]
+        inline_models = [inline.model for inline in user_admin.inlines]
+        self.assertIn(UserProfile, inline_models)
 
 
 class TemplateTagsTests(TestCase):

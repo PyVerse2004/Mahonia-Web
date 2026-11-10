@@ -13,6 +13,8 @@ from profit_loss.services import get_profit_loss_report
 class ProfitLossReportTests(TestCase):
     def setUp(self):
         self.user = get_user_model().objects.create_user(username="report-user", password="pwd")
+        self.user.profile.role = "manager"
+        self.user.profile.save()
         self.user.user_permissions.add(
             Permission.objects.get(content_type__app_label="sales_invoice", codename="view_sale"),
             Permission.objects.get(content_type__app_label="sales_invoice", codename="add_sale"),
@@ -170,3 +172,11 @@ class ProfitLossReportTests(TestCase):
         self.assertContains(response, "کالای الف")
         self.assertContains(response, "30,000")
         self.assertContains(response, "10,000")
+
+    def test_seller_user_gets_403_on_profit_loss_report(self):
+        seller = get_user_model().objects.create_user(username="seller-user", password="pwd")
+        seller.profile.role = "seller"
+        seller.profile.save()
+        self.client.force_login(seller)
+        response = self.client.get(reverse("profit_loss:report"))
+        self.assertEqual(response.status_code, 403)

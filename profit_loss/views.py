@@ -1,15 +1,25 @@
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.views.generic import ListView
 
 from .forms import JALALI_MONTH_CHOICES, ProfitLossFilterForm
 from .services import get_profit_loss_report
 
 
-class ProfitLossReportView(PermissionRequiredMixin, ListView):
-    permission_required = "sales_invoice.view_sale"
+class ProfitLossReportView(UserPassesTestMixin, ListView):
     template_name = "profit_loss/report.html"
     context_object_name = "sales"
     paginate_by = 30
+
+    def test_func(self):
+        user = self.request.user
+        if not user.is_authenticated:
+            return False
+        if self.request.session.get("active_role") == "seller":
+            return False
+        if user.is_superuser:
+            return True
+        profile = getattr(user, "profile", None)
+        return bool(profile and profile.role == "manager")
 
     def get_filter_form(self):
         if not hasattr(self, "_filter_form"):

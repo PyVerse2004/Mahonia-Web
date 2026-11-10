@@ -22,7 +22,7 @@
                     <a class="nav-link" href="{% url 'inventory:stock_movement_list' %}">تاریخچه انبار</a>
                 </li>
                 {% endif %}
-                {% if perms.purchases.view_purchaseinvoice %}
+                {% if is_manager and perms.purchases.view_purchaseinvoice %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'purchases:invoice_list' %}">فاکتورهای خرید</a>
                 </li>
@@ -31,6 +31,8 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'sales_invoice:sale_list' %}">فاکتور فروش</a>
                 </li>
+                {% endif %}
+                {% if is_manager %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'profit_loss:report' %}">سود و زیان</a>
                 </li>
@@ -40,7 +42,7 @@
                     <a class="nav-link" href="{% url 'persons:person_list' %}">اشخاص</a>
                 </li>
                 {% endif %}
-                {% if perms.purchases.view_supplier %}
+                {% if is_manager and perms.purchases.view_supplier %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'purchases:supplier_list' %}">تامین‌کنندگان</a>
                 </li>
@@ -48,7 +50,7 @@
             </ul>
             <form method="post" action="{% url 'logout' %}" class="d-flex align-items-center gap-2 mb-0">
                 {% csrf_token %}
-                <span class="text-muted small">{{ user.get_username }}</span>
+                <span class="text-muted small">{{ user.get_username }} ({{ active_role_display }})</span>
                 <button type="submit" class="btn btn-sm btn-outline-secondary">خروج</button>
             </form>
         </div>

@@ -14,7 +14,7 @@
         تاریخچه انبار
     </a>
     {% endif %}
-    {% if perms.purchases.view_purchaseinvoice %}
+    {% if is_manager and perms.purchases.view_purchaseinvoice %}
     <a href="{% url 'purchases:invoice_list' %}" class="list-group-item list-group-item-action">
         فاکتورهای خرید
     </a>
@@ -23,6 +23,8 @@
     <a href="{% url 'sales_invoice:sale_list' %}" class="list-group-item list-group-item-action">
         فاکتور فروش
     </a>
+    {% endif %}
+    {% if is_manager %}
     <a href="{% url 'profit_loss:report' %}" class="list-group-item list-group-item-action">
         گزارش سود و زیان
     </a>
@@ -32,12 +34,12 @@
         اشخاص
     </a>
     {% endif %}
-    {% if perms.purchases.view_supplier %}
+    {% if is_manager and perms.purchases.view_supplier %}
     <a href="{% url 'purchases:supplier_list' %}" class="list-group-item list-group-item-action">
         تامین‌کنندگان
     </a>
     {% endif %}
-    {% if not perms.inventory.view_product and not perms.purchases.view_purchaseinvoice and not perms.purchases.view_supplier and not perms.sales_invoice.view_sale and not perms.persons.view_person %}
+    {% if not perms.inventory.view_product and not is_manager and not perms.sales_invoice.view_sale and not perms.persons.view_person %}
     <div class="list-group-item text-muted">دسترسی‌ای برای شما تعریف نشده است.</div>
     {% endif %}
 </div>
