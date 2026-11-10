@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% load humanize %}
 
-{% block title %}فاکتورهای فروش{% endblock %}
+{% block title %}فاکتور فروش{% endblock %}
 
 {% block head %}{{ filter_form.media }}{% endblock %}
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">فاکتورهای فروش</h2>
+    <h2 class="mb-0">فاکتور فروش</h2>
 
     {% if perms.daily_sales.add_sale %}
     <a href="{% url 'daily_sales:sale_create' %}" class="btn btn-primary">ثبت فاکتور فروش جدید</a>

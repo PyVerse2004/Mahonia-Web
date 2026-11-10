@@ -38,7 +38,7 @@ class Sale(models.Model):
     class Meta:
         ordering = ["-date", "-id"]
         verbose_name = "فاکتور فروش"
-        verbose_name_plural = "فاکتورهای فروش"
+        verbose_name_plural = "فاکتور فروش"
 
     def __str__(self):
         return f"فاکتور فروش شماره {self.pk} - {self.product_name}"
