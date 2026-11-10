@@ -1,7 +1,7 @@
 from django import forms
 import jdatetime
 
-from daily_sales.models import Sale
+from sales_invoice.models import Sale
 from inventory.models import Product
 
 JALALI_MONTH_CHOICES = [

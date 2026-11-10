@@ -9,8 +9,8 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="mb-0">فاکتور فروش</h2>
 
-    {% if perms.daily_sales.add_sale %}
-    <a href="{% url 'daily_sales:sale_create' %}" class="btn btn-primary">ثبت فاکتور فروش جدید</a>
+    {% if perms.sales_invoice.add_sale %}
+    <a href="{% url 'sales_invoice:sale_create' %}" class="btn btn-primary">ثبت فاکتور فروش جدید</a>
     {% endif %}
 </div>
 
@@ -35,7 +35,7 @@
     </div>
     <div class="col-12 mt-2">
         <button type="submit" class="btn btn-primary">اعمال فیلتر</button>
-        <a href="{% url 'daily_sales:sale_list' %}" class="btn btn-outline-secondary">پاک‌کردن</a>
+        <a href="{% url 'sales_invoice:sale_list' %}" class="btn btn-outline-secondary">پاک‌کردن</a>
     </div>
 </form>
 
@@ -68,11 +68,11 @@
                     {% endif %}
                 </td>
                 <td class="text-nowrap">
-                    {% if perms.daily_sales.change_sale %}
-                    <a href="{% url 'daily_sales:sale_update' sale.pk %}" class="btn btn-sm btn-warning">ویرایش</a>
+                    {% if perms.sales_invoice.change_sale %}
+                    <a href="{% url 'sales_invoice:sale_update' sale.pk %}" class="btn btn-sm btn-warning">ویرایش</a>
                     {% endif %}
-                    {% if perms.daily_sales.delete_sale %}
-                    <form method="post" action="{% url 'daily_sales:sale_toggle_active' sale.pk %}" class="d-inline" onsubmit="return confirm('آیا از {% if sale.is_active %}غیرفعال‌کردن{% else %}فعال‌کردن{% endif %} این فاکتور اطمینان دارید؟');">
+                    {% if perms.sales_invoice.delete_sale %}
+                    <form method="post" action="{% url 'sales_invoice:sale_toggle_active' sale.pk %}" class="d-inline" onsubmit="return confirm('آیا از {% if sale.is_active %}غیرفعال‌کردن{% else %}فعال‌کردن{% endif %} این فاکتور اطمینان دارید؟');">
                         {% csrf_token %}
                         {% if sale.is_active %}
                         <button type="submit" class="btn btn-sm btn-outline-danger">غیر فعال کردن</button>

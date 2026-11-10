@@ -7,7 +7,7 @@ from .views import (
     SaleUpdateView,
 )
 
-app_name = "daily_sales"
+app_name = "sales_invoice"
 
 urlpatterns = [
     path("", SaleListView.as_view(), name="sale_list"),

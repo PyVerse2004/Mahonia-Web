@@ -6,7 +6,7 @@ from .services import get_profit_loss_report
 
 
 class ProfitLossReportView(PermissionRequiredMixin, ListView):
-    permission_required = "daily_sales.view_sale"
+    permission_required = "sales_invoice.view_sale"
     template_name = "profit_loss/report.html"
     context_object_name = "sales"
     paginate_by = 30

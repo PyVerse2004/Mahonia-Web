@@ -4,7 +4,7 @@ from decimal import ROUND_HALF_UP, Decimal
 from django.db.models import DecimalField, F, Sum
 import jdatetime
 
-from daily_sales.models import Sale
+from sales_invoice.models import Sale
 
 
 def get_jalali_date_range(year, month=None):

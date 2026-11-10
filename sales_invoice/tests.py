@@ -35,16 +35,16 @@ class SaleListAndOperationTests(TestCase):
     def setUp(self):
         user = get_user_model().objects.create_user(username="sales-user", password="test")
         user.user_permissions.add(
-            Permission.objects.get(content_type__app_label="daily_sales", codename="view_sale")
+            Permission.objects.get(content_type__app_label="sales_invoice", codename="view_sale")
         )
         user.user_permissions.add(
-            Permission.objects.get(content_type__app_label="daily_sales", codename="add_sale")
+            Permission.objects.get(content_type__app_label="sales_invoice", codename="add_sale")
         )
         user.user_permissions.add(
-            Permission.objects.get(content_type__app_label="daily_sales", codename="change_sale")
+            Permission.objects.get(content_type__app_label="sales_invoice", codename="change_sale")
         )
         user.user_permissions.add(
-            Permission.objects.get(content_type__app_label="daily_sales", codename="delete_sale")
+            Permission.objects.get(content_type__app_label="sales_invoice", codename="delete_sale")
         )
         self.client.force_login(user)
         self.product = Product.objects.create(name="محصول نمونه", stock_quantity=10)
@@ -61,7 +61,7 @@ class SaleListAndOperationTests(TestCase):
         )
 
     def test_create_page_renders_jalali_calendar_and_today_button(self):
-        response = self.client.get(reverse("daily_sales:sale_create"))
+        response = self.client.get(reverse("sales_invoice:sale_create"))
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'id="date-today"')
@@ -71,7 +71,7 @@ class SaleListAndOperationTests(TestCase):
 
     def test_creating_sale_decreases_stock_and_records_stock_movement(self):
         response = self.client.post(
-            reverse("daily_sales:sale_create"),
+            reverse("sales_invoice:sale_create"),
             {
                 "date": "1405-08-12",
                 "product": self.product.pk,
@@ -80,7 +80,7 @@ class SaleListAndOperationTests(TestCase):
             },
         )
 
-        self.assertRedirects(response, reverse("daily_sales:sale_list"))
+        self.assertRedirects(response, reverse("sales_invoice:sale_list"))
         self.product.refresh_from_db()
         self.assertEqual(self.product.stock_quantity, 7)
         self.assertEqual(Sale.objects.count(), 1)
@@ -94,7 +94,7 @@ class SaleListAndOperationTests(TestCase):
 
     def test_sale_with_insufficient_stock_is_not_saved(self):
         response = self.client.post(
-            reverse("daily_sales:sale_create"),
+            reverse("sales_invoice:sale_create"),
             {
                 "date": "1405-08-12",
                 "product": self.product.pk,
@@ -112,7 +112,7 @@ class SaleListAndOperationTests(TestCase):
 
     def test_editing_sale_updates_stock(self):
         response = self.client.post(
-            reverse("daily_sales:sale_create"),
+            reverse("sales_invoice:sale_create"),
             {
                 "date": "1405-08-12",
                 "product": self.product.pk,
@@ -120,11 +120,11 @@ class SaleListAndOperationTests(TestCase):
                 "unit_price": "12000",
             },
         )
-        self.assertRedirects(response, reverse("daily_sales:sale_list"))
+        self.assertRedirects(response, reverse("sales_invoice:sale_list"))
         sale = Sale.objects.latest("pk")
 
         response = self.client.post(
-            reverse("daily_sales:sale_update", args=[sale.pk]),
+            reverse("sales_invoice:sale_update", args=[sale.pk]),
             {
                 "date": "1405-08-12",
                 "product": self.product.pk,
@@ -133,7 +133,7 @@ class SaleListAndOperationTests(TestCase):
             },
         )
 
-        self.assertRedirects(response, reverse("daily_sales:sale_list"))
+        self.assertRedirects(response, reverse("sales_invoice:sale_list"))
         sale.refresh_from_db()
         self.product.refresh_from_db()
         self.assertEqual(sale.quantity, 5)
@@ -143,7 +143,7 @@ class SaleListAndOperationTests(TestCase):
 
     def test_editing_sale_to_another_product_restores_old_and_decreases_new_stock(self):
         self.client.post(
-            reverse("daily_sales:sale_create"),
+            reverse("sales_invoice:sale_create"),
             {
                 "date": "1405-08-12",
                 "product": self.product.pk,
@@ -155,7 +155,7 @@ class SaleListAndOperationTests(TestCase):
         other_product = Product.objects.create(name="محصول دیگر", stock_quantity=8)
 
         response = self.client.post(
-            reverse("daily_sales:sale_update", args=[sale.pk]),
+            reverse("sales_invoice:sale_update", args=[sale.pk]),
             {
                 "date": "1405-08-12",
                 "product": other_product.pk,
@@ -164,7 +164,7 @@ class SaleListAndOperationTests(TestCase):
             },
         )
 
-        self.assertRedirects(response, reverse("daily_sales:sale_list"))
+        self.assertRedirects(response, reverse("sales_invoice:sale_list"))
         sale.refresh_from_db()
         self.product.refresh_from_db()
         other_product.refresh_from_db()
@@ -174,7 +174,7 @@ class SaleListAndOperationTests(TestCase):
 
     def test_toggle_active_sale_deactivates_and_restores_stock(self):
         self.client.post(
-            reverse("daily_sales:sale_create"),
+            reverse("sales_invoice:sale_create"),
             {
                 "date": "1405-08-12",
                 "product": self.product.pk,
@@ -187,16 +187,16 @@ class SaleListAndOperationTests(TestCase):
         self.assertEqual(self.product.stock_quantity, 7)
 
         # Deactivate
-        response = self.client.post(reverse("daily_sales:sale_toggle_active", args=[sale.pk]))
-        self.assertRedirects(response, reverse("daily_sales:sale_list"))
+        response = self.client.post(reverse("sales_invoice:sale_toggle_active", args=[sale.pk]))
+        self.assertRedirects(response, reverse("sales_invoice:sale_list"))
         sale.refresh_from_db()
         self.assertFalse(sale.is_active)
         self.product.refresh_from_db()
         self.assertEqual(self.product.stock_quantity, 10)
 
         # Reactivate
-        response = self.client.post(reverse("daily_sales:sale_toggle_active", args=[sale.pk]))
-        self.assertRedirects(response, reverse("daily_sales:sale_list"))
+        response = self.client.post(reverse("sales_invoice:sale_toggle_active", args=[sale.pk]))
+        self.assertRedirects(response, reverse("sales_invoice:sale_list"))
         sale.refresh_from_db()
         self.assertTrue(sale.is_active)
         self.product.refresh_from_db()
@@ -207,7 +207,7 @@ class SaleListAndOperationTests(TestCase):
         s2 = self.create_sale("2026-11-02")
 
         response = self.client.get(
-            reverse("daily_sales:sale_list"),
+            reverse("sales_invoice:sale_list"),
             {"date": "1405-08-12"},
         )
         self.assertEqual(response.status_code, 200)
@@ -219,14 +219,14 @@ class SaleListAndOperationTests(TestCase):
         inactive_sale = self.create_sale(is_active=False)
 
         response = self.client.get(
-            reverse("daily_sales:sale_list"),
+            reverse("sales_invoice:sale_list"),
             {"is_active": "1"},
         )
         self.assertIn(active_sale, response.context["sales"])
         self.assertNotIn(inactive_sale, response.context["sales"])
 
         response2 = self.client.get(
-            reverse("daily_sales:sale_list"),
+            reverse("sales_invoice:sale_list"),
             {"is_active": "0"},
         )
         self.assertIn(inactive_sale, response2.context["sales"])

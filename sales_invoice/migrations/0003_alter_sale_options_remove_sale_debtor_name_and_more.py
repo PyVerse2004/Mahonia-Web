@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('daily_sales', '0002_sale_paid_amount'),
+        ('sales_invoice', '0002_sale_paid_amount'),
     ]
 
     operations = [

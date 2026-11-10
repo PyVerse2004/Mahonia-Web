@@ -5,7 +5,7 @@ from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
 
-from daily_sales.models import Sale
+from sales_invoice.models import Sale
 from inventory.models import Product
 from profit_loss.services import get_profit_loss_report
 
@@ -14,8 +14,8 @@ class ProfitLossReportTests(TestCase):
     def setUp(self):
         self.user = get_user_model().objects.create_user(username="report-user", password="pwd")
         self.user.user_permissions.add(
-            Permission.objects.get(content_type__app_label="daily_sales", codename="view_sale"),
-            Permission.objects.get(content_type__app_label="daily_sales", codename="add_sale"),
+            Permission.objects.get(content_type__app_label="sales_invoice", codename="view_sale"),
+            Permission.objects.get(content_type__app_label="sales_invoice", codename="add_sale"),
         )
         self.client.force_login(self.user)
 

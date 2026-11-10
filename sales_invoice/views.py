@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import CreateView, ListView, UpdateView, TemplateView
+from django.views.generic import CreateView, ListView, UpdateView
 
 from inventory.services import StockError
 
@@ -14,8 +14,8 @@ from .services import create_sale, toggle_sale_active, update_sale
 
 
 class SaleListView(PermissionRequiredMixin, ListView):
-    permission_required = "daily_sales.view_sale"
-    template_name = "daily_sales/sale_list.html"
+    permission_required = "sales_invoice.view_sale"
+    template_name = "sales_invoice/sale_list.html"
     context_object_name = "sales"
     paginate_by = 20
 
@@ -52,10 +52,10 @@ class SaleListView(PermissionRequiredMixin, ListView):
 
 
 class SaleCreateView(PermissionRequiredMixin, CreateView):
-    permission_required = "daily_sales.add_sale"
+    permission_required = "sales_invoice.add_sale"
     form_class = SaleForm
-    template_name = "daily_sales/sale_form.html"
-    success_url = reverse_lazy("daily_sales:sale_list")
+    template_name = "sales_invoice/sale_form.html"
+    success_url = reverse_lazy("sales_invoice:sale_list")
 
     def form_valid(self, form):
         try:
@@ -69,11 +69,11 @@ class SaleCreateView(PermissionRequiredMixin, CreateView):
 
 
 class SaleUpdateView(PermissionRequiredMixin, UpdateView):
-    permission_required = "daily_sales.change_sale"
+    permission_required = "sales_invoice.change_sale"
     model = Sale
     form_class = SaleForm
-    template_name = "daily_sales/sale_form.html"
-    success_url = reverse_lazy("daily_sales:sale_list")
+    template_name = "sales_invoice/sale_form.html"
+    success_url = reverse_lazy("sales_invoice:sale_list")
 
     def form_valid(self, form):
         try:
@@ -87,11 +87,11 @@ class SaleUpdateView(PermissionRequiredMixin, UpdateView):
 
 
 class SaleToggleActiveView(PermissionRequiredMixin, View):
-    permission_required = "daily_sales.delete_sale"
+    permission_required = "sales_invoice.delete_sale"
 
     def get(self, request, pk):
         sale = get_object_or_404(Sale, pk=pk)
-        return redirect("daily_sales:sale_list")
+        return redirect("sales_invoice:sale_list")
 
     def post(self, request, pk):
         sale = get_object_or_404(Sale, pk=pk)
@@ -99,7 +99,7 @@ class SaleToggleActiveView(PermissionRequiredMixin, View):
             is_active = toggle_sale_active(sale)
         except StockError as error:
             messages.error(request, f"خطا در تغییر وضعیت فاکتور فروش: {error}")
-            return redirect("daily_sales:sale_list")
+            return redirect("sales_invoice:sale_list")
 
         if is_active:
             messages.success(
@@ -111,4 +111,4 @@ class SaleToggleActiveView(PermissionRequiredMixin, View):
                 request,
                 f"فاکتور فروش شماره {sale.pk} غیرفعال شد و تعداد آن به موجودی انبار بازگردانده شد.",
             )
-        return redirect("daily_sales:sale_list")
+        return redirect("sales_invoice:sale_list")

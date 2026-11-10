@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('daily_sales', '0003_alter_sale_options_remove_sale_debtor_name_and_more'),
+        ('sales_invoice', '0003_alter_sale_options_remove_sale_debtor_name_and_more'),
     ]
 
     operations = [

@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     'accounts',
     'inventory',
     'purchases',
-    'daily_sales',
+    'sales_invoice',
     'persons',
     'profit_loss',
     'jalali_date',

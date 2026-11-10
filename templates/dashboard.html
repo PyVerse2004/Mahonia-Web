@@ -19,8 +19,8 @@
         فاکتورهای خرید
     </a>
     {% endif %}
-    {% if perms.daily_sales.view_sale %}
-    <a href="{% url 'daily_sales:sale_list' %}" class="list-group-item list-group-item-action">
+    {% if perms.sales_invoice.view_sale %}
+    <a href="{% url 'sales_invoice:sale_list' %}" class="list-group-item list-group-item-action">
         فاکتور فروش
     </a>
     <a href="{% url 'profit_loss:report' %}" class="list-group-item list-group-item-action">
@@ -37,7 +37,7 @@
         تامین‌کنندگان
     </a>
     {% endif %}
-    {% if not perms.inventory.view_product and not perms.purchases.view_purchaseinvoice and not perms.purchases.view_supplier and not perms.daily_sales.view_sale and not perms.persons.view_person %}
+    {% if not perms.inventory.view_product and not perms.purchases.view_purchaseinvoice and not perms.purchases.view_supplier and not perms.sales_invoice.view_sale and not perms.persons.view_person %}
     <div class="list-group-item text-muted">دسترسی‌ای برای شما تعریف نشده است.</div>
     {% endif %}
 </div>
