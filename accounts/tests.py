@@ -169,6 +169,46 @@ class RoleBasedAccessControlTests(TestCase):
         inline_models = [inline.model for inline in user_admin.inlines]
         self.assertIn(UserProfile, inline_models)
 
+    def test_admin_can_add_user_with_manager_role(self):
+        superuser = User.objects.create_superuser("admin_test", password="AdminPassword123!")
+        self.client.force_login(superuser)
+        post_data = {
+            "username": "new_manager_user",
+            "password1": "SecurePass12345!",
+            "password2": "SecurePass12345!",
+            "profile-TOTAL_FORMS": "1",
+            "profile-INITIAL_FORMS": "0",
+            "profile-MIN_NUM_FORMS": "0",
+            "profile-MAX_NUM_FORMS": "1",
+            "profile-0-role": "manager",
+        }
+        response = self.client.post(reverse("admin:auth_user_add"), post_data)
+        self.assertEqual(response.status_code, 302)
+        new_user = User.objects.get(username="new_manager_user")
+        self.assertEqual(new_user.profile.role, "manager")
+        self.assertTrue(new_user.is_staff)
+        self.assertIn("مدیران", [g.name for g in new_user.groups.all()])
+
+    def test_admin_can_add_user_with_seller_role(self):
+        superuser = User.objects.create_superuser("admin_test2", password="AdminPassword123!")
+        self.client.force_login(superuser)
+        post_data = {
+            "username": "new_seller_user",
+            "password1": "SecurePass12345!",
+            "password2": "SecurePass12345!",
+            "profile-TOTAL_FORMS": "1",
+            "profile-INITIAL_FORMS": "0",
+            "profile-MIN_NUM_FORMS": "0",
+            "profile-MAX_NUM_FORMS": "1",
+            "profile-0-role": "seller",
+        }
+        response = self.client.post(reverse("admin:auth_user_add"), post_data)
+        self.assertEqual(response.status_code, 302)
+        new_user = User.objects.get(username="new_seller_user")
+        self.assertEqual(new_user.profile.role, "seller")
+        self.assertFalse(new_user.is_staff)
+        self.assertIn("فروشندگان", [g.name for g in new_user.groups.all()])
+
 
 class TemplateTagsTests(TestCase):
     def test_url_replace_updates_and_preserves_query_params(self):
