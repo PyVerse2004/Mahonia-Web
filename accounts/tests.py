@@ -162,6 +162,42 @@ class RoleBasedAccessControlTests(TestCase):
         self.assertContains(response, "سود و زیان")
         self.assertContains(response, "مدیر")
 
+    def test_inventory_product_list_elements_for_seller_and_manager(self):
+        """
+        فروشنده در لیست انبار نباید قیمت خرید میانگین و ستون عملیات را ببیند.
+        اما مدیر باید هر دو را ببیند.
+        """
+        from decimal import Decimal
+        from inventory.models import Product
+
+        Product.objects.create(
+            name="عطر تست",
+            stock_quantity=10,
+            purchase_price=Decimal("1200000"),
+            sale_price=Decimal("1800000"),
+        )
+
+        # بررسی برای نقش فروشنده
+        self.client.force_login(self.seller_user)
+        resp_seller = self.client.get(reverse("inventory:product_list"))
+        self.assertEqual(resp_seller.status_code, 200)
+        self.assertContains(resp_seller, "عطر تست")
+        self.assertContains(resp_seller, "1,800,000")
+        self.assertNotContains(resp_seller, "قیمت خرید (میانگین)")
+        self.assertNotContains(resp_seller, "1,200,000")
+        self.assertNotContains(resp_seller, "<th>عملیات</th>")
+        self.assertNotContains(resp_seller, "افزودن محصول")
+
+        # بررسی برای نقش مدیر
+        self.client.force_login(self.manager_user)
+        resp_manager = self.client.get(reverse("inventory:product_list"))
+        self.assertEqual(resp_manager.status_code, 200)
+        self.assertContains(resp_manager, "عطر تست")
+        self.assertContains(resp_manager, "قیمت خرید (میانگین)")
+        self.assertContains(resp_manager, "1,200,000")
+        self.assertContains(resp_manager, "<th>عملیات</th>")
+        self.assertContains(resp_manager, "افزودن محصول")
+
     def test_user_admin_registration(self):
         user_admin = site._registry[User]
         inline_models = [inline.model for inline in user_admin.inlines]
