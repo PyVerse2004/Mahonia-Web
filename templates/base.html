@@ -5,54 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}ماهونیا{% endblock %}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="{% static 'css/app.css' %}">
     {% block head %}{% endblock %}
 </head>
 <body>
     {% if user.is_authenticated %}
-    <nav class="navbar navbar-expand bg-white border-bottom">
+    <nav class="navbar navbar-expand-lg navbar-luxury">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="{% url 'dashboard' %}">ماهونیا</a>
-            <ul class="navbar-nav me-auto">
-                {% if perms.inventory.view_product %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'inventory:product_list' %}">کالا و انبار</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'inventory:stock_movement_list' %}">تاریخچه انبار</a>
-                </li>
-                {% endif %}
-                {% if is_manager and perms.purchases.view_purchaseinvoice %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'purchases:invoice_list' %}">فاکتورهای خرید</a>
-                </li>
-                {% endif %}
-                {% if perms.sales_invoice.view_sale %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'sales_invoice:sale_list' %}">فاکتور فروش</a>
-                </li>
-                {% endif %}
-                {% if is_manager %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'profit_loss:report' %}">سود و زیان</a>
-                </li>
-                {% endif %}
-                {% if perms.persons.view_person %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'persons:person_list' %}">اشخاص</a>
-                </li>
-                {% endif %}
-                {% if is_manager and perms.purchases.view_supplier %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'purchases:supplier_list' %}">تامین‌کنندگان</a>
-                </li>
-                {% endif %}
-            </ul>
-            <form method="post" action="{% url 'logout' %}" class="d-flex align-items-center gap-2 mb-0">
-                {% csrf_token %}
-                <span class="text-muted small">{{ user.get_username }} ({{ active_role_display }})</span>
-                <button type="submit" class="btn btn-sm btn-outline-secondary">خروج</button>
-            </form>
+            <a class="navbar-brand fw-bold" href="{% url 'dashboard' %}">
+                <i class="bi bi-gem brand-icon"></i>
+                <span class="text-gradient-gold">ماهونیا</span>
+            </a>
+            <button class="navbar-toggler border-0 text-gold" type="button" data-bs-toggle="collapse" data-bs-target="#mahoniaNavbar" aria-controls="mahoniaNavbar" aria-expanded="false" aria-label="منو">
+                <i class="bi bi-list fs-2 text-gold"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="mahoniaNavbar">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-1">
+                    {% if perms.inventory.view_product %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'inventory:product_list' %}">کالا و انبار</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'inventory:stock_movement_list' %}">تاریخچه انبار</a>
+                    </li>
+                    {% endif %}
+                    {% if is_manager and perms.purchases.view_purchaseinvoice %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'purchases:invoice_list' %}">فاکتورهای خرید</a>
+                    </li>
+                    {% endif %}
+                    {% if perms.sales_invoice.view_sale %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'sales_invoice:sale_list' %}">فاکتور فروش</a>
+                    </li>
+                    {% endif %}
+                    {% if is_manager %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'profit_loss:report' %}">سود و زیان</a>
+                    </li>
+                    {% endif %}
+                    {% if perms.persons.view_person %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'persons:person_list' %}">اشخاص</a>
+                    </li>
+                    {% endif %}
+                    {% if is_manager and perms.purchases.view_supplier %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'purchases:supplier_list' %}">تامین‌کنندگان</a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <div class="d-flex align-items-center gap-3 pt-2 pt-lg-0">
+                    <span class="user-role-badge {% if is_manager %}role-manager{% else %}role-seller{% endif %}">
+                        <i class="bi {% if is_manager %}bi-shield-check{% else %}bi-person{% endif %}"></i>
+                        {{ user.get_username }} ({{ active_role_display }})
+                    </span>
+                    <form method="post" action="{% url 'logout' %}" class="d-inline mb-0">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">خروج</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </nav>
     {% endif %}

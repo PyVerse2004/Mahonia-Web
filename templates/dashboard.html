@@ -3,44 +3,115 @@
 {% block title %}داشبورد{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">داشبورد</h2>
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h2 class="mb-1 d-flex align-items-center gap-2">
+            <span class="text-gradient-gold">داشبورد</span>
+            <small class="fs-6 fw-normal text-muted">| سامانه مدیریت عطر ماهونیا</small>
+        </h2>
+        <div class="text-muted small">
+            خوش آمدید، <strong>{{ user.get_username }}</strong> ({% if is_manager %}مدیر سیستم{% else %}فروشنده{% endif %})
+        </div>
+    </div>
+    <div>
+        <span class="user-role-badge {% if is_manager %}role-manager{% else %}role-seller{% endif %}">
+            <i class="bi {% if is_manager %}bi-shield-check{% else %}bi-person-check{% endif %}"></i>
+            نقش فعال: {{ active_role_display }}
+        </span>
+    </div>
+</div>
 
-<div class="list-group">
+<div class="dashboard-grid">
     {% if perms.inventory.view_product %}
-    <a href="{% url 'inventory:product_list' %}" class="list-group-item list-group-item-action">
-        لیست کالا و انبار
+    <a href="{% url 'inventory:product_list' %}" class="dashboard-action-card">
+        <div class="dashboard-action-icon">
+            <i class="bi bi-droplet-half"></i>
+        </div>
+        <div class="dashboard-action-content">
+            <div class="dashboard-action-title">لیست کالا و انبار</div>
+            <div class="dashboard-action-desc">مشاهده موجودی عطرها، قیمت فروش و انبار</div>
+        </div>
+        <i class="bi bi-chevron-left dashboard-action-arrow"></i>
     </a>
-    <a href="{% url 'inventory:stock_movement_list' %}" class="list-group-item list-group-item-action">
-        تاریخچه انبار
+    <a href="{% url 'inventory:stock_movement_list' %}" class="dashboard-action-card">
+        <div class="dashboard-action-icon">
+            <i class="bi bi-clock-history"></i>
+        </div>
+        <div class="dashboard-action-content">
+            <div class="dashboard-action-title">تاریخچه انبار</div>
+            <div class="dashboard-action-desc">گزارش گردش ورودی، خروجی و مانده کالاها</div>
+        </div>
+        <i class="bi bi-chevron-left dashboard-action-arrow"></i>
     </a>
     {% endif %}
-    {% if is_manager and perms.purchases.view_purchaseinvoice %}
-    <a href="{% url 'purchases:invoice_list' %}" class="list-group-item list-group-item-action">
-        فاکتورهای خرید
-    </a>
-    {% endif %}
+
     {% if perms.sales_invoice.view_sale %}
-    <a href="{% url 'sales_invoice:sale_list' %}" class="list-group-item list-group-item-action">
-        فاکتور فروش
+    <a href="{% url 'sales_invoice:sale_list' %}" class="dashboard-action-card">
+        <div class="dashboard-action-icon">
+            <i class="bi bi-receipt"></i>
+        </div>
+        <div class="dashboard-action-content">
+            <div class="dashboard-action-title">فاکتور فروش</div>
+            <div class="dashboard-action-desc">ثبت و مدیریت فاکتورهای فروش روزانه</div>
+        </div>
+        <i class="bi bi-chevron-left dashboard-action-arrow"></i>
     </a>
     {% endif %}
+
     {% if is_manager %}
-    <a href="{% url 'profit_loss:report' %}" class="list-group-item list-group-item-action">
-        گزارش سود و زیان
+    <a href="{% url 'profit_loss:report' %}" class="dashboard-action-card">
+        <div class="dashboard-action-icon">
+            <i class="bi bi-graph-up-arrow"></i>
+        </div>
+        <div class="dashboard-action-content">
+            <div class="dashboard-action-title">گزارش سود و زیان</div>
+            <div class="dashboard-action-desc">محاسبه دقیق سود خالص، بهای تمام‌شده و حاشیه سود</div>
+        </div>
+        <i class="bi bi-chevron-left dashboard-action-arrow"></i>
     </a>
     {% endif %}
+
     {% if perms.persons.view_person %}
-    <a href="{% url 'persons:person_list' %}" class="list-group-item list-group-item-action">
-        اشخاص
+    <a href="{% url 'persons:person_list' %}" class="dashboard-action-card">
+        <div class="dashboard-action-icon">
+            <i class="bi bi-people"></i>
+        </div>
+        <div class="dashboard-action-content">
+            <div class="dashboard-action-title">اشخاص</div>
+            <div class="dashboard-action-desc">مدیریت مشتریان، بدهکاران و تسویه حساب‌ها</div>
+        </div>
+        <i class="bi bi-chevron-left dashboard-action-arrow"></i>
     </a>
     {% endif %}
+
+    {% if is_manager and perms.purchases.view_purchaseinvoice %}
+    <a href="{% url 'purchases:invoice_list' %}" class="dashboard-action-card">
+        <div class="dashboard-action-icon">
+            <i class="bi bi-cart-check"></i>
+        </div>
+        <div class="dashboard-action-content">
+            <div class="dashboard-action-title">فاکتورهای خرید</div>
+            <div class="dashboard-action-desc">ثبت فاکتورهای ورود کالا و محاسبه میانگین خرید</div>
+        </div>
+        <i class="bi bi-chevron-left dashboard-action-arrow"></i>
+    </a>
+    {% endif %}
+
     {% if is_manager and perms.purchases.view_supplier %}
-    <a href="{% url 'purchases:supplier_list' %}" class="list-group-item list-group-item-action">
-        تامین‌کنندگان
+    <a href="{% url 'purchases:supplier_list' %}" class="dashboard-action-card">
+        <div class="dashboard-action-icon">
+            <i class="bi bi-truck"></i>
+        </div>
+        <div class="dashboard-action-content">
+            <div class="dashboard-action-title">تامین‌کنندگان</div>
+            <div class="dashboard-action-desc">فهرست شرکت‌های تامین و واردکنندگان عطر</div>
+        </div>
+        <i class="bi bi-chevron-left dashboard-action-arrow"></i>
     </a>
-    {% endif %}
-    {% if not perms.inventory.view_product and not is_manager and not perms.sales_invoice.view_sale and not perms.persons.view_person %}
-    <div class="list-group-item text-muted">دسترسی‌ای برای شما تعریف نشده است.</div>
     {% endif %}
 </div>
+
+{% if not perms.inventory.view_product and not is_manager and not perms.sales_invoice.view_sale and not perms.persons.view_person %}
+<div class="alert alert-warning text-center mt-4">دسترسی‌ای برای شما تعریف نشده است.</div>
+{% endif %}
 {% endblock %}

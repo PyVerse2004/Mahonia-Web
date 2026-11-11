@@ -6,7 +6,7 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
     <div>
-        <h2 class="mb-1">گزارش سود و زیان</h2>
+        <h2 class="mb-1 text-gradient-gold">گزارش سود و زیان</h2>
         <div class="text-muted small">
             {% if selected_year_val and selected_month_name %}
                 گزارش فروش و سود برای <strong>{{ selected_month_name }} {{ selected_year_val }}</strong>
@@ -25,7 +25,7 @@
 <div class="row g-3 mb-4">
     {# جمع کل فروش #}
     <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card shadow-sm border-primary h-100">
+        <div class="card profit-stat-card shadow-sm border-primary h-100">
             <div class="card-body">
                 <span class="text-muted small fw-bold">جمع کل فروش</span>
                 <h4 class="mt-2 mb-1 text-primary fw-bold">{{ summary.total_sales|intcomma:False }} <span class="fs-6 fw-normal text-muted">تومان</span></h4>
@@ -38,7 +38,7 @@
 
     {# جمع کل بهای تمام‌شده خرید #}
     <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card shadow-sm border-secondary h-100">
+        <div class="card profit-stat-card shadow-sm border-secondary h-100">
             <div class="card-body">
                 <span class="text-muted small fw-bold">جمع بهای تمام‌شده خرید (COGS)</span>
                 <h4 class="mt-2 mb-1 text-dark fw-bold">{{ summary.total_cost|intcomma:False }} <span class="fs-6 fw-normal text-muted">تومان</span></h4>
@@ -51,7 +51,7 @@
 
     {# میزان سود یا زیان خالص #}
     <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card shadow-sm {% if summary.is_profitable %}border-success bg-success-subtle{% else %}border-danger bg-danger-subtle{% endif %} h-100">
+        <div class="card profit-stat-card shadow-sm {% if summary.is_profitable %}border-success bg-success-subtle{% else %}border-danger bg-danger-subtle{% endif %} h-100">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <span class="{% if summary.is_profitable %}text-success{% else %}text-danger{% endif %} small fw-bold">
@@ -73,7 +73,7 @@
 
     {# تعداد اقلام فروخته‌شده #}
     <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card shadow-sm border-info h-100">
+        <div class="card profit-stat-card shadow-sm border-info h-100">
             <div class="card-body">
                 <span class="text-muted small fw-bold">تعداد کل کالاهای فروخته‌شده</span>
                 <h4 class="mt-2 mb-1 text-info-emphasis fw-bold">{{ summary.total_quantity|intcomma:False }} <span class="fs-6 fw-normal text-muted">عدد</span></h4>
