@@ -162,17 +162,20 @@
                 <button type="button" class="btn btn-sm btn-outline-secondary theme-toggle-btn" id="themeToggleBtn" aria-label="تغییر تم" title="تغییر حالت تم (روشن / تاریک)">
                     <i class="bi bi-moon-stars-fill theme-icon-dark"></i>
                     <i class="bi bi-sun-fill theme-icon-light d-none text-warning"></i>
-                    <span class="theme-text d-none d-sm-inline ms-1">حالت تیره</span>
+                    <span class="theme-text d-none d-sm-inline">حالت تیره</span>
                 </button>
 
                 <span class="user-role-badge {% if is_manager %}role-manager{% else %}role-seller{% endif %} d-none d-sm-inline-flex">
                     <i class="bi {% if is_manager %}bi-shield-check{% else %}bi-person{% endif %}"></i>
-                    {{ user.get_username }} ({{ active_role_display }})
+                    <span>{{ user.get_username }} ({{ active_role_display }})</span>
                 </span>
 
                 <form method="post" action="{% url 'logout' %}" class="d-inline mb-0">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-sm btn-outline-secondary">خروج</button>
+                    <button type="submit" class="btn btn-sm btn-outline-secondary topbar-action-btn">
+                        <i class="bi bi-box-arrow-left"></i>
+                        <span>خروج</span>
+                    </button>
                 </form>
             </div>
         </header>

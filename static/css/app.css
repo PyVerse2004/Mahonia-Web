@@ -447,13 +447,19 @@ h1, h2, h3, h4, h5, h6 {
    5. User Role Badges & Pills
    -------------------------------------------------------------------------- */
 .user-role-badge {
-    padding: 0.35rem 0.8rem;
+    height: 34px;
+    padding: 0 0.95rem;
     border-radius: 9999px;
     font-size: 0.82rem;
     font-weight: 600;
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    justify-content: center;
+    text-align: center;
+    gap: 0.45rem;
+    line-height: 1;
+    vertical-align: middle;
+    box-sizing: border-box;
 }
 
 .user-role-badge.role-manager {
@@ -485,20 +491,40 @@ h1, h2, h3, h4, h5, h6 {
    6. Theme Toggle Buttons
    -------------------------------------------------------------------------- */
 .theme-toggle-btn {
-    border-radius: 9999px;
-    padding: 0.38rem 0.85rem;
-    font-size: 0.85rem;
+    border-radius: 9999px !important;
+    height: 34px !important;
+    padding: 0 0.95rem !important;
+    font-size: 0.85rem !important;
     font-weight: 600;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center;
+    gap: 0.45rem;
+    line-height: 1;
     border-color: var(--gold-border) !important;
     color: var(--text-secondary) !important;
     background: var(--bg-surface) !important;
     transition: var(--transition-fast);
+    box-sizing: border-box;
 }
 
 .theme-toggle-btn:hover {
     color: var(--gold-light) !important;
     border-color: var(--gold-primary) !important;
     box-shadow: 0 0 12px var(--gold-glow);
+}
+
+.topbar-action-btn {
+    border-radius: 9999px !important;
+    height: 34px !important;
+    padding: 0 0.95rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center;
+    font-size: 0.85rem !important;
+    gap: 0.4rem;
 }
 
 /* --------------------------------------------------------------------------
