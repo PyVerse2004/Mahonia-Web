@@ -1392,3 +1392,107 @@ p.date > input {
 .cursor-pointer {
     cursor: pointer;
 }
+
+/* --------------------------------------------------------------------------
+   15. Custom Luxury Mahonia Modal Dialog for Ajax Confirmations
+   -------------------------------------------------------------------------- */
+.mahonia-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 1070;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-smooth);
+    padding: 1rem;
+}
+
+.mahonia-modal-backdrop.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.mahonia-modal-card {
+    background: var(--bg-card);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--gold-border);
+    border-radius: var(--radius-xl);
+    width: 100%;
+    max-width: 480px;
+    box-shadow: var(--shadow-dropdown), 0 0 35px var(--gold-glow);
+    transform: scale(0.92) translateY(12px);
+    transition: transform var(--transition-smooth);
+    overflow: hidden;
+}
+
+.mahonia-modal-backdrop.show .mahonia-modal-card {
+    transform: scale(1) translateY(0);
+}
+
+.mahonia-modal-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--gold-border);
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    background: var(--bg-surface-elevated);
+}
+
+.mahonia-modal-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    flex-shrink: 0;
+}
+
+.mahonia-modal-icon.icon-warning {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--accent-amber);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.mahonia-modal-icon.icon-danger {
+    background: rgba(244, 63, 94, 0.15);
+    color: var(--accent-rose);
+    border: 1px solid rgba(244, 63, 94, 0.4);
+}
+
+.mahonia-modal-icon.icon-success {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--accent-emerald);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.mahonia-modal-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.mahonia-modal-body {
+    padding: 1.5rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+
+.mahonia-modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    background: var(--bg-surface);
+}

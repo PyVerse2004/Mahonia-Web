@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views import View
@@ -95,20 +95,28 @@ class SaleToggleActiveView(PermissionRequiredMixin, View):
 
     def post(self, request, pk):
         sale = get_object_or_404(Sale, pk=pk)
+        is_ajax = request.headers.get("x-requested-with") == "XMLHttpRequest" or "application/json" in request.headers.get("accept", "")
         try:
             is_active = toggle_sale_active(sale)
         except StockError as error:
-            messages.error(request, f"خطا در تغییر وضعیت فاکتور فروش: {error}")
+            error_msg = f"خطا در تغییر وضعیت فاکتور فروش: {error}"
+            if is_ajax:
+                return JsonResponse({"status": "error", "message": error_msg}, status=400)
+            messages.error(request, error_msg)
             return redirect("sales_invoice:sale_list")
 
         if is_active:
-            messages.success(
-                request,
-                f"فاکتور فروش شماره {sale.pk} مجدداً فعال شد و تعداد آن از انبار کسر گردید.",
-            )
+            msg = f"فاکتور فروش شماره {sale.pk} مجدداً فعال شد و تعداد آن از انبار کسر گردید."
         else:
-            messages.success(
-                request,
-                f"فاکتور فروش شماره {sale.pk} غیرفعال شد و تعداد آن به موجودی انبار بازگردانده شد.",
-            )
+            msg = f"فاکتور فروش شماره {sale.pk} غیرفعال شد و تعداد آن به موجودی انبار بازگردانده شد."
+
+        if is_ajax:
+            return JsonResponse({
+                "status": "success",
+                "is_active": is_active,
+                "message": msg,
+                "sale_id": sale.pk,
+            })
+
+        messages.success(request, msg)
         return redirect("sales_invoice:sale_list")

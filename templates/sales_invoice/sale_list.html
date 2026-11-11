@@ -78,7 +78,7 @@
                     </a>
                     {% endif %}
                     {% if perms.sales_invoice.delete_sale %}
-                    <form method="post" action="{% url 'sales_invoice:sale_toggle_active' sale.pk %}" class="d-inline sale-toggle-form" onsubmit="return confirm('آیا از {% if sale.is_active %}غیرفعال‌کردن{% else %}فعال‌کردن{% endif %} این فاکتور اطمینان دارید؟');">
+                    <form method="post" action="{% url 'sales_invoice:sale_toggle_active' sale.pk %}" class="d-inline sale-toggle-form" data-sale-id="{{ sale.pk }}" data-product="{{ sale.product_name }}" data-active="{{ sale.is_active|yesno:'true,false' }}">
                         {% csrf_token %}
                         {% if sale.is_active %}
                         <button type="submit" class="btn btn-sm btn-action-deactivate">
@@ -116,6 +116,31 @@
 </nav>
 {% endif %}
 
+<!-- Custom Ajax Confirmation Modal -->
+<div class="mahonia-modal-backdrop" id="toggleConfirmModal" aria-hidden="true">
+    <div class="mahonia-modal-card">
+        <div class="mahonia-modal-header">
+            <div class="mahonia-modal-icon icon-warning" id="modalIconBox">
+                <i class="bi bi-exclamation-triangle-fill" id="modalIcon"></i>
+            </div>
+            <div>
+                <h5 class="mahonia-modal-title" id="modalTitle">تایید تغییر وضعیت فاکتور فروش</h5>
+                <small class="text-muted" id="modalSubtitle">سامانه مدیریت عطر ماهونیا</small>
+            </div>
+        </div>
+        <div class="mahonia-modal-body" id="modalMessage">
+            آیا از تغییر وضعیت این فاکتور فروش اطمینان دارید؟
+        </div>
+        <div class="mahonia-modal-footer">
+            <button type="button" class="btn btn-outline-secondary" id="modalCancelBtn">انصراف</button>
+            <button type="button" class="btn btn-action-deactivate" id="modalConfirmBtn">
+                <span class="spinner-border spinner-border-sm d-none" id="modalSpinner"></span>
+                <span id="modalConfirmText">بله، غیرفعال شود</span>
+            </button>
+        </div>
+    </div>
+</div>
+
 <script>
 (function () {
     const dateField = document.getElementById("id_date");
@@ -124,6 +149,101 @@
         todayButton.addEventListener("click", () => {
             dateField.value = dateField.dataset.today;
             dateField.dispatchEvent(new Event("change", { bubbles: true }));
+        });
+    }
+
+    // Ajax Toggle Modal Logic
+    const modal = document.getElementById("toggleConfirmModal");
+    const modalIconBox = document.getElementById("modalIconBox");
+    const modalIcon = document.getElementById("modalIcon");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalMessage = document.getElementById("modalMessage");
+    const modalConfirmBtn = document.getElementById("modalConfirmBtn");
+    const modalConfirmText = document.getElementById("modalConfirmText");
+    const modalCancelBtn = document.getElementById("modalCancelBtn");
+    const modalSpinner = document.getElementById("modalSpinner");
+
+    let activeForm = null;
+
+    function openModal(form) {
+        activeForm = form;
+        const saleId = form.dataset.saleId;
+        const productName = form.dataset.product;
+        const isActive = form.dataset.active === "true";
+
+        if (isActive) {
+            modalIconBox.className = "mahonia-modal-icon icon-warning";
+            modalIcon.className = "bi bi-pause-circle-fill";
+            modalTitle.textContent = "تایید غیرفعال‌سازی فاکتور شماره " + saleId;
+            modalMessage.innerHTML = "آیا از <strong>غیرفعال‌کردن</strong> فاکتور فروش محصول «" + productName + "» (شماره " + saleId + ") اطمینان دارید؟<br><small class='text-muted mt-2 d-block'>با غیرفعال شدن این فاکتور، تعداد کالای مربوطه به انبار بازگردانده خواهد شد.</small>";
+            modalConfirmBtn.className = "btn btn-action-deactivate";
+            modalConfirmText.textContent = "بله، غیرفعال شود";
+        } else {
+            modalIconBox.className = "mahonia-modal-icon icon-success";
+            modalIcon.className = "bi bi-play-circle-fill";
+            modalTitle.textContent = "تایید فعال‌سازی مجدد فاکتور شماره " + saleId;
+            modalMessage.innerHTML = "آیا از <strong>فعال‌کردن مجدد</strong> فاکتور فروش محصول «" + productName + "» (شماره " + saleId + ") اطمینان دارید؟<br><small class='text-muted mt-2 d-block'>با فعال شدن، تعداد کالای مربوطه مجدداً از موجودی انبار کسر خواهد شد.</small>";
+            modalConfirmBtn.className = "btn btn-action-activate";
+            modalConfirmText.textContent = "بله، فعال شود";
+        }
+
+        modal.classList.add("show");
+    }
+
+    function closeModal() {
+        modal.classList.remove("show");
+        activeForm = null;
+        if (modalSpinner) modalSpinner.classList.add("d-none");
+        if (modalConfirmBtn) modalConfirmBtn.disabled = false;
+    }
+
+    document.querySelectorAll(".sale-toggle-form").forEach(form => {
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            openModal(this);
+        });
+    });
+
+    if (modalCancelBtn) modalCancelBtn.addEventListener("click", closeModal);
+    modal.addEventListener("click", function(e) {
+        if (e.target === modal) closeModal();
+    });
+
+    if (modalConfirmBtn) {
+        modalConfirmBtn.addEventListener("click", function () {
+            if (!activeForm) return;
+
+            modalSpinner.classList.remove("d-none");
+            modalConfirmBtn.disabled = true;
+
+            const actionUrl = activeForm.action;
+            const csrfInput = activeForm.querySelector("input[name='csrfmiddlewaretoken']");
+            const csrfToken = csrfInput ? csrfInput.value : "";
+
+            fetch(actionUrl, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Accept": "application/json"
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => { throw new Error(data.message || "خطا در تغییر وضعیت"); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                closeModal();
+                // Refresh smoothly to reflect updated stock and totals
+                window.location.reload();
+            })
+            .catch(error => {
+                modalSpinner.classList.add("d-none");
+                modalConfirmBtn.disabled = false;
+                alert(error.message);
+            });
         });
     }
 })();
