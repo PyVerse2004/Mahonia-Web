@@ -6,13 +6,10 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
     <div>
-        <h2 class="mb-1 d-flex align-items-center gap-2">
+        <h2 class="mb-0 d-flex align-items-center gap-2">
             <span class="text-gradient-gold">داشبورد</span>
             <small class="fs-6 fw-normal text-muted">| سامانه مدیریت عطر ماهونیا</small>
         </h2>
-        <div class="text-muted small">
-            خوش آمدید، <strong>{{ user.get_username }}</strong> ({% if is_manager %}مدیر سیستم{% else %}فروشنده{% endif %})
-        </div>
     </div>
     <div>
         <span class="user-role-badge {% if is_manager %}role-manager{% else %}role-seller{% endif %}">
