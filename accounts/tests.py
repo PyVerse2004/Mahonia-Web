@@ -48,6 +48,63 @@ class AccountsTests(TestCase):
         response = self.client.get(reverse("dashboard"))
         self.assertContains(response, "داشبورد")
 
+    def test_dashboard_kpi_metrics(self):
+        """
+        داشبورد باید آمار ۴ گانه شامل تعداد کل محصولات، تعداد فروش امروز،
+        مبلغ فروش روزانه و تاریخ و ساعت را نمایش دهد.
+        """
+        from datetime import timedelta
+        from decimal import Decimal
+        from django.utils import timezone
+        from inventory.models import Product
+        from sales_invoice.models import Sale
+
+        today = timezone.localdate()
+        yesterday = today - timedelta(days=1)
+
+        p1 = Product.objects.create(name="عطر تام فورد", stock_quantity=15, sale_price=Decimal("2000000"))
+        p2 = Product.objects.create(name="عطر کرید اونتوس", stock_quantity=8, sale_price=Decimal("3500000"))
+
+        # فروش امروز
+        Sale.objects.create(
+            date=today,
+            product=p1,
+            product_name=p1.name,
+            quantity=2,
+            unit_price=Decimal("2000000"),
+            purchase_unit_price=Decimal("1500000"),
+            is_active=True,
+        )
+        # فروش دیروز (نباید در آمار امروز بیاید)
+        Sale.objects.create(
+            date=yesterday,
+            product=p2,
+            product_name=p2.name,
+            quantity=1,
+            unit_price=Decimal("3500000"),
+            purchase_unit_price=Decimal("2800000"),
+            is_active=True,
+        )
+
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("dashboard"))
+        self.assertEqual(response.status_code, 200)
+
+        # بررسی متغیرهای Context
+        self.assertEqual(response.context["total_products"], 2)
+        self.assertEqual(response.context["today_sales_count"], 1)
+        self.assertEqual(response.context["today_sales_quantity"], 2)
+        self.assertEqual(response.context["today_sales_amount"], Decimal("4000000"))
+        self.assertIn("today_jalali_date", response.context)
+        self.assertIn("current_time", response.context)
+
+        # بررسی محتوای رندر شده HTML
+        self.assertContains(response, "تعداد کل محصولات")
+        self.assertContains(response, "تعداد فروش امروز")
+        self.assertContains(response, "مبلغ فروش امروز (روزانه)")
+        self.assertContains(response, "تاریخ و ساعت امروز")
+        self.assertContains(response, "4,000,000")
+
 
 class RoleBasedAccessControlTests(TestCase):
     def setUp(self):

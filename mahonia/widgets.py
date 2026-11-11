@@ -7,3 +7,4 @@ class JalaliDateInput(AdminJalaliDateWidget):
     جهت هم‌ترازسازی دقیق پیکسلی در سطرهای فیلتر و گروه‌های ورودی بوت‌استرپ.
     """
     template_name = "django/forms/widgets/input.html"
+
