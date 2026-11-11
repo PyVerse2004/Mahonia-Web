@@ -22,37 +22,36 @@
     </div>
 </div>
 
-<!-- 4 Main KPI Cards -->
+<!-- 4 Main KPI Cards (Enlarged & Prominent Inspired by UI Mockup) -->
 <div class="row g-3 mb-4">
-    <!-- 1. تاریخ و ساعت امروز -->
+    <!-- 1. تعداد کل محصولات -->
     <div class="col-12 col-sm-6 col-xl-3">
-        <div class="dashboard-kpi-card kpi-datetime">
-            <div class="kpi-icon-box">
-                <i class="bi bi-calendar2-week"></i>
-            </div>
-            <div class="kpi-content">
-                <div class="kpi-label">تاریخ و ساعت امروز</div>
-                <div class="kpi-value text-gold">{{ today_weekday }}، {{ today_jalali_date }}</div>
-                <div class="kpi-subtext d-flex align-items-center gap-1">
-                    <i class="bi bi-clock"></i>
-                    ساعت: <span id="liveDashboardClock" class="fw-bold">{{ current_time }}</span>
+        <div class="dashboard-kpi-card kpi-products">
+            <div class="kpi-header">
+                <span class="kpi-label">تعداد کل کالاها</span>
+                <div class="kpi-icon-box">
+                    <i class="bi bi-box-seam"></i>
                 </div>
+            </div>
+            <div class="kpi-body">
+                <div class="kpi-value">{{ total_products|intcomma:False }} <span class="kpi-unit">قلم</span></div>
+                <div class="kpi-subtext">کاتالوگ فعال کالاها و انبار</div>
             </div>
         </div>
     </div>
 
-    <!-- 2. تعداد کل محصولات -->
+    <!-- 2. مبلغ فروش امروز (روزانه) -->
     <div class="col-12 col-sm-6 col-xl-3">
-        <div class="dashboard-kpi-card kpi-products">
-            <div class="kpi-icon-box">
-                <i class="bi bi-boxes"></i>
-            </div>
-            <div class="kpi-content">
-                <div class="kpi-label">تعداد کل محصولات</div>
-                <div class="kpi-value">{{ total_products|intcomma:False }} <small class="kpi-unit">قلم کالا</small></div>
-                <div class="kpi-subtext">
-                    کاتالوگ فعال کالاها و انبار
+        <div class="dashboard-kpi-card kpi-sales-amount">
+            <div class="kpi-header">
+                <span class="kpi-label">مبلغ فروش امروز</span>
+                <div class="kpi-icon-box">
+                    <i class="bi bi-wallet2"></i>
                 </div>
+            </div>
+            <div class="kpi-body">
+                <div class="kpi-value text-gradient-gold">{{ today_sales_amount|intcomma:False }} <span class="kpi-unit">تومان</span></div>
+                <div class="kpi-subtext">مجموع دریافتی فروش روز جاری</div>
             </div>
         </div>
     </div>
@@ -60,30 +59,33 @@
     <!-- 3. تعداد فروش امروز -->
     <div class="col-12 col-sm-6 col-xl-3">
         <div class="dashboard-kpi-card kpi-sales-count">
-            <div class="kpi-icon-box">
-                <i class="bi bi-receipt-cutoff"></i>
-            </div>
-            <div class="kpi-content">
-                <div class="kpi-label">تعداد فروش امروز</div>
-                <div class="kpi-value text-emerald">{{ today_sales_count|intcomma:False }} <small class="kpi-unit">فاکتور</small></div>
-                <div class="kpi-subtext">
-                    {{ today_sales_quantity|intcomma:False }} قلم محصول فروخته‌شده
+            <div class="kpi-header">
+                <span class="kpi-label">تعداد فروش امروز</span>
+                <div class="kpi-icon-box">
+                    <i class="bi bi-cart3"></i>
                 </div>
+            </div>
+            <div class="kpi-body">
+                <div class="kpi-value text-emerald">{{ today_sales_count|intcomma:False }} <span class="kpi-unit">فاکتور</span></div>
+                <div class="kpi-subtext">{{ today_sales_quantity|intcomma:False }} قلم محصول فروخته‌شده</div>
             </div>
         </div>
     </div>
 
-    <!-- 4. جمع کل مبلغ فروش امروز (روزانه) -->
+    <!-- 4. تاریخ و ساعت امروز -->
     <div class="col-12 col-sm-6 col-xl-3">
-        <div class="dashboard-kpi-card kpi-sales-amount">
-            <div class="kpi-icon-box">
-                <i class="bi bi-cash-stack"></i>
+        <div class="dashboard-kpi-card kpi-datetime">
+            <div class="kpi-header">
+                <span class="kpi-label">تاریخ و زمان جاری</span>
+                <div class="kpi-icon-box">
+                    <i class="bi bi-calendar2-week"></i>
+                </div>
             </div>
-            <div class="kpi-content">
-                <div class="kpi-label">مبلغ فروش امروز (روزانه)</div>
-                <div class="kpi-value text-gradient-gold">{{ today_sales_amount|intcomma:False }} <small class="kpi-unit">تومان</small></div>
-                <div class="kpi-subtext">
-                    مجموع دریافتی فروش روز جاری
+            <div class="kpi-body">
+                <div class="kpi-value kpi-date-value text-gold">{{ today_weekday }}، {{ today_jalali_date }}</div>
+                <div class="kpi-subtext d-flex align-items-center gap-1 mt-2">
+                    <i class="bi bi-clock"></i>
+                    ساعت: <span id="liveDashboardClock" class="fw-bold font-monospace fs-6">{{ current_time }}</span>
                 </div>
             </div>
         </div>
