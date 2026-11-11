@@ -606,6 +606,129 @@ h1, h2, h3, h4, h5, h6 {
     opacity: 0.85;
 }
 
+/* Custom Select & Text Choices Styling */
+.form-select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23d4af37' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat !important;
+    background-position: left 0.85rem center !important;
+    background-size: 14px 10px !important;
+    padding-left: 2.25rem !important;
+    padding-right: 0.85rem !important;
+    cursor: pointer;
+}
+
+[data-theme="light"] .form-select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23b8860b' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
+}
+
+.form-select option {
+    background-color: var(--bg-surface-elevated) !important;
+    color: var(--text-primary) !important;
+    padding: 0.6rem 0.85rem;
+}
+
+/* Custom Checkboxes and Radios */
+.form-check-input {
+    background-color: var(--input-bg) !important;
+    border: 1px solid var(--gold-border) !important;
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-top: 0.15rem;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.form-check-input:checked {
+    background-color: var(--gold-primary) !important;
+    border-color: var(--gold-primary) !important;
+    box-shadow: 0 0 10px var(--gold-glow) !important;
+}
+
+.form-check-input:focus {
+    border-color: var(--gold-primary) !important;
+    box-shadow: 0 0 0 3px var(--gold-glow) !important;
+}
+
+.form-check-label {
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 0.92rem;
+    user-select: none;
+    margin-right: 0.45rem;
+}
+
+/* Themed Status Badges & Choice Indicators */
+.badge {
+    font-weight: 600;
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-sm);
+    letter-spacing: 0.01em;
+    font-size: 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.badge.text-bg-success {
+    background: rgba(16, 185, 129, 0.16) !important;
+    color: #34d399 !important;
+    border: 1px solid rgba(16, 185, 129, 0.45);
+}
+
+.badge.text-bg-warning {
+    background: rgba(245, 158, 11, 0.16) !important;
+    color: #fbbf24 !important;
+    border: 1px solid rgba(245, 158, 11, 0.45);
+}
+
+.badge.text-bg-danger {
+    background: rgba(244, 63, 94, 0.16) !important;
+    color: #f87171 !important;
+    border: 1px solid rgba(244, 63, 94, 0.45);
+}
+
+.badge.text-bg-secondary {
+    background: rgba(148, 163, 184, 0.14) !important;
+    color: #94a3b8 !important;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.badge.text-bg-info {
+    background: rgba(56, 189, 248, 0.16) !important;
+    color: #38bdf8 !important;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+}
+
+[data-theme="light"] .badge.text-bg-success {
+    background: rgba(5, 150, 105, 0.12) !important;
+    color: #047857 !important;
+    border-color: rgba(5, 150, 105, 0.35);
+}
+
+[data-theme="light"] .badge.text-bg-warning {
+    background: rgba(217, 119, 6, 0.12) !important;
+    color: #b45309 !important;
+    border-color: rgba(217, 119, 6, 0.35);
+}
+
+[data-theme="light"] .badge.text-bg-danger {
+    background: rgba(225, 29, 72, 0.12) !important;
+    color: #be123c !important;
+    border-color: rgba(225, 29, 72, 0.35);
+}
+
+[data-theme="light"] .badge.text-bg-secondary {
+    background: rgba(100, 116, 139, 0.12) !important;
+    color: #475569 !important;
+    border-color: rgba(100, 116, 139, 0.35);
+}
+
+[data-theme="light"] .badge.text-bg-info {
+    background: rgba(8, 145, 178, 0.12) !important;
+    color: #0e7490 !important;
+    border-color: rgba(8, 145, 178, 0.35);
+}
+
 .form-label {
     font-size: 0.88rem;
     font-weight: 600;
