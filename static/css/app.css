@@ -146,6 +146,25 @@ html, body {
     background-attachment: fixed;
 }
 
+/* Guest / Login Layout Background Matching Store Logo Atmosphere */
+body.app-guest {
+    background-color: #04070e;
+    background-image: 
+        radial-gradient(circle at 85% 15%, rgba(212, 175, 55, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 15% 85%, rgba(16, 185, 129, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, #080d19 0%, #020306 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+}
+
+[data-theme="light"] body.app-guest {
+    background-color: #f3f5f9;
+    background-image: 
+        radial-gradient(circle at 85% 15%, rgba(184, 134, 11, 0.07) 0%, transparent 40%),
+        radial-gradient(circle at 15% 85%, rgba(5, 150, 105, 0.05) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, #ffffff 0%, #edf1f7 100%);
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
     width: 8px;
@@ -528,175 +547,389 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* --------------------------------------------------------------------------
-   7. Official Mahonia Logo & Login Screen Styling (Mockup Inspired)
+   7. Official Mahonia Boutique Login Experience & Luxury Perfume Showcase
    -------------------------------------------------------------------------- */
-.login-wrapper {
-    max-width: 920px;
-    margin: 1.5rem auto;
+.login-page-container {
+    max-width: 1220px;
+    margin: 1.25rem auto 2.5rem;
+    padding: 0 0.5rem;
+}
+
+.login-master-card {
     background: var(--bg-card);
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     border: 1px solid var(--gold-border);
     border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-card), 0 0 35px var(--gold-glow);
+    box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.75), 0 0 40px var(--gold-glow);
     overflow: hidden;
-}
-
-.login-hero-col {
     position: relative;
-    background: #04070d;
-    overflow: hidden;
-    min-height: 480px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
-.login-hero-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-}
-
-.login-hero-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(7, 11, 19, 0.2) 0%, rgba(7, 11, 19, 0.85) 100%);
-    pointer-events: none;
-}
-
-.login-form-col {
-    padding: 2.75rem 2.5rem;
+/* --- RIGHT SIDE: Login Form & Credentials (در سمت راست) --- */
+.login-form-side {
+    background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(8, 12, 22, 0.98) 100%);
+    border-left: 1px solid var(--gold-border);
+    padding: 2.75rem 2.25rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    position: relative;
+    z-index: 2;
 }
 
-.login-input-wrapper {
+[data-theme="light"] .login-form-side {
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    border-left: 1px solid rgba(184, 134, 11, 0.2);
+}
+
+.login-form-inner {
+    max-width: 420px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.login-brand-header {
+    margin-bottom: 1.75rem;
+}
+
+.login-logo-glow {
+    display: inline-block;
+    padding: 6px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.4), rgba(16, 185, 129, 0.25));
+    box-shadow: 0 0 28px var(--gold-glow);
+    margin-bottom: 0.85rem;
+}
+
+.login-brand-logo {
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--gold-primary);
+    display: block;
+}
+
+.login-brand-name {
+    font-size: 1.75rem;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    margin-bottom: 0.2rem;
+}
+
+.login-brand-sub {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.login-welcome-box {
+    margin-bottom: 1.75rem;
+}
+
+.login-heading {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 0.35rem;
+}
+
+.login-subheading {
+    font-size: 0.84rem;
+    color: var(--text-secondary);
+    margin-bottom: 0;
+}
+
+.login-field-label {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.45rem;
+}
+
+.login-input-group {
     position: relative;
     display: flex;
     align-items: center;
 }
 
-.login-input-icon {
+.login-input {
+    height: 48px !important;
+    border-radius: 9999px !important;
+    padding-right: 2.85rem !important;
+    padding-left: 2.85rem !important;
+    background-color: var(--input-bg) !important;
+    border: 1px solid var(--gold-border) !important;
+    color: var(--input-text) !important;
+    font-size: 0.95rem !important;
+    transition: var(--transition-fast) !important;
+}
+
+[data-theme="light"] .login-input {
+    background-color: #ffffff !important;
+    border-color: #cbd5e1 !important;
+}
+
+.login-input:focus {
+    border-color: var(--gold-primary) !important;
+    box-shadow: 0 0 0 3px var(--gold-glow) !important;
+}
+
+.login-field-icon {
     position: absolute;
-    left: 1rem;
+    right: 1.15rem;
     color: var(--text-muted);
     font-size: 1.15rem;
     pointer-events: none;
     transition: var(--transition-fast);
 }
 
-.login-input-wrapper .form-control {
-    border-radius: 9999px !important;
-    height: 48px;
-    padding-left: 2.75rem !important;
-    padding-right: 1.25rem !important;
-    background-color: rgba(13, 19, 34, 0.85) !important;
-    border: 1px solid var(--gold-border) !important;
-    font-size: 0.95rem;
+.login-input:focus ~ .login-field-icon {
+    color: var(--gold-primary);
 }
 
-[data-theme="light"] .login-input-wrapper .form-control {
-    background-color: #ffffff !important;
-    border-color: #cbd5e1 !important;
+.btn-toggle-password {
+    position: absolute;
+    left: 0.85rem;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.15rem;
+    padding: 0.35rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition-fast);
 }
 
-.login-input-wrapper .form-control:focus + .login-input-icon {
+.btn-toggle-password:hover {
     color: var(--gold-primary);
 }
 
 .btn-login-submit {
+    height: 50px !important;
     border-radius: 9999px !important;
-    height: 48px !important;
-    font-size: 1rem !important;
-    font-weight: 700 !important;
-    background: linear-gradient(135deg, #dfb76c 0%, #b88628 100%) !important;
+    background: linear-gradient(135deg, #e5be70 0%, #b88628 100%) !important;
     border: 1px solid var(--gold-light) !important;
     color: #070b13 !important;
-    box-shadow: 0 4px 18px var(--gold-glow);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.6rem;
-    width: 100%;
-    transition: var(--transition-smooth);
+    font-size: 1.05rem !important;
+    font-weight: 800 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.65rem !important;
+    width: 100% !important;
+    box-shadow: 0 6px 22px var(--gold-glow) !important;
+    margin-top: 1.5rem !important;
+    transition: var(--transition-smooth) !important;
 }
 
 .btn-login-submit:hover {
-    background: linear-gradient(135deg, #f5c777 0%, #c9932d 100%) !important;
-    box-shadow: 0 6px 25px rgba(212, 175, 55, 0.45);
+    background: linear-gradient(135deg, #f5d085 0%, #c9952e 100%) !important;
     transform: translateY(-2px);
-    color: #000 !important;
+    box-shadow: 0 8px 30px rgba(212, 175, 55, 0.45) !important;
+    color: #000000 !important;
 }
 
-.login-separator {
+.login-trust-footer {
+    margin-top: 2rem;
+    padding-top: 1.15rem;
+    border-top: 1px solid var(--border-subtle);
+}
+
+/* --- LEFT SIDE: Luxury Perfume Showcase & World Brands (در سمت چپ) --- */
+.login-showcase-side {
+    background: #050810;
+    position: relative;
+    padding: 2.25rem 2.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+[data-theme="light"] .login-showcase-side {
+    background: #f1f4f9;
+}
+
+.showcase-content-wrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.25rem;
+}
+
+.showcase-hero-banner {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    height: 290px;
+    border: 1px solid var(--gold-border);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.55);
+}
+
+.showcase-hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+    transition: transform 0.6s ease;
+}
+
+.showcase-hero-banner:hover .showcase-hero-img {
+    transform: scale(1.03);
+}
+
+.showcase-hero-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(5, 8, 16, 0.1) 0%, rgba(5, 8, 16, 0.85) 100%);
+    pointer-events: none;
+}
+
+.showcase-floating-tag {
+    position: absolute;
+    bottom: 1.15rem;
+    right: 1.25rem;
+    background: rgba(10, 15, 27, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--gold-border);
+    border-radius: 9999px;
+    padding: 0.45rem 1.1rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--gold-light);
     display: flex;
     align-items: center;
-    text-align: center;
-    color: var(--text-muted);
-    font-size: 0.82rem;
-    margin: 1.25rem 0;
+    gap: 0.45rem;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
 }
 
-.login-separator::before,
-.login-separator::after {
-    content: '';
-    flex: 1;
-    border-bottom: 1px solid var(--border-subtle);
+/* Brand Cards Grid */
+.showcase-brand-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.85rem;
 }
 
-.login-separator::before {
-    margin-left: 0.85rem;
+@media (max-width: 575.98px) {
+    .showcase-brand-cards {
+        grid-template-columns: 1fr;
+    }
 }
 
-.login-separator::after {
-    margin-right: 0.85rem;
-}
-
-.login-card {
+.perfume-brand-pill {
     background: var(--bg-card);
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     border: 1px solid var(--gold-border);
-    border-radius: var(--radius-xl);
-    padding: 2.5rem 2rem;
-    box-shadow: var(--shadow-card), 0 0 30px var(--gold-glow);
+    border-radius: var(--radius-md);
+    padding: 0.85rem 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
     transition: var(--transition-smooth);
 }
 
-.login-logo-container {
-    display: inline-block;
-    position: relative;
-    padding: 6px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.35), transparent 70%);
+.perfume-brand-pill:hover {
+    border-color: var(--gold-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px -4px var(--gold-glow);
 }
 
-.login-logo-image {
-    width: 78px;
-    height: 78px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid var(--gold-primary);
-    box-shadow: 0 0 25px var(--gold-glow);
-    display: block;
-}
-
-.login-brand-title {
-    font-size: 1.6rem;
+.perfume-brand-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-weight: 800;
-    text-align: center;
-    letter-spacing: 0.15em;
-    margin-bottom: 0.2rem;
+    font-size: 0.95rem;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
 }
 
-.login-subtitle {
-    text-align: center;
-    color: var(--text-secondary);
+.avatar-creed {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.25), rgba(7, 11, 19, 0.9));
+    color: var(--gold-light);
+    border: 1px solid var(--gold-border);
+}
+
+.avatar-chanel {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(7, 11, 19, 0.9));
+    color: #6ee7b7;
+    border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.avatar-tomford {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(7, 11, 19, 0.9));
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.avatar-dior {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(7, 11, 19, 0.9));
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.35);
+}
+
+.perfume-brand-info {
+    overflow: hidden;
+    flex-grow: 1;
+}
+
+.perfume-brand-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     font-size: 0.88rem;
-    margin-bottom: 1.75rem;
+    color: var(--text-primary);
+    margin-bottom: 0.15rem;
+}
+
+.perfume-brand-badge {
+    font-size: 0.68rem;
+    padding: 0.15rem 0.45rem;
+    border-radius: 9999px;
+    background: var(--bg-surface-elevated);
+    border: 1px solid var(--gold-border);
+    color: var(--text-muted);
+}
+
+.perfume-brand-notes {
+    font-size: 0.74rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.showcase-notes-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-subtle);
+}
+
+.note-chip {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    background: var(--bg-surface);
+    border: 1px solid var(--gold-border);
+    border-radius: 9999px;
+    padding: 0.3rem 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
 }
 
 /* --------------------------------------------------------------------------

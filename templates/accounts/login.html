@@ -1,75 +1,221 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}ورود به حساب کاربری | عطر ماهونیا{% endblock %}
+{% block title %}ورود به حساب کاربری | بوتیک عطر ماهونیا{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center py-2 py-md-4">
-    <div class="col-12 col-lg-11 col-xl-10">
-        <div class="login-wrapper">
-            <div class="row g-0">
-                <!-- Left Visual Hero Column (Matching UI Mockup) -->
-                <div class="col-12 col-md-5 d-none d-md-flex login-hero-col">
-                    <img src="{% static 'img/login-perfume-hero.jpg' %}" alt="عطر لوکس ماهونیا" class="login-hero-img">
-                    <div class="login-hero-overlay"></div>
+<div class="login-page-container">
+    <div class="row g-0 login-master-card">
+        
+        <!-- ===================================================================
+             1. RIGHT COLUMN: Form & Credentials (سمت راست - فرم ورود)
+             =================================================================== -->
+        <div class="col-12 col-lg-5 login-form-side">
+            <div class="login-form-inner">
+                
+                <!-- Brand Logo & Header -->
+                <div class="login-brand-header text-center">
+                    <div class="login-logo-glow">
+                        <img src="{% static 'img/mahonia-logo.jpg' %}" alt="بوتیک تخصصی عطر ماهونیا" class="login-brand-logo">
+                    </div>
+                    <div class="login-brand-name text-gradient-gold">MAHONIA</div>
+                    <div class="login-brand-sub">بوتیک تخصصی عطر و ادکلن‌های اورجینال</div>
                 </div>
 
-                <!-- Right Form Column (RTL) -->
-                <div class="col-12 col-md-7 login-form-col">
-                    <div class="text-center mb-3">
-                        <div class="login-logo-container">
-                            <img src="{% static 'img/mahonia-logo.jpg' %}" alt="عطر ماهونیا" class="login-logo-image">
+                <!-- Form Title -->
+                <div class="login-welcome-box text-center">
+                    <h1 class="login-heading">ورود به حساب کاربری</h1>
+                    <p class="login-subheading">برای ورود به سامانه مدیریت اطلاعات خود را وارد نمایید</p>
+                </div>
+
+                <!-- Actual Form -->
+                <form method="post" class="login-form">
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger py-2 mb-3" role="alert">
+                            <i class="bi bi-exclamation-octagon-fill me-1"></i>
+                            {{ form.non_field_errors }}
                         </div>
-                        <h2 class="login-brand-title text-gradient-gold mt-2">MAHONIA</h2>
-                        <h4 class="fw-bold mt-2">به سیستم خوش آمدید</h4>
-                        <p class="login-subtitle mb-3">برای ادامه، وارد حساب کاربری خود شوید</p>
+                    {% endif %}
+
+                    <!-- Username Field -->
+                    <div class="mb-3">
+                        <label for="{{ form.username.id_for_label }}" class="form-label login-field-label">
+                            <i class="bi bi-person-fill text-gold"></i>
+                            <span>نام کاربری</span>
+                        </label>
+                        <div class="login-input-group">
+                            <input type="text" 
+                                   name="username" 
+                                   id="{{ form.username.id_for_label }}" 
+                                   class="form-control login-input" 
+                                   placeholder="نام کاربری خود را وارد کنید" 
+                                   autocomplete="username"
+                                   required 
+                                   autofocus>
+                            <i class="bi bi-person login-field-icon"></i>
+                        </div>
+                        {% for error in form.username.errors %}
+                            <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle"></i> {{ error }}</div>
+                        {% endfor %}
                     </div>
 
-                    <form method="post">
-                        {% csrf_token %}
-
-                        {% if form.non_field_errors %}
-                            <div class="alert alert-danger">{{ form.non_field_errors }}</div>
-                        {% endif %}
-
-                        <div class="mb-3">
-                            <label for="{{ form.username.id_for_label }}" class="form-label visually-hidden">نام کاربری</label>
-                            <div class="login-input-wrapper">
-                                <input type="text" name="username" id="{{ form.username.id_for_label }}" class="form-control" placeholder="نام کاربری" required autofocus>
-                                <i class="bi bi-person login-input-icon"></i>
-                            </div>
-                            {% for error in form.username.errors %}
-                                <div class="text-danger small mt-1">{{ error }}</div>
-                            {% endfor %}
+                    <!-- Password Field -->
+                    <div class="mb-4">
+                        <label for="{{ form.password.id_for_label }}" class="form-label login-field-label">
+                            <i class="bi bi-shield-lock-fill text-gold"></i>
+                            <span>کلمه عبور</span>
+                        </label>
+                        <div class="login-input-group">
+                            <input type="password" 
+                                   name="password" 
+                                   id="{{ form.password.id_for_label }}" 
+                                   class="form-control login-input" 
+                                   placeholder="رمز عبور اختصاصی" 
+                                   autocomplete="current-password"
+                                   required>
+                            <i class="bi bi-lock login-field-icon"></i>
+                            <button type="button" class="btn-toggle-password" id="togglePasswordBtn" aria-label="نمایش رمز">
+                                <i class="bi bi-eye" id="togglePasswordIcon"></i>
+                            </button>
                         </div>
+                        {% for error in form.password.errors %}
+                            <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle"></i> {{ error }}</div>
+                        {% endfor %}
+                    </div>
 
-                        <div class="mb-4">
-                            <label for="{{ form.password.id_for_label }}" class="form-label visually-hidden">رمز عبور</label>
-                            <div class="login-input-wrapper">
-                                <input type="password" name="password" id="{{ form.password.id_for_label }}" class="form-control" placeholder="رمز عبور" required>
-                                <i class="bi bi-lock login-input-icon"></i>
-                            </div>
-                            {% for error in form.password.errors %}
-                                <div class="text-danger small mt-1">{{ error }}</div>
-                            {% endfor %}
-                        </div>
+                    <input type="hidden" name="next" value="{{ next }}">
 
-                        <input type="hidden" name="next" value="{{ next }}">
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-login-submit">
+                        <span>ورود به سامانه</span>
+                        <i class="bi bi-arrow-left"></i>
+                    </button>
+                </form>
 
-                        <button type="submit" class="btn btn-login-submit">
-                            <span>ورود به حساب</span>
-                            <i class="bi bi-arrow-left"></i>
-                        </button>
-
-                        <div class="login-separator">یا</div>
-
-                        <div class="text-center">
-                            <span class="text-muted small">بوتیک تخصصی عطر و ادکلن ماهونیا</span>
-                        </div>
-                    </form>
+                <!-- Security & Authenticity Trust Badge -->
+                <div class="login-trust-footer">
+                    <div class="d-flex align-items-center justify-content-center gap-2 text-muted small">
+                        <i class="bi bi-shield-check text-gold fs-6"></i>
+                        <span>سامانه امنیتی ثبت فاکتور و کنترل انبار ماهونیا</span>
+                    </div>
                 </div>
+
             </div>
         </div>
+
+        <!-- ===================================================================
+             2. LEFT COLUMN: Famous Perfume Brands Showcase (سمت چپ - عطرها و برندها)
+             =================================================================== -->
+        <div class="col-12 col-lg-7 login-showcase-side">
+            <div class="showcase-content-wrapper">
+                
+                <!-- Main Showcase Visual Banner -->
+                <div class="showcase-hero-banner">
+                    <img src="{% static 'img/perfume-brand-showcase.jpg' %}" 
+                         alt="مجموعه برترین برندهای عطر و ادکلن ماهونیا" 
+                         class="showcase-hero-img">
+                    <div class="showcase-hero-gradient"></div>
+                    
+                    <!-- Floating Hero Glass Badge -->
+                    <div class="showcase-floating-tag">
+                        <i class="bi bi-stars text-gold"></i>
+                        <span>مجموعه شاهکارهای ماندگار عطرسازی جهان</span>
+                    </div>
+                </div>
+
+                <!-- Showcase Brand Cards Grid (Famous World Brands) -->
+                <div class="showcase-brand-cards">
+                    
+                    <!-- 1. Creed Aventus -->
+                    <div class="perfume-brand-pill">
+                        <div class="perfume-brand-avatar avatar-creed">
+                            <span>CR</span>
+                        </div>
+                        <div class="perfume-brand-info">
+                            <div class="perfume-brand-title">
+                                <strong>Creed Aventus</strong>
+                                <span class="perfume-brand-badge">نیش لوکس</span>
+                            </div>
+                            <div class="perfume-brand-notes">کرید اونتوس | آناناس دودی، چوب توس و مشک اصیل</div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Bleu de Chanel -->
+                    <div class="perfume-brand-pill">
+                        <div class="perfume-brand-avatar avatar-chanel">
+                            <span>CH</span>
+                        </div>
+                        <div class="perfume-brand-info">
+                            <div class="perfume-brand-title">
+                                <strong>Bleu de Chanel</strong>
+                                <span class="perfume-brand-badge">آروماتیک</span>
+                            </div>
+                            <div class="perfume-brand-notes">بلو د شنل | گریپ‌فروت، صمغ لابدانیوم و سدر</div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Tom Ford Oud Wood -->
+                    <div class="perfume-brand-pill">
+                        <div class="perfume-brand-avatar avatar-tomford">
+                            <span>TF</span>
+                        </div>
+                        <div class="perfume-brand-info">
+                            <div class="perfume-brand-title">
+                                <strong>Tom Ford Oud Wood</strong>
+                                <span class="perfume-brand-badge">پرایوت بلند</span>
+                            </div>
+                            <div class="perfume-brand-notes">تام فورد عود وود | چوب عود نادر، هل، چوب صندل و وانیل</div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Dior Sauvage -->
+                    <div class="perfume-brand-pill">
+                        <div class="perfume-brand-avatar avatar-dior">
+                            <span>CD</span>
+                        </div>
+                        <div class="perfume-brand-info">
+                            <div class="perfume-brand-title">
+                                <strong>Dior Sauvage</strong>
+                                <span class="perfume-brand-badge">کاریزماتیک</span>
+                            </div>
+                            <div class="perfume-brand-notes">دیور ساواژ | ترنج کالابریا، فلفل سیچوان و آمبروکسان</div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Fragrance Families & Authenticity Bar -->
+                <div class="showcase-notes-bar">
+                    <span class="note-chip"><i class="bi bi-droplet-half text-gold"></i> چوبی و شرقی</span>
+                    <span class="note-chip"><i class="bi bi-flower1 text-emerald"></i> آروماتیک و خنک</span>
+                    <span class="note-chip"><i class="bi bi-gem text-gold"></i> روایح نیش و خاص</span>
+                    <span class="note-chip"><i class="bi bi-patch-check-fill text-gold"></i> ۱۰۰٪ تضمین اصالت</span>
+                </div>
+
+            </div>
+        </div>
+
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var toggleBtn = document.getElementById('togglePasswordBtn');
+    var passwordInput = document.getElementById('{{ form.password.id_for_label }}');
+    var toggleIcon = document.getElementById('togglePasswordIcon');
+    if (toggleBtn && passwordInput && toggleIcon) {
+        toggleBtn.addEventListener('click', function() {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.className = 'bi bi-eye-slash';
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.className = 'bi bi-eye';
+            }
+        });
+    }
+});
+</script>
 {% endblock %}
