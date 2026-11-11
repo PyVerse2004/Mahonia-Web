@@ -528,8 +528,133 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* --------------------------------------------------------------------------
-   7. Official Mahonia Logo & Login Screen Styling
+   7. Official Mahonia Logo & Login Screen Styling (Mockup Inspired)
    -------------------------------------------------------------------------- */
+.login-wrapper {
+    max-width: 920px;
+    margin: 1.5rem auto;
+    background: var(--bg-card);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--gold-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card), 0 0 35px var(--gold-glow);
+    overflow: hidden;
+}
+
+.login-hero-col {
+    position: relative;
+    background: #04070d;
+    overflow: hidden;
+    min-height: 480px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.login-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(7, 11, 19, 0.2) 0%, rgba(7, 11, 19, 0.85) 100%);
+    pointer-events: none;
+}
+
+.login-form-col {
+    padding: 2.75rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.login-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.login-input-icon {
+    position: absolute;
+    left: 1rem;
+    color: var(--text-muted);
+    font-size: 1.15rem;
+    pointer-events: none;
+    transition: var(--transition-fast);
+}
+
+.login-input-wrapper .form-control {
+    border-radius: 9999px !important;
+    height: 48px;
+    padding-left: 2.75rem !important;
+    padding-right: 1.25rem !important;
+    background-color: rgba(13, 19, 34, 0.85) !important;
+    border: 1px solid var(--gold-border) !important;
+    font-size: 0.95rem;
+}
+
+[data-theme="light"] .login-input-wrapper .form-control {
+    background-color: #ffffff !important;
+    border-color: #cbd5e1 !important;
+}
+
+.login-input-wrapper .form-control:focus + .login-input-icon {
+    color: var(--gold-primary);
+}
+
+.btn-login-submit {
+    border-radius: 9999px !important;
+    height: 48px !important;
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    background: linear-gradient(135deg, #dfb76c 0%, #b88628 100%) !important;
+    border: 1px solid var(--gold-light) !important;
+    color: #070b13 !important;
+    box-shadow: 0 4px 18px var(--gold-glow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    width: 100%;
+    transition: var(--transition-smooth);
+}
+
+.btn-login-submit:hover {
+    background: linear-gradient(135deg, #f5c777 0%, #c9932d 100%) !important;
+    box-shadow: 0 6px 25px rgba(212, 175, 55, 0.45);
+    transform: translateY(-2px);
+    color: #000 !important;
+}
+
+.login-separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    margin: 1.25rem 0;
+}
+
+.login-separator::before,
+.login-separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.login-separator::before {
+    margin-left: 0.85rem;
+}
+
+.login-separator::after {
+    margin-right: 0.85rem;
+}
+
 .login-card {
     background: var(--bg-card);
     backdrop-filter: var(--glass-blur);
@@ -550,8 +675,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .login-logo-image {
-    width: 95px;
-    height: 95px;
+    width: 78px;
+    height: 78px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid var(--gold-primary);
@@ -560,17 +685,18 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .login-brand-title {
-    font-size: 1.85rem;
+    font-size: 1.6rem;
     font-weight: 800;
     text-align: center;
-    margin-bottom: 0.35rem;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.2rem;
 }
 
 .login-subtitle {
     text-align: center;
     color: var(--text-secondary);
-    font-size: 0.9rem;
-    margin-bottom: 2rem;
+    font-size: 0.88rem;
+    margin-bottom: 1.75rem;
 }
 
 /* --------------------------------------------------------------------------

@@ -1,45 +1,74 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}ورود به حساب کاربری | ماهونیا{% endblock %}
+{% block title %}ورود به حساب کاربری | عطر ماهونیا{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center py-4 py-md-5">
-    <div class="col-12 col-sm-9 col-md-6 col-lg-4">
-        <div class="login-card">
-            <!-- Official Mahonia Store Logo -->
-            <div class="text-center mb-3">
-                <div class="login-logo-container">
-                    <img src="{% static 'img/mahonia-logo.jpg' %}" alt="عطر ماهونیا" class="login-logo-image">
+<div class="row justify-content-center py-2 py-md-4">
+    <div class="col-12 col-lg-11 col-xl-10">
+        <div class="login-wrapper">
+            <div class="row g-0">
+                <!-- Left Visual Hero Column (Matching UI Mockup) -->
+                <div class="col-12 col-md-5 d-none d-md-flex login-hero-col">
+                    <img src="{% static 'img/login-perfume-hero.jpg' %}" alt="عطر لوکس ماهونیا" class="login-hero-img">
+                    <div class="login-hero-overlay"></div>
+                </div>
+
+                <!-- Right Form Column (RTL) -->
+                <div class="col-12 col-md-7 login-form-col">
+                    <div class="text-center mb-3">
+                        <div class="login-logo-container">
+                            <img src="{% static 'img/mahonia-logo.jpg' %}" alt="عطر ماهونیا" class="login-logo-image">
+                        </div>
+                        <h2 class="login-brand-title text-gradient-gold mt-2">MAHONIA</h2>
+                        <h4 class="fw-bold mt-2">به سیستم خوش آمدید</h4>
+                        <p class="login-subtitle mb-3">برای ادامه، وارد حساب کاربری خود شوید</p>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                        {% endif %}
+
+                        <div class="mb-3">
+                            <label for="{{ form.username.id_for_label }}" class="form-label visually-hidden">نام کاربری</label>
+                            <div class="login-input-wrapper">
+                                <input type="text" name="username" id="{{ form.username.id_for_label }}" class="form-control" placeholder="نام کاربری" required autofocus>
+                                <i class="bi bi-person login-input-icon"></i>
+                            </div>
+                            {% for error in form.username.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.password.id_for_label }}" class="form-label visually-hidden">رمز عبور</label>
+                            <div class="login-input-wrapper">
+                                <input type="password" name="password" id="{{ form.password.id_for_label }}" class="form-control" placeholder="رمز عبور" required>
+                                <i class="bi bi-lock login-input-icon"></i>
+                            </div>
+                            {% for error in form.password.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <input type="hidden" name="next" value="{{ next }}">
+
+                        <button type="submit" class="btn btn-login-submit">
+                            <span>ورود به حساب</span>
+                            <i class="bi bi-arrow-left"></i>
+                        </button>
+
+                        <div class="login-separator">یا</div>
+
+                        <div class="text-center">
+                            <span class="text-muted small">بوتیک تخصصی عطر و ادکلن ماهونیا</span>
+                        </div>
+                    </form>
                 </div>
             </div>
-
-            <h2 class="login-brand-title text-gradient-gold">ماهونیا</h2>
-            <p class="login-subtitle">سامانه مدیریت و انبارداری عطر و ادکلن</p>
-
-            <form method="post">
-                {% csrf_token %}
-
-                {% if form.non_field_errors %}
-                    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
-                {% endif %}
-
-                {% for field in form %}
-                    <div class="mb-3">
-                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                        {{ field }}
-                        {% for error in field.errors %}
-                            <div class="text-danger small mt-1">{{ error }}</div>
-                        {% endfor %}
-                    </div>
-                {% endfor %}
-
-                <input type="hidden" name="next" value="{{ next }}">
-
-                <button type="submit" class="btn btn-primary w-100 mt-3 py-2 fs-6">
-                    <i class="bi bi-box-arrow-in-right"></i> ورود به سامانه
-                </button>
-            </form>
         </div>
     </div>
 </div>
