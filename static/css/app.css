@@ -1,49 +1,121 @@
 /* ==========================================================================
-   Mahonia - Luxury Boutique & Dark Gold Theme (Concept 3)
-   پوسته اختصاصی و لوکس بوتیک عطر ماهونیا: آبنوسی تیره با جزئیات طلایی و کهربایی
+   Mahonia Perfume Boutique - Official Theme & Design System
+   سامانه مدیریت بوتیک عطر ماهونیا - تم اختصاصی و هماهنگ با لوگوی رسمی
    ========================================================================== */
 
-:root {
-    --bg-base: #0b0f17;
-    --bg-surface: rgba(18, 24, 38, 0.78);
-    --bg-surface-elevated: rgba(26, 34, 52, 0.85);
-    --bg-card: rgba(19, 26, 42, 0.72);
-    --bg-card-hover: rgba(28, 38, 60, 0.85);
+/* --------------------------------------------------------------------------
+   1. Design Tokens & Theme Variables (Dark & Light)
+   -------------------------------------------------------------------------- */
+:root, [data-theme="dark"] {
+    --bg-base: #070b13;
+    --bg-sidebar: #090e1a;
+    --bg-topbar: rgba(9, 14, 26, 0.92);
+    --bg-surface: #0e1627;
+    --bg-surface-elevated: #131d33;
+    --bg-card: rgba(14, 22, 39, 0.82);
+    --bg-card-hover: rgba(20, 31, 55, 0.92);
 
+    /* Mahonia Brand Gold (from logo typography & 'M') */
     --gold-primary: #d4af37;
-    --gold-light: #f3c978;
+    --gold-light: #f5d78e;
     --gold-dark: #aa7c11;
-    --gold-glow: rgba(212, 175, 55, 0.22);
-    --gold-border: rgba(212, 175, 55, 0.2);
-    --gold-border-hover: rgba(212, 175, 55, 0.45);
+    --gold-glow: rgba(212, 175, 55, 0.28);
+    --gold-border: rgba(212, 175, 55, 0.22);
+    --gold-border-hover: rgba(212, 175, 55, 0.55);
+
+    /* Mahonia Emerald Accent (from logo perfume bulb) */
+    --accent-emerald: #10b981;
+    --accent-emerald-dark: #059669;
+    --accent-emerald-bg: rgba(16, 185, 129, 0.14);
 
     --text-primary: #f8fafc;
     --text-secondary: #94a3b8;
     --text-muted: #64748b;
-    --text-gold: #f3c978;
+    --text-gold: #f5d78e;
 
-    --accent-emerald: #10b981;
-    --accent-emerald-bg: rgba(16, 185, 129, 0.12);
     --accent-rose: #f43f5e;
-    --accent-rose-bg: rgba(244, 63, 94, 0.12);
+    --accent-rose-bg: rgba(244, 63, 94, 0.14);
     --accent-amber: #f59e0b;
-    --accent-amber-bg: rgba(245, 158, 11, 0.12);
+    --accent-amber-bg: rgba(245, 158, 11, 0.14);
     --accent-cyan: #06b6d4;
+    --accent-cyan-bg: rgba(6, 182, 212, 0.14);
 
     --border-subtle: rgba(255, 255, 255, 0.08);
     --border-focus: rgba(212, 175, 55, 0.5);
+
+    --input-bg: rgba(13, 19, 34, 0.9);
+    --input-border: rgba(255, 255, 255, 0.14);
+    --input-text: #f8fafc;
+    --input-placeholder: #64748b;
+
+    --table-header-bg: #111a2d;
+    --table-border: rgba(255, 255, 255, 0.08);
+    --table-row-hover: rgba(212, 175, 55, 0.045);
+
+    --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.65);
+    --shadow-dropdown: 0 14px 35px rgba(0, 0, 0, 0.7);
 
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 16px;
     --radius-xl: 20px;
-
+    --sidebar-width: 260px;
     --glass-blur: blur(14px);
     --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Base Body & Reset */
+[data-theme="light"] {
+    --bg-base: #f4f6fa;
+    --bg-sidebar: #ffffff;
+    --bg-topbar: rgba(255, 255, 255, 0.94);
+    --bg-surface: #ffffff;
+    --bg-surface-elevated: #f8fafc;
+    --bg-card: #ffffff;
+    --bg-card-hover: #f8fafc;
+
+    --gold-primary: #b8860b;
+    --gold-light: #9a6f08;
+    --gold-dark: #785404;
+    --gold-glow: rgba(184, 134, 11, 0.16);
+    --gold-border: rgba(184, 134, 11, 0.28);
+    --gold-border-hover: rgba(184, 134, 11, 0.55);
+
+    --accent-emerald: #059669;
+    --accent-emerald-dark: #047857;
+    --accent-emerald-bg: rgba(5, 150, 105, 0.1);
+
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    --text-gold: #b8860b;
+
+    --accent-rose: #e11d48;
+    --accent-rose-bg: rgba(225, 29, 72, 0.1);
+    --accent-amber: #d97706;
+    --accent-amber-bg: rgba(217, 119, 6, 0.1);
+    --accent-cyan: #0891b2;
+    --accent-cyan-bg: rgba(8, 145, 178, 0.1);
+
+    --border-subtle: rgba(0, 0, 0, 0.08);
+    --border-focus: rgba(184, 134, 11, 0.5);
+
+    --input-bg: #ffffff;
+    --input-border: #cbd5e1;
+    --input-text: #0f172a;
+    --input-placeholder: #94a3b8;
+
+    --table-header-bg: #f8fafc;
+    --table-border: #e2e8f0;
+    --table-row-hover: rgba(184, 134, 11, 0.04);
+
+    --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.07);
+    --shadow-dropdown: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* --------------------------------------------------------------------------
+   2. Base HTML & Global Resets
+   -------------------------------------------------------------------------- */
 html, body {
     direction: rtl;
     text-align: right;
@@ -51,35 +123,46 @@ html, body {
     background-color: var(--bg-base);
     color: var(--text-primary);
     min-height: 100vh;
+    margin: 0;
+    padding: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: background-color var(--transition-smooth), color var(--transition-smooth);
 }
 
-body {
+[data-theme="dark"] body {
     background-image: 
-        radial-gradient(circle at 15% 15%, rgba(212, 175, 55, 0.06) 0%, transparent 40%),
-        radial-gradient(circle at 85% 80%, rgba(170, 124, 17, 0.05) 0%, transparent 45%),
-        radial-gradient(circle at 50% 50%, rgba(11, 15, 23, 1) 0%, rgba(7, 10, 15, 1) 100%);
+        radial-gradient(circle at 10% 10%, rgba(212, 175, 55, 0.07) 0%, transparent 45%),
+        radial-gradient(circle at 90% 85%, rgba(16, 185, 129, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, #070b13 0%, #05080e 100%);
     background-attachment: fixed;
 }
 
-/* Custom Scrollbar */
+[data-theme="light"] body {
+    background-image: 
+        radial-gradient(circle at 10% 10%, rgba(184, 134, 11, 0.04) 0%, transparent 40%),
+        radial-gradient(circle at 90% 85%, rgba(5, 150, 105, 0.03) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, #f4f6fa 0%, #edf1f7 100%);
+    background-attachment: fixed;
+}
+
+/* Scrollbar */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
 }
 ::-webkit-scrollbar-track {
-    background: #090c12;
+    background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-    background: rgba(212, 175, 55, 0.25);
+    background: var(--gold-border);
     border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(212, 175, 55, 0.5);
+    background: var(--gold-primary);
 }
 
-/* Typography Enhancements */
+/* Typography */
 h1, h2, h3, h4, h5, h6 {
     color: var(--text-primary);
     font-weight: 700;
@@ -87,78 +170,284 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .text-gold {
-    color: var(--gold-light) !important;
+    color: var(--gold-primary) !important;
 }
 
 .text-gradient-gold {
-    background: linear-gradient(135deg, #fff2cc 0%, #f3c978 50%, #d4af37 100%);
+    background: linear-gradient(135deg, #fff2cc 0%, #f5d78e 50%, #d4af37 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+[data-theme="light"] .text-gradient-gold {
+    background: linear-gradient(135deg, #785404 0%, #b8860b 60%, #9a6f08 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
 .text-muted {
-    color: var(--text-secondary) !important;
+    color: var(--text-muted) !important;
 }
 
-/* Navigation Bar */
-.navbar-luxury {
-    background: rgba(12, 17, 26, 0.85);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    border-bottom: 1px solid var(--gold-border);
-    padding: 0.75rem 0;
-    position: sticky;
+/* --------------------------------------------------------------------------
+   3. Right Sidebar (RTL) & App Layout
+   -------------------------------------------------------------------------- */
+.app-sidebar {
+    position: fixed;
     top: 0;
-    z-index: 1030;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    right: 0;
+    bottom: 0;
+    width: var(--sidebar-width);
+    background-color: var(--bg-sidebar);
+    border-left: 1px solid var(--gold-border);
+    display: flex;
+    flex-direction: column;
+    z-index: 1040;
+    box-shadow: -4px 0 25px rgba(0, 0, 0, 0.4);
+    transition: transform var(--transition-smooth), background-color var(--transition-smooth);
 }
 
-.navbar-luxury .navbar-brand {
-    font-size: 1.35rem;
-    font-weight: 800;
-    color: var(--gold-light);
+[data-theme="light"] .app-sidebar {
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.05);
+}
+
+/* Sidebar Header & Brand */
+.sidebar-header {
+    padding: 1.25rem 1.25rem 1rem;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    text-decoration: none;
-    transition: var(--transition-fast);
+    justify-content: space-between;
+    border-bottom: 1px solid var(--gold-border);
 }
 
-.navbar-luxury .navbar-brand:hover {
-    color: #fff;
-    text-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+.sidebar-brand-box {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
 }
 
-.navbar-luxury .brand-icon {
-    font-size: 1.4rem;
+.sidebar-logo-img {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--gold-primary);
+    box-shadow: 0 0 12px var(--gold-glow);
+    flex-shrink: 0;
+}
+
+.sidebar-brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-brand-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.sidebar-brand-desc {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Sidebar User Info */
+.sidebar-user-box {
+    padding: 1rem 1.25rem;
+    margin: 0.75rem 1rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--gold-border);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.sidebar-user-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--gold-glow);
     color: var(--gold-primary);
-    filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.5));
+    border: 1px solid var(--gold-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
 }
 
-.navbar-luxury .nav-link {
-    color: #cbd5e1;
-    font-size: 0.95rem;
-    font-weight: 500;
-    padding: 0.5rem 0.85rem !important;
+.sidebar-user-info {
+    overflow: hidden;
+    flex-grow: 1;
+}
+
+.sidebar-user-name {
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: var(--text-primary);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.sidebar-user-role {
+    margin-top: 0.2rem;
+}
+
+/* Sidebar Navigation Items */
+.sidebar-nav-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 0.5rem 0.75rem;
+}
+
+.sidebar-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.sidebar-nav-heading {
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 0.75rem 0.85rem 0.25rem;
+    letter-spacing: 0.03em;
+}
+
+.sidebar-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0.95rem;
+    color: var(--text-secondary);
+    text-decoration: none;
     border-radius: var(--radius-sm);
+    font-weight: 500;
+    font-size: 0.92rem;
     transition: var(--transition-fast);
     position: relative;
 }
 
-.navbar-luxury .nav-link:hover {
-    color: var(--gold-light);
-    background: rgba(212, 175, 55, 0.08);
+.sidebar-icon {
+    font-size: 1.15rem;
+    color: var(--gold-primary);
+    opacity: 0.85;
+    transition: var(--transition-fast);
 }
 
-.navbar-luxury .nav-link.active {
-    color: var(--gold-light);
-    background: rgba(212, 175, 55, 0.12);
-    border: 1px solid rgba(212, 175, 55, 0.25);
+.sidebar-nav-link:hover {
+    color: var(--text-primary);
+    background-color: var(--bg-surface-elevated);
 }
 
-/* User Badge Pill in Navbar */
+.sidebar-nav-link:hover .sidebar-icon {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.sidebar-nav-link.active {
+    color: var(--text-primary);
+    font-weight: 700;
+    background: linear-gradient(90deg, rgba(212, 175, 55, 0.18), rgba(212, 175, 55, 0.05));
+    border-right: 3px solid var(--gold-primary);
+}
+
+[data-theme="light"] .sidebar-nav-link.active {
+    background: linear-gradient(90deg, rgba(184, 134, 11, 0.12), rgba(184, 134, 11, 0.03));
+    color: var(--gold-light);
+}
+
+.sidebar-nav-link.active .sidebar-icon {
+    opacity: 1;
+    filter: drop-shadow(0 0 6px var(--gold-glow));
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+    padding: 1rem;
+    border-top: 1px solid var(--gold-border);
+    background: var(--bg-sidebar);
+}
+
+/* --------------------------------------------------------------------------
+   4. Top App Header & Content Layout
+   -------------------------------------------------------------------------- */
+.app-main-layout {
+    margin-right: var(--sidebar-width);
+    margin-left: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: margin-right var(--transition-smooth);
+}
+
+.app-topbar {
+    height: 64px;
+    background-color: var(--bg-topbar);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-bottom: 1px solid var(--gold-border);
+    padding: 0 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.app-main-content {
+    flex-grow: 1;
+}
+
+/* Mobile Sidebar Behavior */
+.sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 1035;
+    opacity: 0;
+    transition: opacity var(--transition-smooth);
+}
+
+@media (max-width: 991.98px) {
+    .app-sidebar {
+        transform: translateX(100%);
+    }
+
+    body.sidebar-open .app-sidebar {
+        transform: translateX(0);
+    }
+
+    body.sidebar-open .sidebar-backdrop {
+        display: block;
+        opacity: 1;
+    }
+
+    .app-main-layout {
+        margin-right: 0 !important;
+    }
+
+    .app-topbar {
+        padding: 0 1rem;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   5. User Role Badges & Pills
+   -------------------------------------------------------------------------- */
 .user-role-badge {
-    padding: 0.35rem 0.75rem;
+    padding: 0.35rem 0.8rem;
     border-radius: 9999px;
     font-size: 0.82rem;
     font-weight: 600;
@@ -168,19 +457,246 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .user-role-badge.role-manager {
-    background: rgba(212, 175, 55, 0.15);
-    border: 1px solid rgba(212, 175, 55, 0.4);
+    background: var(--gold-glow);
+    border: 1px solid var(--gold-border-hover);
     color: var(--gold-light);
-    box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+    box-shadow: 0 0 10px var(--gold-glow);
+}
+
+[data-theme="light"] .user-role-badge.role-manager {
+    background: rgba(184, 134, 11, 0.12);
+    border: 1px solid rgba(184, 134, 11, 0.4);
+    color: #8f6707;
 }
 
 .user-role-badge.role-seller {
-    background: rgba(16, 185, 129, 0.15);
-    border: 1px solid rgba(16, 185, 129, 0.4);
+    background: var(--accent-emerald-bg);
+    border: 1px solid rgba(16, 185, 129, 0.45);
     color: #6ee7b7;
 }
 
-/* Luxury Glass Cards */
+[data-theme="light"] .user-role-badge.role-seller {
+    background: rgba(5, 150, 105, 0.12);
+    border: 1px solid rgba(5, 150, 105, 0.4);
+    color: #047857;
+}
+
+/* --------------------------------------------------------------------------
+   6. Theme Toggle Buttons
+   -------------------------------------------------------------------------- */
+.theme-toggle-btn {
+    border-radius: 9999px;
+    padding: 0.38rem 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-color: var(--gold-border) !important;
+    color: var(--text-secondary) !important;
+    background: var(--bg-surface) !important;
+    transition: var(--transition-fast);
+}
+
+.theme-toggle-btn:hover {
+    color: var(--gold-light) !important;
+    border-color: var(--gold-primary) !important;
+    box-shadow: 0 0 12px var(--gold-glow);
+}
+
+/* --------------------------------------------------------------------------
+   7. Official Mahonia Logo & Login Screen Styling
+   -------------------------------------------------------------------------- */
+.login-card {
+    background: var(--bg-card);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--gold-border);
+    border-radius: var(--radius-xl);
+    padding: 2.5rem 2rem;
+    box-shadow: var(--shadow-card), 0 0 30px var(--gold-glow);
+    transition: var(--transition-smooth);
+}
+
+.login-logo-container {
+    display: inline-block;
+    position: relative;
+    padding: 6px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.35), transparent 70%);
+}
+
+.login-logo-image {
+    width: 95px;
+    height: 95px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--gold-primary);
+    box-shadow: 0 0 25px var(--gold-glow);
+    display: block;
+}
+
+.login-brand-title {
+    font-size: 1.85rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 0.35rem;
+}
+
+.login-subtitle {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+}
+
+/* --------------------------------------------------------------------------
+   8. Form Controls, Inputs & Date Filter Exact Baseline Alignment
+   -------------------------------------------------------------------------- */
+.filter-card {
+    background: var(--bg-card);
+    border: 1px solid var(--gold-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+}
+
+.form-control, .form-select, input[type="text"], input[type="password"], input[type="number"], input[type="search"], textarea {
+    background-color: var(--input-bg) !important;
+    border: 1px solid var(--input-border) !important;
+    color: var(--input-text) !important;
+    border-radius: var(--radius-sm);
+    padding: 0.52rem 0.85rem;
+    font-size: 0.92rem;
+    height: 42px;
+    transition: var(--transition-fast);
+}
+
+.form-control:focus, .form-select:focus, textarea:focus {
+    border-color: var(--gold-primary) !important;
+    box-shadow: 0 0 0 3px var(--gold-glow) !important;
+    color: var(--input-text) !important;
+    outline: none;
+}
+
+.form-control::placeholder {
+    color: var(--input-placeholder) !important;
+    opacity: 0.85;
+}
+
+.form-label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.35rem;
+    display: block;
+}
+
+/* Input Group & Date Filter Perfect Alignment */
+.input-group {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    width: 100%;
+}
+
+.input-group > .form-control {
+    position: relative;
+    flex: 1 1 auto;
+    width: 1%;
+    min-width: 0;
+    height: 42px;
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+}
+
+.input-group > .btn {
+    position: relative;
+    z-index: 2;
+    height: 42px;
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-right: 0 !important;
+}
+
+/* Remove default Django Admin p.date wrapper margins and disruption */
+p.date {
+    margin: 0 !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    width: 100% !important;
+    flex: 1 1 auto !important;
+}
+
+p.date > input {
+    margin: 0 !important;
+}
+
+/* --------------------------------------------------------------------------
+   9. Buttons
+   -------------------------------------------------------------------------- */
+.btn {
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.92rem;
+    padding: 0.5rem 1.15rem;
+    height: 42px;
+    transition: var(--transition-smooth);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+}
+
+.btn-sm {
+    height: 34px !important;
+    padding: 0.25rem 0.75rem !important;
+    font-size: 0.82rem !important;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #dfb76c 0%, #b88628 100%) !important;
+    border: 1px solid var(--gold-light) !important;
+    color: #070b13 !important;
+    box-shadow: 0 4px 14px var(--gold-glow);
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background: linear-gradient(135deg, #f5c777 0%, #c9932d 100%) !important;
+    color: #000000 !important;
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.45);
+    transform: translateY(-1px);
+}
+
+.btn-outline-secondary {
+    background: var(--bg-surface) !important;
+    border: 1px solid var(--gold-border) !important;
+    color: var(--text-secondary) !important;
+}
+
+.btn-outline-secondary:hover {
+    background: var(--bg-surface-elevated) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--gold-primary) !important;
+}
+
+.btn-outline-danger {
+    background: transparent !important;
+    border: 1px solid rgba(244, 63, 94, 0.35) !important;
+    color: #fda4af !important;
+}
+
+[data-theme="light"] .btn-outline-danger {
+    color: #e11d48 !important;
+    border-color: rgba(225, 29, 72, 0.35) !important;
+}
+
+.btn-outline-danger:hover {
+    background: #e11d48 !important;
+    border-color: #e11d48 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(225, 29, 72, 0.3);
+}
+
+/* --------------------------------------------------------------------------
+   10. Glass Cards & Dashboard Action Cards
+   -------------------------------------------------------------------------- */
 .card, .glass-card {
     background: var(--bg-card);
     backdrop-filter: var(--glass-blur);
@@ -188,7 +704,7 @@ h1, h2, h3, h4, h5, h6 {
     border: 1px solid var(--gold-border);
     border-radius: var(--radius-lg);
     color: var(--text-primary);
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+    box-shadow: var(--shadow-card);
     transition: var(--transition-smooth);
 }
 
@@ -197,7 +713,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .card-header {
-    background: rgba(26, 34, 52, 0.6);
+    background: var(--bg-surface-elevated);
     border-bottom: 1px solid var(--gold-border);
     color: var(--gold-light);
     font-weight: 700;
@@ -206,18 +722,6 @@ h1, h2, h3, h4, h5, h6 {
     padding: 1rem 1.25rem;
 }
 
-.card-body {
-    padding: 1.25rem;
-}
-
-.card-footer {
-    background: rgba(26, 34, 52, 0.4);
-    border-top: 1px solid var(--border-subtle);
-    border-bottom-left-radius: var(--radius-lg) !important;
-    border-bottom-right-radius: var(--radius-lg) !important;
-}
-
-/* Dashboard Action Grid Cards */
 .dashboard-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -231,7 +735,7 @@ h1, h2, h3, h4, h5, h6 {
     -webkit-backdrop-filter: var(--glass-blur);
     border: 1px solid var(--gold-border);
     border-radius: var(--radius-lg);
-    padding: 1.5rem 1.25rem;
+    padding: 1.4rem 1.25rem;
     display: flex;
     align-items: center;
     gap: 1.1rem;
@@ -246,7 +750,7 @@ h1, h2, h3, h4, h5, h6 {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.12), transparent 60%);
+    background: linear-gradient(135deg, var(--gold-glow), transparent 60%);
     opacity: 0;
     transition: var(--transition-smooth);
 }
@@ -254,7 +758,7 @@ h1, h2, h3, h4, h5, h6 {
 .dashboard-action-card:hover {
     border-color: var(--gold-primary);
     transform: translateY(-3px);
-    box-shadow: 0 14px 35px -8px rgba(212, 175, 55, 0.22);
+    box-shadow: 0 14px 35px -8px var(--gold-glow);
     color: var(--text-primary);
 }
 
@@ -263,26 +767,25 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .dashboard-action-icon {
-    width: 52px;
-    height: 52px;
+    width: 50px;
+    height: 50px;
     border-radius: var(--radius-md);
-    background: rgba(212, 175, 55, 0.12);
-    border: 1px solid rgba(212, 175, 55, 0.3);
+    background: var(--gold-glow);
+    border: 1px solid var(--gold-border);
     color: var(--gold-light);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     flex-shrink: 0;
     transition: var(--transition-smooth);
 }
 
 .dashboard-action-card:hover .dashboard-action-icon {
     background: linear-gradient(135deg, #e5b869, #aa7c11);
-    color: #0b0f17;
+    color: #070b13;
     border-color: var(--gold-light);
     transform: scale(1.08);
-    box-shadow: 0 0 18px rgba(212, 175, 55, 0.4);
 }
 
 .dashboard-action-content {
@@ -314,315 +817,87 @@ h1, h2, h3, h4, h5, h6 {
     transform: translateX(-4px);
 }
 
-/* Fallback for standard list-group on dashboard */
-.list-group-item {
-    background-color: var(--bg-card);
-    border: 1px solid var(--gold-border);
-    color: var(--text-primary);
-    padding: 1rem 1.25rem;
-    transition: var(--transition-fast);
-}
-
-.list-group-item:hover, .list-group-item-action:hover {
-    background-color: var(--bg-surface-elevated);
-    border-color: var(--gold-primary);
-    color: var(--gold-light);
-    transform: translateX(-4px);
-}
-
-/* Form Controls & Inputs */
-.form-control, .form-select, input[type="text"], input[type="password"], input[type="number"], input[type="search"], textarea {
-    background-color: rgba(15, 20, 32, 0.85) !important;
-    border: 1px solid rgba(255, 255, 255, 0.14) !important;
-    color: #f1f5f9 !important;
-    border-radius: var(--radius-sm);
-    padding: 0.55rem 0.85rem;
-    font-size: 0.95rem;
-    transition: var(--transition-fast);
-}
-
-.form-control:focus, .form-select:focus, textarea:focus {
-    background-color: rgba(20, 27, 44, 0.95) !important;
-    border-color: var(--gold-primary) !important;
-    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.25) !important;
-    color: #ffffff !important;
-    outline: none;
-}
-
-.form-control::placeholder {
-    color: var(--text-muted) !important;
-    opacity: 0.8;
-}
-
-.form-label {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    margin-bottom: 0.4rem;
-}
-
-/* Buttons */
-.btn {
-    border-radius: var(--radius-sm);
-    font-weight: 600;
-    font-size: 0.92rem;
-    padding: 0.5rem 1.1rem;
-    transition: var(--transition-smooth);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, #dfb76c 0%, #b88628 100%) !important;
-    border: 1px solid var(--gold-light) !important;
-    color: #0b0f17 !important;
-    box-shadow: 0 4px 14px rgba(212, 175, 55, 0.28);
-}
-
-.btn-primary:hover, .btn-primary:focus {
-    background: linear-gradient(135deg, #f5c777 0%, #c9932d 100%) !important;
-    color: #000000 !important;
-    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.45);
-    transform: translateY(-1px);
-}
-
-.btn-outline-primary {
-    background: rgba(212, 175, 55, 0.06) !important;
-    border: 1px solid rgba(212, 175, 55, 0.45) !important;
-    color: var(--gold-light) !important;
-}
-
-.btn-outline-primary:hover {
-    background: linear-gradient(135deg, #dfb76c 0%, #b88628 100%) !important;
-    color: #0b0f17 !important;
-    border-color: var(--gold-light) !important;
-    box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
-    transform: translateY(-1px);
-}
-
-.btn-outline-secondary {
-    background: rgba(255, 255, 255, 0.03) !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
-    color: #cbd5e1 !important;
-}
-
-.btn-outline-secondary:hover {
-    background: rgba(255, 255, 255, 0.1) !important;
-    color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.3) !important;
-}
-
-.btn-danger {
-    background: rgba(244, 63, 94, 0.18) !important;
-    border: 1px solid rgba(244, 63, 94, 0.4) !important;
-    color: #fda4af !important;
-}
-
-.btn-danger:hover {
-    background: #e11d48 !important;
-    border-color: #e11d48 !important;
-    color: #ffffff !important;
-    box-shadow: 0 4px 14px rgba(225, 29, 72, 0.35);
-}
-
-.btn-warning {
-    background: rgba(245, 158, 11, 0.18) !important;
-    border: 1px solid rgba(245, 158, 11, 0.4) !important;
-    color: #fde68a !important;
-}
-
-.btn-warning:hover {
-    background: #d97706 !important;
-    border-color: #d97706 !important;
-    color: #ffffff !important;
-    box-shadow: 0 4px 14px rgba(217, 119, 6, 0.35);
-}
-
-.btn-success {
-    background: rgba(16, 185, 129, 0.18) !important;
-    border: 1px solid rgba(16, 185, 129, 0.4) !important;
-    color: #a7f3d0 !important;
-}
-
-.btn-success:hover {
-    background: #059669 !important;
-    border-color: #059669 !important;
-    color: #ffffff !important;
-    box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35);
-}
-
-/* Tables */
+/* --------------------------------------------------------------------------
+   11. Tables
+   -------------------------------------------------------------------------- */
 .table-responsive {
     border-radius: var(--radius-lg);
     border: 1px solid var(--gold-border);
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+    box-shadow: var(--shadow-card);
     background: var(--bg-card);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
     margin-bottom: 1.5rem;
 }
 
 .table {
     margin-bottom: 0;
     color: var(--text-primary);
-    border-color: rgba(255, 255, 255, 0.08) !important;
+    border-color: var(--table-border) !important;
     background: transparent !important;
 }
 
 .table > :not(caption) > * > * {
     background-color: transparent !important;
     color: var(--text-primary);
-    border-bottom-color: rgba(255, 255, 255, 0.07);
-    padding: 0.9rem 1rem;
+    border-bottom-color: var(--table-border);
+    padding: 0.85rem 1rem;
     vertical-align: middle;
 }
 
 .table thead th {
-    background: rgba(24, 32, 50, 0.95) !important;
+    background: var(--table-header-bg) !important;
     color: var(--gold-light) !important;
     font-weight: 700;
     font-size: 0.88rem;
-    border-bottom: 2px solid rgba(212, 175, 55, 0.3) !important;
+    border-bottom: 2px solid var(--gold-border) !important;
     white-space: nowrap;
 }
 
-.table tbody tr {
-    transition: var(--transition-fast);
+[data-theme="light"] .table thead th {
+    color: var(--gold-light) !important;
+    background: #f8fafc !important;
 }
 
 .table-hover > tbody > tr:hover > * {
-    background-color: rgba(212, 175, 55, 0.045) !important;
+    background-color: var(--table-row-hover) !important;
 }
 
-/* Badges & Pills */
-.badge {
-    padding: 0.4em 0.75em;
-    font-weight: 600;
-    border-radius: 6px;
-    font-size: 0.78rem;
+/* --------------------------------------------------------------------------
+   12. Jalali Datepicker Dark & Light Customization
+   -------------------------------------------------------------------------- */
+.jalali-datepicker, .ui-datepicker {
+    background: var(--bg-surface-elevated) !important;
+    border: 1px solid var(--gold-border) !important;
+    border-radius: var(--radius-md) !important;
+    box-shadow: var(--shadow-dropdown) !important;
+    color: var(--text-primary) !important;
+    z-index: 1060 !important;
 }
 
-.badge.text-bg-warning {
-    background: rgba(245, 158, 11, 0.18) !important;
-    border: 1px solid rgba(245, 158, 11, 0.4) !important;
-    color: #fde68a !important;
+.ui-datepicker-header {
+    background: var(--bg-surface) !important;
+    border-bottom: 1px solid var(--gold-border) !important;
+    color: var(--gold-light) !important;
 }
 
-.badge.text-bg-success {
-    background: rgba(16, 185, 129, 0.18) !important;
-    border: 1px solid rgba(16, 185, 129, 0.4) !important;
-    color: #a7f3d0 !important;
+.ui-datepicker td a {
+    color: var(--text-primary) !important;
+    border-radius: 6px !important;
 }
 
-.badge.text-bg-danger {
-    background: rgba(244, 63, 94, 0.18) !important;
-    border: 1px solid rgba(244, 63, 94, 0.4) !important;
-    color: #fda4af !important;
+.ui-datepicker td a:hover {
+    background: var(--gold-primary) !important;
+    color: #070b13 !important;
 }
 
-.badge.text-bg-secondary {
-    background: rgba(148, 163, 184, 0.15) !important;
-    border: 1px solid rgba(148, 163, 184, 0.3) !important;
-    color: #cbd5e1 !important;
+.ui-datepicker-current-day a, .ui-datepicker td.ui-state-active a {
+    background: linear-gradient(135deg, #dfb76c, #b88628) !important;
+    color: #070b13 !important;
+    font-weight: bold !important;
 }
 
-/* Alerts */
-.alert {
-    border-radius: var(--radius-md);
-    backdrop-filter: var(--glass-blur);
-    border-width: 1px;
-    padding: 0.9rem 1.2rem;
-    margin-bottom: 1.25rem;
-}
-
-.alert-success {
-    background: var(--accent-emerald-bg) !important;
-    border-color: rgba(16, 185, 129, 0.4) !important;
-    color: #a7f3d0 !important;
-}
-
-.alert-danger {
-    background: var(--accent-rose-bg) !important;
-    border-color: rgba(244, 63, 94, 0.4) !important;
-    color: #fda4af !important;
-}
-
-.alert-warning {
-    background: var(--accent-amber-bg) !important;
-    border-color: rgba(245, 158, 11, 0.4) !important;
-    color: #fde68a !important;
-}
-
-.alert-info {
-    background: rgba(6, 182, 212, 0.12) !important;
-    border-color: rgba(6, 182, 212, 0.4) !important;
-    color: #a5f3fc !important;
-}
-
-.btn-close {
-    filter: invert(1) grayscale(100%) brightness(200%);
-}
-
-/* Pagination */
-nav[aria-label="صفحه‌بندی"] a {
-    color: var(--gold-light);
-    text-decoration: none;
-    padding: 0.4rem 0.85rem;
-    border: 1px solid var(--gold-border);
-    border-radius: var(--radius-sm);
-    background: rgba(212, 175, 55, 0.06);
-    transition: var(--transition-fast);
-}
-
-nav[aria-label="صفحه‌بندی"] a:hover {
-    background: var(--gold-primary);
-    color: #0b0f17;
-    border-color: var(--gold-light);
-}
-
-/* Profit & Loss Special Stat Cards */
-.profit-stat-card {
-    background: var(--bg-card);
-    border: 1px solid var(--gold-border);
-    border-radius: var(--radius-lg);
-    padding: 1.25rem;
-    transition: var(--transition-smooth);
-}
-
-.profit-stat-card:hover {
-    border-color: var(--gold-primary);
-    box-shadow: 0 10px 25px -5px rgba(212, 175, 55, 0.2);
-}
-
-/* Login Card Specific */
-.login-card {
-    background: rgba(17, 23, 36, 0.85);
-    border: 1px solid var(--gold-border);
-    border-radius: var(--radius-xl);
-    padding: 2.5rem 2rem;
-    box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.7), 0 0 25px rgba(212, 175, 55, 0.08);
-}
-
-.login-brand-title {
-    font-size: 1.8rem;
-    font-weight: 800;
-    text-align: center;
-    margin-bottom: 0.5rem;
-    color: var(--gold-light);
-}
-
-.login-subtitle {
-    text-align: center;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    margin-bottom: 2rem;
-}
-
-/* ==========================================================================
-   Bootstrap Dark Overrides & Jalali Datepicker Enhancements
-   ========================================================================== */
+/* --------------------------------------------------------------------------
+   13. Compatibility Overrides for Bootstrap Utilities
+   -------------------------------------------------------------------------- */
 .bg-white {
     background-color: var(--bg-card) !important;
 }
@@ -632,21 +907,8 @@ nav[aria-label="صفحه‌بندی"] a:hover {
     color: var(--text-primary) !important;
 }
 
-.table-light {
-    --bs-table-bg: rgba(24, 32, 50, 0.95) !important;
-    --bs-table-color: var(--gold-light) !important;
-}
-
 .border {
     border-color: var(--gold-border) !important;
-}
-
-.border-bottom {
-    border-bottom-color: var(--gold-border) !important;
-}
-
-.border-top {
-    border-top-color: var(--gold-border) !important;
 }
 
 .text-dark {
@@ -654,72 +916,5 @@ nav[aria-label="صفحه‌بندی"] a:hover {
 }
 
 .text-primary {
-    color: var(--gold-light) !important;
-}
-
-.text-info-emphasis {
-    color: var(--accent-cyan) !important;
-}
-
-.border-primary {
-    border-color: rgba(212, 175, 55, 0.4) !important;
-}
-
-.border-secondary {
-    border-color: rgba(255, 255, 255, 0.12) !important;
-}
-
-.border-info {
-    border-color: rgba(6, 182, 212, 0.35) !important;
-}
-
-.border-success {
-    border-color: rgba(16, 185, 129, 0.4) !important;
-}
-
-.border-danger {
-    border-color: rgba(244, 63, 94, 0.4) !important;
-}
-
-.bg-success-subtle {
-    background-color: rgba(16, 185, 129, 0.12) !important;
-}
-
-.bg-danger-subtle {
-    background-color: rgba(244, 63, 94, 0.12) !important;
-}
-
-.bg-info-subtle {
-    background-color: rgba(6, 182, 212, 0.12) !important;
-}
-
-/* Jalali Datepicker Dark Customization */
-.jalali-datepicker, .ui-datepicker {
-    background: #111723 !important;
-    border: 1px solid var(--gold-border) !important;
-    border-radius: var(--radius-md) !important;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6) !important;
-    color: #f8fafc !important;
-}
-
-.ui-datepicker-header {
-    background: rgba(26, 34, 52, 0.9) !important;
-    border-bottom: 1px solid var(--gold-border) !important;
-    color: var(--gold-light) !important;
-}
-
-.ui-datepicker td a {
-    color: #cbd5e1 !important;
-    border-radius: 6px !important;
-}
-
-.ui-datepicker td a:hover {
-    background: var(--gold-primary) !important;
-    color: #0b0f17 !important;
-}
-
-.ui-datepicker-current-day a, .ui-datepicker td.ui-state-active a {
-    background: linear-gradient(135deg, #dfb76c, #b88628) !important;
-    color: #0b0f17 !important;
-    font-weight: bold !important;
+    color: var(--gold-primary) !important;
 }

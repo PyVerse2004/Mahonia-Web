@@ -1,14 +1,19 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}ورود به حساب کاربری | ماهونیا{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center py-5">
+<div class="row justify-content-center py-4 py-md-5">
     <div class="col-12 col-sm-9 col-md-6 col-lg-4">
         <div class="login-card">
+            <!-- Official Mahonia Store Logo -->
             <div class="text-center mb-3">
-                <i class="bi bi-gem brand-icon fs-1 text-gold"></i>
+                <div class="login-logo-container">
+                    <img src="{% static 'img/mahonia-logo.jpg' %}" alt="عطر ماهونیا" class="login-logo-image">
+                </div>
             </div>
+
             <h2 class="login-brand-title text-gradient-gold">ماهونیا</h2>
             <p class="login-subtitle">سامانه مدیریت و انبارداری عطر و ادکلن</p>
 
@@ -31,7 +36,7 @@
 
                 <input type="hidden" name="next" value="{{ next }}">
 
-                <button type="submit" class="btn btn-primary w-100 mt-2 py-2 fs-6">
+                <button type="submit" class="btn btn-primary w-100 mt-3 py-2 fs-6">
                     <i class="bi bi-box-arrow-in-right"></i> ورود به سامانه
                 </button>
             </form>

@@ -3,8 +3,8 @@ from django.forms import inlineformset_factory
 from django.utils import timezone
 from jalali_date import date2jalali
 from jalali_date.fields import JalaliDateField
-from jalali_date.widgets import AdminJalaliDateWidget
 
+from mahonia.widgets import JalaliDateInput
 from inventory.models import Product
 
 from .models import PurchaseInvoice, PurchaseItem, Supplier
@@ -25,7 +25,7 @@ class PurchaseInvoiceForm(forms.ModelForm):
     date = JalaliDateField(
         input_formats=["%Y-%m-%d", "%Y/%m/%d"],
         label="تاریخ فاکتور",
-        widget=AdminJalaliDateWidget(
+        widget=JalaliDateInput(
             attrs={
                 "class": "form-control",
                 "placeholder": "۱۴۰۵-۰۸-۱۲",

@@ -1,88 +1,260 @@
 {% load static %}<!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="rtl" data-theme="dark" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}ماهونیا{% endblock %}</title>
+    
+    <script>
+        (function() {
+            var savedTheme = localStorage.getItem('mahonia-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            document.documentElement.setAttribute('data-bs-theme', savedTheme);
+        })();
+    </script>
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="{% static 'css/app.css' %}?v=3.5">
+    <link rel="stylesheet" href="{% static 'css/app.css' %}?v=4.0">
     {% block head %}{% endblock %}
 </head>
-<body>
+<body class="{% if user.is_authenticated %}app-authenticated{% else %}app-guest{% endif %}">
     {% if user.is_authenticated %}
-    <nav class="navbar navbar-expand-lg navbar-luxury">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="{% url 'dashboard' %}">
-                <i class="bi bi-gem brand-icon"></i>
-                <span class="text-gradient-gold">ماهونیا</span>
+    <!-- Right Sidebar Navigation (RTL) -->
+    <aside class="app-sidebar" id="appSidebar">
+        <!-- Sidebar Brand / Logo -->
+        <div class="sidebar-header">
+            <a href="{% url 'dashboard' %}" class="sidebar-brand-box text-decoration-none">
+                <img src="{% static 'img/mahonia-logo.jpg' %}" alt="لوگوی عطر ماهونیا" class="sidebar-logo-img">
+                <div class="sidebar-brand-text">
+                    <span class="sidebar-brand-title text-gradient-gold">ماهونیا</span>
+                    <span class="sidebar-brand-desc">بوتیک تخصصی عطر</span>
+                </div>
             </a>
-            <button class="navbar-toggler border-0 text-gold" type="button" data-bs-toggle="collapse" data-bs-target="#mahoniaNavbar" aria-controls="mahoniaNavbar" aria-expanded="false" aria-label="منو">
-                <i class="bi bi-list fs-2 text-gold"></i>
-            </button>
-            <div class="collapse navbar-collapse" id="mahoniaNavbar">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-1">
-                    {% if perms.inventory.view_product %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'inventory:product_list' %}">کالا و انبار</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'inventory:stock_movement_list' %}">تاریخچه انبار</a>
-                    </li>
-                    {% endif %}
-                    {% if is_manager and perms.purchases.view_purchaseinvoice %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'purchases:invoice_list' %}">فاکتورهای خرید</a>
-                    </li>
-                    {% endif %}
-                    {% if perms.sales_invoice.view_sale %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'sales_invoice:sale_list' %}">فاکتور فروش</a>
-                    </li>
-                    {% endif %}
-                    {% if is_manager %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'profit_loss:report' %}">سود و زیان</a>
-                    </li>
-                    {% endif %}
-                    {% if perms.persons.view_person %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'persons:person_list' %}">اشخاص</a>
-                    </li>
-                    {% endif %}
-                    {% if is_manager and perms.purchases.view_supplier %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'purchases:supplier_list' %}">تامین‌کنندگان</a>
-                    </li>
-                    {% endif %}
-                </ul>
-                <div class="d-flex align-items-center gap-3 pt-2 pt-lg-0">
+            <button type="button" class="btn-close btn-close-white d-lg-none" id="sidebarCloseBtn" aria-label="بستن منو"></button>
+        </div>
+
+        <!-- Sidebar User Card -->
+        <div class="sidebar-user-box">
+            <div class="sidebar-user-avatar">
+                <i class="bi bi-person-fill"></i>
+            </div>
+            <div class="sidebar-user-info">
+                <div class="sidebar-user-name">{{ user.get_username }}</div>
+                <div class="sidebar-user-role">
                     <span class="user-role-badge {% if is_manager %}role-manager{% else %}role-seller{% endif %}">
                         <i class="bi {% if is_manager %}bi-shield-check{% else %}bi-person{% endif %}"></i>
-                        {{ user.get_username }} ({{ active_role_display }})
+                        {{ active_role_display }}
                     </span>
-                    <form method="post" action="{% url 'logout' %}" class="d-inline mb-0">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-sm btn-outline-secondary">خروج</button>
-                    </form>
                 </div>
             </div>
         </div>
-    </nav>
+
+        <!-- Sidebar Navigation Menu -->
+        <div class="sidebar-nav-container">
+            <ul class="sidebar-nav">
+                <li class="sidebar-nav-heading">منوی اصلی</li>
+                <li class="sidebar-nav-item">
+                    <a class="sidebar-nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">
+                        <i class="bi bi-grid-1x2-fill sidebar-icon"></i>
+                        <span>داشبورد</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-nav-heading">فروش و انبارداری</li>
+                {% if perms.sales_invoice.view_sale %}
+                <li class="sidebar-nav-item">
+                    <a class="sidebar-nav-link {% if request.resolver_match.app_name == 'sales_invoice' %}active{% endif %}" href="{% url 'sales_invoice:sale_list' %}">
+                        <i class="bi bi-receipt-cutoff sidebar-icon"></i>
+                        <span>فاکتور فروش</span>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% if perms.inventory.view_product %}
+                <li class="sidebar-nav-item">
+                    <a class="sidebar-nav-link {% if request.resolver_match.app_name == 'inventory' and request.resolver_match.url_name == 'product_list' %}active{% endif %}" href="{% url 'inventory:product_list' %}">
+                        <i class="bi bi-box-seam-fill sidebar-icon"></i>
+                        <span>کالا و انبار</span>
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a class="sidebar-nav-link {% if request.resolver_match.app_name == 'inventory' and request.resolver_match.url_name == 'stock_movement_list' %}active{% endif %}" href="{% url 'inventory:stock_movement_list' %}">
+                        <i class="bi bi-clock-history sidebar-icon"></i>
+                        <span>تاریخچه انبار</span>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% if perms.persons.view_person %}
+                <li class="sidebar-nav-item">
+                    <a class="sidebar-nav-link {% if request.resolver_match.app_name == 'persons' %}active{% endif %}" href="{% url 'persons:person_list' %}">
+                        <i class="bi bi-people-fill sidebar-icon"></i>
+                        <span>اشخاص</span>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% if is_manager %}
+                <li class="sidebar-nav-heading">امور مدیریت و مالی</li>
+                {% if perms.purchases.view_purchaseinvoice %}
+                <li class="sidebar-nav-item">
+                    <a class="sidebar-nav-link {% if request.resolver_match.app_name == 'purchases' and request.resolver_match.url_name == 'invoice_list' %}active{% endif %}" href="{% url 'purchases:invoice_list' %}">
+                        <i class="bi bi-cart-check-fill sidebar-icon"></i>
+                        <span>فاکتورهای خرید</span>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% if perms.purchases.view_supplier %}
+                <li class="sidebar-nav-item">
+                    <a class="sidebar-nav-link {% if request.resolver_match.app_name == 'purchases' and request.resolver_match.url_name == 'supplier_list' %}active{% endif %}" href="{% url 'purchases:supplier_list' %}">
+                        <i class="bi bi-truck sidebar-icon"></i>
+                        <span>تامین‌کنندگان</span>
+                    </a>
+                </li>
+                {% endif %}
+
+                <li class="sidebar-nav-item">
+                    <a class="sidebar-nav-link {% if request.resolver_match.app_name == 'profit_loss' %}active{% endif %}" href="{% url 'profit_loss:report' %}">
+                        <i class="bi bi-graph-up-arrow sidebar-icon"></i>
+                        <span>سود و زیان</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+
+        <!-- Sidebar Footer Action -->
+        <div class="sidebar-footer">
+            <form method="post" action="{% url 'logout' %}" class="w-100 m-0">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-danger w-100 d-flex align-items-center justify-content-center gap-2">
+                    <i class="bi bi-box-arrow-left"></i>
+                    <span>خروج از حساب</span>
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- Mobile Sidebar Backdrop -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
     {% endif %}
 
-    <main class="container py-4">
-        {% for message in messages %}
-            <div class="alert alert-{% if message.level_tag == 'error' %}danger{% else %}{{ message.level_tag|default:'info' }}{% endif %} alert-dismissible" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="بستن"></button>
+    <!-- Main Layout Container -->
+    <div class="{% if user.is_authenticated %}app-main-layout{% else %}guest-layout-wrapper{% endif %}">
+        {% if user.is_authenticated %}
+        <!-- Top App Header -->
+        <header class="app-topbar">
+            <div class="d-flex align-items-center gap-3">
+                <button class="btn btn-icon d-lg-none" type="button" id="sidebarToggleBtn" aria-label="منو">
+                    <i class="bi bi-list fs-3 text-gold"></i>
+                </button>
+                <div class="topbar-brand-title d-flex align-items-center gap-2">
+                    <span class="fw-bold d-none d-sm-inline text-gradient-gold">ماهونیا</span>
+                    <span class="text-muted small d-none d-md-inline">| سامانه مدیریت عطر و ادکلن</span>
+                </div>
             </div>
-        {% endfor %}
 
-        {% block content %}{% endblock %}
-    </main>
+            <div class="d-flex align-items-center gap-2 gap-sm-3">
+                <!-- Theme Toggle Button -->
+                <button type="button" class="btn btn-sm btn-outline-secondary theme-toggle-btn" id="themeToggleBtn" aria-label="تغییر تم" title="تغییر حالت تم (روشن / تاریک)">
+                    <i class="bi bi-moon-stars-fill theme-icon-dark"></i>
+                    <i class="bi bi-sun-fill theme-icon-light d-none text-warning"></i>
+                    <span class="theme-text d-none d-sm-inline ms-1">حالت تیره</span>
+                </button>
+
+                <span class="user-role-badge {% if is_manager %}role-manager{% else %}role-seller{% endif %} d-none d-sm-inline-flex">
+                    <i class="bi {% if is_manager %}bi-shield-check{% else %}bi-person{% endif %}"></i>
+                    {{ user.get_username }} ({{ active_role_display }})
+                </span>
+
+                <form method="post" action="{% url 'logout' %}" class="d-inline mb-0">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-secondary">خروج</button>
+                </form>
+            </div>
+        </header>
+        {% else %}
+        <!-- Guest Top Header with Theme Switcher -->
+        <div class="guest-top-bar container d-flex justify-content-end py-3">
+            <button type="button" class="btn btn-sm btn-outline-secondary theme-toggle-btn" id="guestThemeToggleBtn" aria-label="تغییر تم" title="تغییر حالت تم (روشن / تاریک)">
+                <i class="bi bi-moon-stars-fill theme-icon-dark"></i>
+                <i class="bi bi-sun-fill theme-icon-light d-none text-warning"></i>
+                <span class="theme-text d-none d-sm-inline ms-1">حالت تیره</span>
+            </button>
+        </div>
+        {% endif %}
+
+        <!-- Content Area -->
+        <main class="{% if user.is_authenticated %}app-main-content container-fluid px-3 px-md-4 py-4{% else %}container py-3{% endif %}">
+            {% for message in messages %}
+                <div class="alert alert-{% if message.level_tag == 'error' %}danger{% else %}{{ message.level_tag|default:'info' }}{% endif %} alert-dismissible" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="بستن"></button>
+                </div>
+            {% endfor %}
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Theme toggle logic
+            function updateThemeUI(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                document.documentElement.setAttribute('data-bs-theme', theme);
+                
+                var toggleBtns = document.querySelectorAll('.theme-toggle-btn');
+                toggleBtns.forEach(function(btn) {
+                    var darkIcon = btn.querySelector('.theme-icon-dark');
+                    var lightIcon = btn.querySelector('.theme-icon-light');
+                    var text = btn.querySelector('.theme-text');
+                    
+                    if (theme === 'light') {
+                        if (darkIcon) darkIcon.classList.add('d-none');
+                        if (lightIcon) lightIcon.classList.remove('d-none');
+                        if (text) text.textContent = 'حالت روشن';
+                    } else {
+                        if (darkIcon) darkIcon.classList.remove('d-none');
+                        if (lightIcon) lightIcon.classList.add('d-none');
+                        if (text) text.textContent = 'حالت تیره';
+                    }
+                });
+            }
+
+            var currentTheme = localStorage.getItem('mahonia-theme') || 'dark';
+            updateThemeUI(currentTheme);
+
+            document.querySelectorAll('.theme-toggle-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var activeTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+                    var newTheme = activeTheme === 'dark' ? 'light' : 'dark';
+                    localStorage.setItem('mahonia-theme', newTheme);
+                    updateThemeUI(newTheme);
+                });
+            });
+
+            // Mobile sidebar toggle
+            var sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
+            var sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
+            var backdrop = document.getElementById('sidebarBackdrop');
+
+            function toggleSidebar() {
+                document.body.classList.toggle('sidebar-open');
+            }
+
+            function closeSidebar() {
+                document.body.classList.remove('sidebar-open');
+            }
+
+            if (sidebarToggleBtn) sidebarToggleBtn.addEventListener('click', toggleSidebar);
+            if (sidebarCloseBtn) sidebarCloseBtn.addEventListener('click', closeSidebar);
+            if (backdrop) backdrop.addEventListener('click', closeSidebar);
+        });
+    </script>
 </body>
 </html>

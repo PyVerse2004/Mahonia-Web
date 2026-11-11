@@ -2,8 +2,8 @@ from django import forms
 from django.utils import timezone
 from jalali_date import date2jalali
 from jalali_date.fields import JalaliDateField
-from jalali_date.widgets import AdminJalaliDateWidget
 
+from mahonia.widgets import JalaliDateInput
 from .models import Product
 
 
@@ -20,7 +20,7 @@ class StockMovementFilterForm(forms.Form):
         required=False,
         label="تاریخ",
         error_messages={"invalid": "تاریخ را به شکل سال/ماه/روز شمسی وارد کنید."},
-        widget=AdminJalaliDateWidget(
+        widget=JalaliDateInput(
             attrs={
                 "class": "form-control",
                 "placeholder": "۱۴۰۵-۰۸-۱۲",
