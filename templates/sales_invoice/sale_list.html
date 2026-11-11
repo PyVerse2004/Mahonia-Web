@@ -73,15 +73,21 @@
                 </td>
                 <td class="text-nowrap">
                     {% if perms.sales_invoice.change_sale %}
-                    <a href="{% url 'sales_invoice:sale_update' sale.pk %}" class="btn btn-sm btn-warning">ویرایش</a>
+                    <a href="{% url 'sales_invoice:sale_update' sale.pk %}" class="btn btn-sm btn-action-edit">
+                        <i class="bi bi-pencil-square"></i> ویرایش
+                    </a>
                     {% endif %}
                     {% if perms.sales_invoice.delete_sale %}
-                    <form method="post" action="{% url 'sales_invoice:sale_toggle_active' sale.pk %}" class="d-inline" onsubmit="return confirm('آیا از {% if sale.is_active %}غیرفعال‌کردن{% else %}فعال‌کردن{% endif %} این فاکتور اطمینان دارید؟');">
+                    <form method="post" action="{% url 'sales_invoice:sale_toggle_active' sale.pk %}" class="d-inline sale-toggle-form" onsubmit="return confirm('آیا از {% if sale.is_active %}غیرفعال‌کردن{% else %}فعال‌کردن{% endif %} این فاکتور اطمینان دارید؟');">
                         {% csrf_token %}
                         {% if sale.is_active %}
-                        <button type="submit" class="btn btn-sm btn-outline-danger">غیر فعال کردن</button>
+                        <button type="submit" class="btn btn-sm btn-action-deactivate">
+                            <i class="bi bi-pause-circle"></i> غیر فعال کردن
+                        </button>
                         {% else %}
-                        <button type="submit" class="btn btn-sm btn-outline-success">فعال کردن</button>
+                        <button type="submit" class="btn btn-sm btn-action-activate">
+                            <i class="bi bi-play-circle"></i> فعال کردن
+                        </button>
                         {% endif %}
                     </form>
                     {% endif %}

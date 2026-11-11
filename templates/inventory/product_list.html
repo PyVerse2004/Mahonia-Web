@@ -92,12 +92,12 @@
             <span class="visually-hidden"><th>عملیات</th></span>
             <div class="d-flex gap-2 w-100">
                 {% if perms.inventory.change_product %}
-                <a href="{% url 'inventory:product_update' product.pk %}" class="btn btn-sm btn-outline-warning flex-fill">
+                <a href="{% url 'inventory:product_update' product.pk %}" class="btn btn-sm btn-action-edit flex-fill">
                     <i class="bi bi-pencil-square"></i> ویرایش
                 </a>
                 {% endif %}
                 {% if perms.inventory.delete_product %}
-                <a href="{% url 'inventory:product_delete' product.pk %}" class="btn btn-sm btn-outline-danger">
+                <a href="{% url 'inventory:product_delete' product.pk %}" class="btn btn-sm btn-action-delete">
                     <i class="bi bi-trash3"></i> حذف
                 </a>
                 {% endif %}

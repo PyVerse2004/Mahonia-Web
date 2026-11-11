@@ -25,7 +25,9 @@
                 <td>{{ supplier.name }}</td>
                 <td>
                     {% if perms.purchases.change_supplier %}
-                    <a href="{% url 'purchases:supplier_update' supplier.pk %}" class="btn btn-sm btn-warning">ویرایش</a>
+                    <a href="{% url 'purchases:supplier_update' supplier.pk %}" class="btn btn-sm btn-action-edit">
+                        <i class="bi bi-pencil-square"></i> ویرایش
+                    </a>
                     {% endif %}
                 </td>
             </tr>

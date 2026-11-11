@@ -35,10 +35,14 @@
                 <td>{{ invoice.total_amount|intcomma:False }}</td>
                 <td>
                     {% if perms.purchases.change_purchaseinvoice %}
-                    <a href="{% url 'purchases:invoice_update' invoice.pk %}" class="btn btn-sm btn-warning">ویرایش</a>
+                    <a href="{% url 'purchases:invoice_update' invoice.pk %}" class="btn btn-sm btn-action-edit">
+                        <i class="bi bi-pencil-square"></i> ویرایش
+                    </a>
                     {% endif %}
                     {% if perms.purchases.delete_purchaseinvoice %}
-                    <a href="{% url 'purchases:invoice_delete' invoice.pk %}" class="btn btn-sm btn-danger">حذف</a>
+                    <a href="{% url 'purchases:invoice_delete' invoice.pk %}" class="btn btn-sm btn-action-delete">
+                        <i class="bi bi-trash3"></i> حذف
+                    </a>
                     {% endif %}
                 </td>
             </tr>

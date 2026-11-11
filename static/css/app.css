@@ -682,16 +682,111 @@ p.date > input {
     color: #fda4af !important;
 }
 
-[data-theme="light"] .btn-outline-danger {
-    color: #e11d48 !important;
-    border-color: rgba(225, 29, 72, 0.35) !important;
+/* --- Themed Action Buttons (Edit, Delete, Deactivate, Activate, Settle) --- */
+.btn-action-edit, .btn-warning, .btn-outline-warning {
+    background: rgba(212, 175, 55, 0.12) !important;
+    border: 1px solid var(--gold-border) !important;
+    color: var(--gold-light) !important;
+    backdrop-filter: blur(4px);
+    transition: var(--transition-smooth);
 }
 
-.btn-outline-danger:hover {
-    background: #e11d48 !important;
-    border-color: #e11d48 !important;
+.btn-action-edit:hover, .btn-action-edit:focus,
+.btn-warning:hover, .btn-warning:focus,
+.btn-outline-warning:hover, .btn-outline-warning:focus {
+    background: linear-gradient(135deg, #dfb76c, #b88628) !important;
+    border-color: var(--gold-light) !important;
+    color: #070b13 !important;
+    box-shadow: 0 4px 14px var(--gold-glow);
+    transform: translateY(-1px);
+}
+
+[data-theme="light"] .btn-action-edit,
+[data-theme="light"] .btn-warning,
+[data-theme="light"] .btn-outline-warning {
+    background: rgba(184, 134, 11, 0.08) !important;
+    border-color: rgba(184, 134, 11, 0.3) !important;
+    color: #8f6707 !important;
+}
+
+[data-theme="light"] .btn-action-edit:hover,
+[data-theme="light"] .btn-warning:hover,
+[data-theme="light"] .btn-outline-warning:hover {
+    background: linear-gradient(135deg, #b8860b, #9a6f08) !important;
+    border-color: #785404 !important;
     color: #ffffff !important;
-    box-shadow: 0 4px 14px rgba(225, 29, 72, 0.3);
+}
+
+.btn-action-delete, .btn-action-deactivate, .btn-danger, .btn-outline-danger {
+    background: rgba(244, 63, 94, 0.12) !important;
+    border: 1px solid rgba(244, 63, 94, 0.35) !important;
+    color: #fda4af !important;
+    backdrop-filter: blur(4px);
+    transition: var(--transition-smooth);
+}
+
+.btn-action-delete:hover, .btn-action-delete:focus,
+.btn-action-deactivate:hover, .btn-action-deactivate:focus,
+.btn-danger:hover, .btn-danger:focus,
+.btn-outline-danger:hover, .btn-outline-danger:focus {
+    background: linear-gradient(135deg, #f43f5e, #be123c) !important;
+    border-color: #fb7185 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(244, 63, 94, 0.35);
+    transform: translateY(-1px);
+}
+
+[data-theme="light"] .btn-action-delete,
+[data-theme="light"] .btn-action-deactivate,
+[data-theme="light"] .btn-danger,
+[data-theme="light"] .btn-outline-danger {
+    background: rgba(225, 29, 72, 0.08) !important;
+    border-color: rgba(225, 29, 72, 0.35) !important;
+    color: #e11d48 !important;
+}
+
+[data-theme="light"] .btn-action-delete:hover,
+[data-theme="light"] .btn-action-deactivate:hover,
+[data-theme="light"] .btn-danger:hover,
+[data-theme="light"] .btn-outline-danger:hover {
+    background: linear-gradient(135deg, #e11d48, #be123c) !important;
+    color: #ffffff !important;
+}
+
+.btn-action-activate, .btn-action-success, .btn-success, .btn-outline-success {
+    background: rgba(16, 185, 129, 0.12) !important;
+    border: 1px solid rgba(16, 185, 129, 0.35) !important;
+    color: #6ee7b7 !important;
+    backdrop-filter: blur(4px);
+    transition: var(--transition-smooth);
+}
+
+.btn-action-activate:hover, .btn-action-activate:focus,
+.btn-action-success:hover, .btn-action-success:focus,
+.btn-success:hover, .btn-success:focus,
+.btn-outline-success:hover, .btn-outline-success:focus {
+    background: linear-gradient(135deg, #10b981, #047857) !important;
+    border-color: #34d399 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+    transform: translateY(-1px);
+}
+
+[data-theme="light"] .btn-action-activate,
+[data-theme="light"] .btn-action-success,
+[data-theme="light"] .btn-success,
+[data-theme="light"] .btn-outline-success {
+    background: rgba(5, 150, 105, 0.08) !important;
+    border-color: rgba(5, 150, 105, 0.35) !important;
+    color: #047857 !important;
+}
+
+[data-theme="light"] .btn-action-activate:hover,
+[data-theme="light"] .btn-action-success:hover,
+[data-theme="light"] .btn-success:hover,
+[data-theme="light"] .btn-outline-success:hover {
+    background: linear-gradient(135deg, #059669, #047857) !important;
+    color: #ffffff !important;
 }
 
 /* --------------------------------------------------------------------------
