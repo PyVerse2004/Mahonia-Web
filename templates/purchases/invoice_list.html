@@ -56,15 +56,23 @@
 </div>
 
 {% if is_paginated %}
-<nav class="d-flex justify-content-center align-items-center gap-3 mt-3" aria-label="صفحه‌بندی">
+<nav class="mahonia-pagination" aria-label="صفحه‌بندی">
     {% if page_obj.has_previous %}
-        <a href="?{% url_replace page=page_obj.previous_page_number %}">صفحه قبل</a>
+        <a href="?{% url_replace page=page_obj.previous_page_number %}" class="pagination-btn">
+            <i class="bi bi-chevron-right"></i>
+            <span>صفحه قبل</span>
+        </a>
     {% endif %}
 
-    <span>صفحه {{ page_obj.number }} از {{ page_obj.paginator.num_pages }}</span>
+    <span class="pagination-info">
+        صفحه <span class="current-page">{{ page_obj.number }}</span> از <span>{{ page_obj.paginator.num_pages }}</span>
+    </span>
 
     {% if page_obj.has_next %}
-        <a href="?{% url_replace page=page_obj.next_page_number %}">صفحه بعد</a>
+        <a href="?{% url_replace page=page_obj.next_page_number %}" class="pagination-btn">
+            <span>صفحه بعد</span>
+            <i class="bi bi-chevron-left"></i>
+        </a>
     {% endif %}
 </nav>
 {% endif %}

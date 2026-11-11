@@ -1496,3 +1496,86 @@ p.date > input {
     gap: 0.75rem;
     background: var(--bg-surface);
 }
+
+/* --------------------------------------------------------------------------
+   16. Mahonia Luxury Pagination Component
+   -------------------------------------------------------------------------- */
+.mahonia-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    margin-top: 2rem;
+    margin-bottom: 1.5rem;
+    padding: 0.55rem 1.15rem;
+    background: var(--bg-card);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--gold-border);
+    border-radius: var(--radius-xl);
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: var(--shadow-card);
+}
+
+.pagination-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    height: 36px;
+    padding: 0 0.95rem;
+    border-radius: var(--radius-md);
+    background: var(--bg-surface);
+    border: 1px solid var(--gold-border);
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition-fast);
+}
+
+.pagination-btn:hover {
+    color: var(--gold-light);
+    border-color: var(--gold-primary);
+    background: var(--bg-surface-elevated);
+    box-shadow: 0 0 12px var(--gold-glow);
+    transform: translateY(-1px);
+}
+
+.pagination-info {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    padding: 0 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.pagination-info .current-page {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.25), rgba(170, 124, 17, 0.15));
+    border: 1px solid var(--gold-border);
+    color: var(--gold-light);
+    font-weight: 700;
+    padding: 0 6px;
+}
+
+[data-theme="light"] .pagination-info .current-page {
+    color: #8f6707;
+    background: rgba(184, 134, 11, 0.12);
+    border-color: rgba(184, 134, 11, 0.35);
+}
+
+.pagination-btn.disabled, .pagination-btn:disabled {
+    opacity: 0.4;
+    pointer-events: none;
+    border-color: var(--border-subtle);
+}
