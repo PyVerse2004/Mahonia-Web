@@ -1054,3 +1054,204 @@ p.date > input {
 .text-primary {
     color: var(--gold-primary) !important;
 }
+
+/* --------------------------------------------------------------------------
+   14. Product Catalog Grid & Image Upload Styles
+   -------------------------------------------------------------------------- */
+.product-catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.product-grid-card {
+    background: var(--bg-card);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--gold-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-card);
+    transition: var(--transition-smooth);
+    position: relative;
+}
+
+.product-grid-card:hover {
+    border-color: var(--gold-primary);
+    transform: translateY(-4px);
+    box-shadow: 0 16px 35px -8px var(--gold-glow);
+}
+
+.product-card-image-box {
+    position: relative;
+    width: 100%;
+    padding-top: 75%; /* 4:3 Aspect Ratio */
+    background: var(--bg-surface-elevated);
+    overflow: hidden;
+    border-bottom: 1px solid var(--gold-border);
+}
+
+.product-card-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.product-grid-card:hover .product-card-img {
+    transform: scale(1.05);
+}
+
+.product-card-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 50% 40%, rgba(212, 175, 55, 0.15) 0%, rgba(10, 16, 27, 0.9) 80%);
+    color: var(--gold-light);
+}
+
+[data-theme="light"] .product-card-placeholder {
+    background: radial-gradient(circle at 50% 40%, rgba(184, 134, 11, 0.12) 0%, rgba(244, 246, 250, 0.95) 80%);
+    color: var(--gold-primary);
+}
+
+.product-placeholder-icon {
+    font-size: 2.8rem;
+    filter: drop-shadow(0 0 10px var(--gold-glow));
+    margin-bottom: 0.35rem;
+}
+
+.product-placeholder-brand {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    opacity: 0.75;
+}
+
+.product-stock-badge-wrapper {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 2;
+}
+
+.product-card-body {
+    padding: 1.25rem 1.15rem 1rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.85rem;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.product-card-pricing {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.product-sale-price-box {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.product-price-label {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+.product-price-value {
+    font-size: 1.15rem;
+    font-weight: 800;
+}
+
+.product-purchase-price-box {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding-top: 0.35rem;
+    border-top: 1px dashed var(--border-subtle);
+}
+
+.product-purchase-label {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+.product-purchase-value {
+    font-size: 0.85rem;
+}
+
+.product-card-footer {
+    padding: 0.85rem 1.15rem;
+    border-top: 1px solid var(--gold-border);
+    background: var(--bg-surface);
+}
+
+/* Image Upload Preview Box (Product Form) */
+.product-image-upload-wrapper {
+    display: inline-block;
+    text-align: center;
+}
+
+.product-image-preview-box {
+    width: 180px;
+    height: 180px;
+    margin: 0 auto;
+    border-radius: var(--radius-lg);
+    border: 2px dashed var(--gold-border);
+    background: var(--bg-surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    box-shadow: var(--shadow-card);
+    transition: var(--transition-smooth);
+}
+
+.product-image-preview-box:hover {
+    border-color: var(--gold-primary);
+    box-shadow: 0 0 20px var(--gold-glow);
+}
+
+.product-upload-preview-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.product-upload-placeholder {
+    padding: 1rem;
+    color: var(--text-muted);
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}

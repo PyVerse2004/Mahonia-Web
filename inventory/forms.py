@@ -40,11 +40,14 @@ class StockMovementFilterForm(forms.Form):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ["name", "stock_quantity", "purchase_price", "sale_price"]
+        fields = ["name", "image", "stock_quantity", "purchase_price", "sale_price"]
 
         widgets = {
             "name": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "نام محصول"}
+            ),
+            "image": forms.FileInput(
+                attrs={"class": "form-control", "accept": "image/*", "id": "id_image"}
             ),
             "stock_quantity": forms.NumberInput(
                 attrs={"class": "form-control", "min": 0}

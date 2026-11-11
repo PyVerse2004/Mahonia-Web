@@ -5,3 +5,4 @@ tzdata==2026.5; sys_platform == "win32"
 django-jalali-date==2.0.0
 jdatetime==5.2.0
 setuptools==84.2.1
+Pillow>=10.0.0

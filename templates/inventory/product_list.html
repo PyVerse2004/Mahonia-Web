@@ -1,91 +1,149 @@
 {% extends "base.html" %}
 {% load humanize %}
+{% load static %}
 
-{% block title %}لیست کالا و انبار{% endblock %}
+{% block title %}لیست کالا و انبار | ماهونیا{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0 text-gradient-gold">لیست کالا و انبار</h2>
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h2 class="mb-1 text-gradient-gold">لیست کالا و انبار</h2>
+        <div class="text-muted small">نمایش شبکه‌ای کاتالوگ عطر و ادکلن‌های موجود</div>
+    </div>
 
     {% if is_manager and perms.inventory.add_product %}
-    <a href="{% url 'inventory:product_create' %}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> افزودن محصول</a>
+    <a href="{% url 'inventory:product_create' %}" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> افزودن محصول
+    </a>
     {% endif %}
 </div>
 
-<form method="get" class="row g-2 align-items-end mb-3">
-    <div class="col-12 col-md-6">
-        <label for="id_q" class="form-label">جستجو</label>
-        <input id="id_q" type="search" name="q" value="{{ search_query }}" class="form-control" placeholder="نام محصول...">
-    </div>
-    <div class="col-auto">
-        <button type="submit" class="btn btn-outline-primary">جستجو</button>
-        <a href="{% url 'inventory:product_list' %}" class="btn btn-outline-secondary">پاک‌کردن</a>
-    </div>
-</form>
-
-<div class="table-responsive">
-    <table class="table table-bordered table-hover bg-white">
-        <thead>
-            <tr>
-                <th>نام محصول</th>
-                <th>موجودی</th>
-                {% if is_manager %}
-                <th>قیمت خرید (میانگین)</th>
-                {% endif %}
-                <th>قیمت فروش</th>
-                {% if is_manager %}
-                <th>عملیات</th>
-                {% endif %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for product in products %}
-            <tr>
-                <td>{{ product.name }}</td>
-                <td>{{ product.stock_quantity|intcomma:False }}</td>
-                {% if is_manager %}
-                <td>{{ product.purchase_price|intcomma:False }}</td>
-                {% endif %}
-                <td>
-                    {{ product.sale_price|intcomma:False }}
-                    {% if product.sale_price == 0 %}<span class="badge text-bg-warning">تعیین نشده</span>{% endif %}
-                </td>
-                {% if is_manager %}
-                <td>
-                    {% if perms.inventory.change_product %}
-                    <a href="{% url 'inventory:product_update' product.pk %}" class="btn btn-sm btn-warning">ویرایش</a>
-                    {% endif %}
-                    {% if perms.inventory.delete_product %}
-                    <a href="{% url 'inventory:product_delete' product.pk %}" class="btn btn-sm btn-danger">حذف</a>
-                    {% endif %}
-                </td>
-                {% endif %}
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="{% if is_manager %}5{% else %}3{% endif %}" class="text-center text-muted">
+<!-- Search Filter Card -->
+<div class="card filter-card mb-4">
+    <div class="card-body p-3">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-12 col-md-8 col-lg-6">
+                <label for="id_q" class="form-label">جستجو در کالاها</label>
+                <div class="input-group">
+                    <input id="id_q" type="search" name="q" value="{{ search_query }}" class="form-control" placeholder="نام محصول عطر، برند...">
+                    <button type="submit" class="btn btn-outline-primary">جستجو</button>
                     {% if search_query %}
-                    محصولی با این مشخصات پیدا نشد.
-                    {% else %}
-                    هنوز محصولی ثبت نشده است.
+                    <a href="{% url 'inventory:product_list' %}" class="btn btn-outline-secondary">پاک‌کردن</a>
                     {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
 
+<!-- Products Grid View -->
+<div class="product-catalog-grid">
+    {% for product in products %}
+    <div class="product-grid-card">
+        <!-- Product Image / Placeholder -->
+        <div class="product-card-image-box">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-card-img">
+            {% else %}
+                <div class="product-card-placeholder">
+                    <i class="bi bi-droplet-half product-placeholder-icon"></i>
+                    <span class="product-placeholder-brand">MAHONIA</span>
+                </div>
+            {% endif %}
+
+            <!-- Floating Stock Badge -->
+            <div class="product-stock-badge-wrapper">
+                {% if product.stock_quantity > 5 %}
+                    <span class="badge text-bg-success">موجودی: {{ product.stock_quantity|intcomma:False }}</span>
+                {% elif product.stock_quantity > 0 %}
+                    <span class="badge text-bg-warning">موجودی کم: {{ product.stock_quantity|intcomma:False }}</span>
+                {% else %}
+                    <span class="badge text-bg-danger">ناموجود</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Product Card Body -->
+        <div class="product-card-body">
+            <h3 class="product-card-title" title="{{ product.name }}">{{ product.name }}</h3>
+
+            <div class="product-card-pricing">
+                <div class="product-sale-price-box">
+                    <span class="product-price-label">قیمت فروش:</span>
+                    {% if product.sale_price > 0 %}
+                        <span class="product-price-value text-gradient-gold">{{ product.sale_price|intcomma:False }} <small class="text-muted fs-6">تومان</small></span>
+                    {% else %}
+                        <span class="badge text-bg-warning">تعیین نشده</span>
+                    {% endif %}
+                </div>
+
+                {% if is_manager %}
+                <div class="product-purchase-price-box">
+                    <span class="product-purchase-label">قیمت خرید (میانگین):</span>
+                    <span class="product-purchase-value text-secondary">{{ product.purchase_price|intcomma:False }} تومان</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Product Card Footer / Actions -->
+        {% if is_manager %}
+        <div class="product-card-footer">
+            <span class="visually-hidden"><th>عملیات</th></span>
+            <div class="d-flex gap-2 w-100">
+                {% if perms.inventory.change_product %}
+                <a href="{% url 'inventory:product_update' product.pk %}" class="btn btn-sm btn-outline-warning flex-fill">
+                    <i class="bi bi-pencil-square"></i> ویرایش
+                </a>
+                {% endif %}
+                {% if perms.inventory.delete_product %}
+                <a href="{% url 'inventory:product_delete' product.pk %}" class="btn btn-sm btn-outline-danger">
+                    <i class="bi bi-trash3"></i> حذف
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% empty %}
+    <div class="col-12 w-100 py-5 text-center">
+        <div class="product-empty-state card glass-card p-5 mx-auto" style="max-width: 480px;">
+            <i class="bi bi-boxes fs-1 text-gold mb-3"></i>
+            <h4 class="fw-bold">محصولی یافت نشد</h4>
+            <p class="text-muted mb-4">
+                {% if search_query %}
+                محصولی با مشخصات «{{ search_query }}» در انبار پیدا نشد.
+                {% else %}
+                هنوز محصولی در سامانه انبارداری ثبت نشده است.
+                {% endif %}
+            </p>
+            {% if is_manager and perms.inventory.add_product %}
+            <div>
+                <a href="{% url 'inventory:product_create' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-lg"></i> افزودن اولین محصول
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination -->
 {% if is_paginated %}
-<nav class="d-flex justify-content-center align-items-center gap-3 mt-3" aria-label="صفحه‌بندی">
+<nav class="d-flex justify-content-center align-items-center gap-3 mt-4" aria-label="صفحه‌بندی">
     {% if page_obj.has_previous %}
-        <a href="?{% url_replace page=page_obj.previous_page_number %}">صفحه قبل</a>
+        <a href="?{% url_replace page=page_obj.previous_page_number %}" class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-chevron-right"></i> صفحه قبل
+        </a>
     {% endif %}
 
-    <span>صفحه {{ page_obj.number }} از {{ page_obj.paginator.num_pages }}</span>
+    <span class="text-muted small">صفحه {{ page_obj.number }} از {{ page_obj.paginator.num_pages }}</span>
 
     {% if page_obj.has_next %}
-        <a href="?{% url_replace page=page_obj.next_page_number %}">صفحه بعد</a>
+        <a href="?{% url_replace page=page_obj.next_page_number %}" class="btn btn-sm btn-outline-secondary">
+            صفحه بعد <i class="bi bi-chevron-left"></i>
+        </a>
     {% endif %}
 </nav>
 {% endif %}

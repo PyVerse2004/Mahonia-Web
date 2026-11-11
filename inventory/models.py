@@ -7,6 +7,12 @@ from django.db.models.functions import Lower
 
 class Product(models.Model):
     name = models.CharField(max_length=200, verbose_name="نام محصول")
+    image = models.ImageField(
+        upload_to="products/%Y/%m/",
+        blank=True,
+        null=True,
+        verbose_name="تصویر محصول",
+    )
     stock_quantity = models.PositiveIntegerField(default=0, verbose_name="موجودی انبار")
     purchase_price = models.DecimalField(
         max_digits=12,

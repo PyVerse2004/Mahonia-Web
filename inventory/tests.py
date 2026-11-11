@@ -229,6 +229,40 @@ class ProductCrudTests(TestCase):
         self.assertContains(response, "قبلاً ثبت شده")
         self.assertEqual(Product.objects.count(), 1)
 
+    def test_create_product_with_image(self):
+        import io
+        from PIL import Image
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        file_obj = io.BytesIO()
+        image = Image.new("RGBA", size=(50, 50), color=(255, 0, 0, 0))
+        image.save(file_obj, "png")
+        file_obj.seek(0)
+
+        uploaded_img = SimpleUploadedFile(
+            "perfume.png", file_obj.read(), content_type="image/png"
+        )
+
+        response = self.client.post(
+            reverse("inventory:product_create"),
+            {
+                "name": "عطر مگاماره",
+                "image": uploaded_img,
+                "stock_quantity": 4,
+                "purchase_price": 1000000,
+                "sale_price": 1600000,
+            },
+        )
+        self.assertRedirects(response, reverse("inventory:product_list"))
+        created = Product.objects.get(name="عطر مگاماره")
+        self.assertTrue(bool(created.image))
+        self.assertIn("perfume", created.image.name)
+
+        # بررسی در لیست محصولات (گرید ویو)
+        list_response = self.client.get(reverse("inventory:product_list"))
+        self.assertContains(list_response, "عطر مگاماره")
+        self.assertContains(list_response, created.image.url)
+
     def test_update_changes_sale_price_but_not_stock_or_purchase_price(self):
         product = make_product(stock=5, buy=300, sale=100)
         response = self.client.post(
