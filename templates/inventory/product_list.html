@@ -53,9 +53,9 @@
 
             <!-- Floating Stock Badge -->
             <div class="product-stock-badge-wrapper">
-                {% if product.stock_quantity > 5 %}
+                {% if product.stock_quantity > 1 %}
                     <span class="badge text-bg-success">موجودی: {{ product.stock_quantity|intcomma:False }}</span>
-                {% elif product.stock_quantity > 0 %}
+                {% elif product.stock_quantity == 1 %}
                     <span class="badge text-bg-warning">موجودی کم: {{ product.stock_quantity|intcomma:False }}</span>
                 {% else %}
                     <span class="badge text-bg-danger">ناموجود</span>
