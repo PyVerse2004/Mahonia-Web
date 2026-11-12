@@ -86,6 +86,13 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         today_sales_quantity = sales_metrics["total_quantity"] or 0
         today_sales_amount = sales_metrics["total_amount"] or Decimal("0")
 
+        # 4. آخرین فروش‌ها (به همراه تصویر محصول برای نمایش در داشبورد مطابق موکاپ)
+        recent_sales = (
+            Sale.objects.filter(is_active=True)
+            .select_related("product")
+            .order_by("-date", "-id")[:6]
+        )
+
         context.update(
             {
                 "today_jalali_date": formatted_jalali_date,
@@ -96,6 +103,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
                 "today_sales_count": today_sales_count,
                 "today_sales_quantity": today_sales_quantity,
                 "today_sales_amount": today_sales_amount,
+                "recent_sales": recent_sales,
             }
         )
         return context

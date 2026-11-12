@@ -105,6 +105,49 @@ class AccountsTests(TestCase):
         self.assertContains(response, "تاریخ و ساعت امروز")
         self.assertContains(response, "4,000,000")
 
+    def test_dashboard_recent_sales_list(self):
+        """
+        داشبورد باید جدول آخرین فروش‌ها را شامل نام کالا، تصویر، تعداد، مبلغ کل و تاریخ نمایش دهد.
+        """
+        from decimal import Decimal
+        from django.utils import timezone
+        from inventory.models import Product
+        from sales_invoice.models import Sale
+
+        sync_user_role_permissions(self.user, UserProfile.ROLE_SELLER)
+
+        product = Product.objects.create(
+            name="عطر دیور ساواج",
+            stock_quantity=10,
+            sale_price=Decimal("4500000"),
+        )
+        sale = Sale.objects.create(
+            date=timezone.localdate(),
+            product=product,
+            product_name=product.name,
+            quantity=3,
+            unit_price=Decimal("4500000"),
+            purchase_unit_price=Decimal("3500000"),
+            is_active=True,
+        )
+
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("dashboard"))
+        self.assertEqual(response.status_code, 200)
+
+        # بررسی کانتکست
+        self.assertIn("recent_sales", response.context)
+        self.assertIn(sale, response.context["recent_sales"])
+
+        # بررسی رندر المان‌های کارت آخرین فروش‌ها
+        self.assertContains(response, "آخرین فروش‌ها")
+        self.assertContains(response, "مشاهده همه")
+        self.assertContains(response, f"#FS-{sale.pk:04d}")
+        self.assertContains(response, "عطر دیور ساواج")
+        self.assertContains(response, "3 عدد")
+        self.assertContains(response, "13,500,000 تومان")
+        self.assertContains(response, sale.jalali_date)
+
 
 class RoleBasedAccessControlTests(TestCase):
     def setUp(self):
