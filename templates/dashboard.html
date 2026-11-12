@@ -107,21 +107,16 @@
             <table class="table recent-sales-table align-middle mb-0">
                 <thead>
                     <tr>
-                        <th>شماره فاکتور</th>
                         <th>تصویر محصول</th>
                         <th>نام کالا</th>
                         <th>تعداد</th>
                         <th>مبلغ کل</th>
                         <th>تاریخ</th>
-                        <th>عملیات</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for sale in recent_sales %}
                     <tr>
-                        <td>
-                            <span class="sale-invoice-id">#FS-{{ sale.pk|stringformat:"04d" }}</span>
-                        </td>
                         <td>
                             <div class="recent-sale-img-box">
                                 {% if sale.product and sale.product.image %}
@@ -145,17 +140,10 @@
                         <td>
                             <span class="recent-sale-date">{{ sale.jalali_date }}</span>
                         </td>
-                        <td>
-                            {% if perms.sales_invoice.change_sale or is_manager %}
-                            <a href="{% url 'sales_invoice:sale_update' sale.pk %}" class="btn btn-sm btn-action-edit" title="ویرایش">
-                                <i class="bi bi-pencil-square"></i>
-                            </a>
-                            {% endif %}
-                        </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="7" class="text-center py-4 text-muted">
+                        <td colspan="5" class="text-center py-4 text-muted">
                             <i class="bi bi-inbox fs-3 d-block mb-2 text-gold"></i>
                             هنوز هیچ فاکتور فروشی ثبت نشده است.
                         </td>

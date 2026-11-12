@@ -142,11 +142,42 @@ class AccountsTests(TestCase):
         # بررسی رندر المان‌های کارت آخرین فروش‌ها
         self.assertContains(response, "آخرین فروش‌ها")
         self.assertContains(response, "مشاهده همه")
-        self.assertContains(response, f"#FS-{sale.pk:04d}")
         self.assertContains(response, "عطر دیور ساواج")
         self.assertContains(response, "3 عدد")
         self.assertContains(response, "13,500,000 تومان")
         self.assertContains(response, sale.jalali_date)
+
+        # عدم نمایش فیلدهای شماره فاکتور و عملیات طبق درخواست کاربر
+        self.assertNotContains(response, "<th>شماره فاکتور</th>")
+        self.assertNotContains(response, "<th>عملیات</th>")
+        self.assertNotContains(response, f"#FS-{sale.pk:04d}")
+
+    def test_dashboard_recent_sales_limit_three(self):
+        """
+        تعداد آیتم‌های آخرین فروش‌ها باید حداکثر ۳ عدد باشد.
+        """
+        from decimal import Decimal
+        from django.utils import timezone
+        from inventory.models import Product
+        from sales_invoice.models import Sale
+
+        sync_user_role_permissions(self.user, UserProfile.ROLE_SELLER)
+        product = Product.objects.create(name="عطر تست محدودیت", stock_quantity=20, sale_price=Decimal("1000000"))
+
+        for i in range(5):
+            Sale.objects.create(
+                date=timezone.localdate(),
+                product=product,
+                product_name=f"{product.name} {i}",
+                quantity=1,
+                unit_price=Decimal("1000000"),
+                purchase_unit_price=Decimal("800000"),
+                is_active=True,
+            )
+
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("dashboard"))
+        self.assertEqual(len(response.context["recent_sales"]), 3)
 
 
 class RoleBasedAccessControlTests(TestCase):

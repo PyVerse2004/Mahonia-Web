@@ -86,11 +86,11 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         today_sales_quantity = sales_metrics["total_quantity"] or 0
         today_sales_amount = sales_metrics["total_amount"] or Decimal("0")
 
-        # 4. آخرین فروش‌ها (به همراه تصویر محصول برای نمایش در داشبورد مطابق موکاپ)
+        # 4. آخرین فروش‌ها (نمایش ۳ مورد آخر مطابق نیاز کاربر)
         recent_sales = (
             Sale.objects.filter(is_active=True)
             .select_related("product")
-            .order_by("-date", "-id")[:6]
+            .order_by("-date", "-id")[:3]
         )
 
         context.update(
