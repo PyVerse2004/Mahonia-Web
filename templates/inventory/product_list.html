@@ -21,21 +21,20 @@
 <!-- Search Filter Card -->
 <div class="card filter-card mb-4">
     <div class="card-body p-3">
-        <form method="get" class="row g-2 align-items-end">
+        <form method="get" class="row g-2 align-items-end live-filter-form">
             <div class="col-12 col-md-8 col-lg-6">
                 <label for="id_q" class="form-label">جستجو در کالاها</label>
                 <div class="input-group">
-                    <input id="id_q" type="search" name="q" value="{{ search_query }}" class="form-control" placeholder="نام محصول عطر، برند...">
+                    <input id="id_q" type="search" name="q" value="{{ search_query }}" class="form-control" placeholder="نام محصول عطر، برند..." autocomplete="off">
                     <button type="submit" class="btn btn-outline-primary">جستجو</button>
-                    {% if search_query %}
-                    <a href="{% url 'inventory:product_list' %}" class="btn btn-outline-secondary">پاک‌کردن</a>
-                    {% endif %}
+                    <a href="{% url 'inventory:product_list' %}" class="btn btn-outline-secondary btn-clear-filter">پاک‌کردن</a>
                 </div>
             </div>
         </form>
     </div>
 </div>
 
+<div id="liveResultsContainer" class="live-results-wrapper">
 <!-- Products Grid View -->
 <div class="product-catalog-grid">
     {% for product in products %}
@@ -151,4 +150,5 @@
     {% endif %}
 </nav>
 {% endif %}
+</div>
 {% endblock %}

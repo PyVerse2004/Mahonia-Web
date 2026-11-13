@@ -16,7 +16,7 @@
 
 <div class="card filter-card mb-4">
     <div class="card-body p-3">
-        <form method="get" class="row g-3 align-items-end">
+        <form method="get" class="row g-3 align-items-end live-filter-form">
             <div class="col-12 col-md-4">
                 <label for="{{ filter_form.q.id_for_label }}" class="form-label">{{ filter_form.q.label }}</label>
                 {{ filter_form.q }}
@@ -37,12 +37,13 @@
             </div>
             <div class="col-12 col-md-2 d-flex gap-2">
                 <button type="submit" class="btn btn-primary flex-fill">اعمال فیلتر</button>
-                <a href="{% url 'sales_invoice:sale_list' %}" class="btn btn-outline-secondary">پاک‌کردن</a>
+                <a href="{% url 'sales_invoice:sale_list' %}" class="btn btn-outline-secondary btn-clear-filter">پاک‌کردن</a>
             </div>
         </form>
     </div>
 </div>
 
+<div id="liveResultsContainer" class="live-results-wrapper">
 <div class="table-responsive">
     <table class="table table-bordered table-hover bg-white align-middle">
         <thead>
@@ -123,6 +124,7 @@
     {% endif %}
 </nav>
 {% endif %}
+</div>
 
 <!-- Custom Ajax Confirmation Modal -->
 <div class="mahonia-modal-backdrop" id="toggleConfirmModal" aria-hidden="true">
@@ -205,11 +207,12 @@
         if (modalConfirmBtn) modalConfirmBtn.disabled = false;
     }
 
-    document.querySelectorAll(".sale-toggle-form").forEach(form => {
-        form.addEventListener("submit", function (e) {
+    document.addEventListener("submit", function (e) {
+        const form = e.target.closest(".sale-toggle-form");
+        if (form) {
             e.preventDefault();
-            openModal(this);
-        });
+            openModal(form);
+        }
     });
 
     if (modalCancelBtn) modalCancelBtn.addEventListener("click", closeModal);

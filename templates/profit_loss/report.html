@@ -7,7 +7,7 @@
 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
     <div>
         <h2 class="mb-1 text-gradient-gold">گزارش سود و زیان</h2>
-        <div class="text-muted small">
+        <div id="reportSubtitle" class="text-muted small">
             {% if selected_year_val and selected_month_name %}
                 گزارش فروش و سود برای <strong>{{ selected_month_name }} {{ selected_year_val }}</strong>
             {% elif selected_year_val %}
@@ -22,7 +22,7 @@
 </div>
 
 {# کارت‌های جمع و خلاصه در بالای لیست گزارش #}
-<div class="row g-3 mb-4">
+<div id="reportSummaryCards" class="row g-3 mb-4">
     {# جمع کل فروش #}
     <div class="col-12 col-sm-6 col-xl-3">
         <div class="card profit-stat-card shadow-sm border-primary h-100">
@@ -88,7 +88,7 @@
 {# فرم فیلتر بر اساس ماه و سال و کالا #}
 <div class="card shadow-sm mb-4">
     <div class="card-body p-3">
-        <form method="get" class="row g-2 align-items-end">
+        <form method="get" class="row g-2 align-items-end live-filter-form">
             <div class="col-12 col-sm-6 col-md-3">
                 <label for="{{ filter_form.year.id_for_label }}" class="form-label small fw-bold">{{ filter_form.year.label }} (شمسی)</label>
                 {{ filter_form.year }}
@@ -111,12 +111,13 @@
             </div>
             <div class="col-12 mt-3 d-flex gap-2">
                 <button type="submit" class="btn btn-primary">اعمال فیلتر</button>
-                <a href="{% url 'profit_loss:report' %}" class="btn btn-outline-secondary">پاک‌کردن فیلترها</a>
+                <a href="{% url 'profit_loss:report' %}" class="btn btn-outline-secondary btn-clear-filter">پاک‌کردن فیلترها</a>
             </div>
         </form>
     </div>
 </div>
 
+<div id="liveResultsContainer" class="live-results-wrapper">
 {# جدول لیست فاکتورهای فروش و سود هر فاکتور #}
 <div class="table-responsive">
     <table class="table table-bordered table-hover bg-white align-middle shadow-sm">
@@ -192,5 +193,6 @@
     {% endif %}
 </nav>
 {% endif %}
+</div>
 
 {% endblock %}

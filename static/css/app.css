@@ -2107,3 +2107,70 @@ p.date > input {
     pointer-events: none;
     border-color: var(--border-subtle);
 }
+
+/* --------------------------------------------------------------------------
+   Live Filter & Real-Time Search Styling
+   -------------------------------------------------------------------------- */
+.live-results-wrapper {
+    position: relative;
+    transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.live-results-wrapper.is-loading {
+    opacity: 0.42;
+    pointer-events: none;
+    user-select: none;
+}
+
+.live-filter-loading-bar {
+    position: absolute;
+    top: -4px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold-primary), var(--gold-light), transparent);
+    background-size: 200% 100%;
+    animation: liveFilterShimmer 1s infinite linear;
+    border-radius: 2px;
+    display: none;
+    z-index: 10;
+}
+
+.live-results-wrapper.is-loading .live-filter-loading-bar {
+    display: block;
+}
+
+@keyframes liveFilterShimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.live-search-input-wrapper {
+    position: relative;
+}
+
+.live-search-spinner {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.1rem;
+    height: 1.1rem;
+    border: 2px solid rgba(212, 175, 55, 0.25);
+    border-top-color: var(--gold-primary);
+    border-radius: 50%;
+    animation: liveSearchSpinnerRotate 0.65s linear infinite;
+    display: none;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.is-searching .live-search-spinner {
+    display: block;
+}
+
+@keyframes liveSearchSpinnerRotate {
+    0% { transform: translateY(-50%) rotate(0deg); }
+    100% { transform: translateY(-50%) rotate(360deg); }
+}
+
