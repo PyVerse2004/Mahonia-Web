@@ -41,11 +41,11 @@
                 <i class="bi bi-person-fill"></i>
             </div>
             <div class="sidebar-user-info">
-                <div class="sidebar-user-name">{{ user.get_username }}</div>
+                <div class="sidebar-user-name">{{ user.get_full_name|default:user.get_username }}</div>
                 <div class="sidebar-user-role">
-                    <span class="user-role-badge {% if is_manager %}role-manager{% else %}role-seller{% endif %}">
-                        <i class="bi {% if is_manager %}bi-shield-check{% else %}bi-person{% endif %}"></i>
-                        {{ active_role_display }}
+                    <span class="sidebar-user-role-pill {% if is_manager %}role-pill-manager{% else %}role-pill-seller{% endif %}">
+                        <i class="bi {% if is_manager %}bi-shield-check{% else %}bi-person-check{% endif %}"></i>
+                        <span>{{ active_role_display }}</span>
                     </span>
                 </div>
             </div>

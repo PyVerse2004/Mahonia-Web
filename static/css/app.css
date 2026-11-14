@@ -305,48 +305,129 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--text-muted);
 }
 
-/* Sidebar User Info */
+/* Sidebar User Info (Matching Luxury UI Mockup) */
 .sidebar-user-box {
-    padding: 1rem 1.25rem;
-    margin: 0.75rem 1rem;
-    background: var(--bg-surface);
+    padding: 0.75rem 0.95rem;
+    margin: 0.85rem 0.95rem 1rem;
+    background: linear-gradient(145deg, rgba(14, 23, 42, 0.95), rgba(7, 13, 24, 0.95));
     border: 1px solid var(--gold-border);
-    border-radius: var(--radius-md);
+    border-radius: 18px;
     display: flex;
     align-items: center;
-    gap: 0.85rem;
+    justify-content: space-between;
+    gap: 0.75rem;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+    transition: var(--transition-smooth);
+}
+
+.sidebar-user-box:hover {
+    border-color: var(--gold-border-hover);
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.45), 0 0 14px var(--gold-glow);
+    transform: translateY(-1px);
 }
 
 .sidebar-user-avatar {
-    width: 38px;
-    height: 38px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
-    background: var(--gold-glow);
-    color: var(--gold-primary);
-    border: 1px solid var(--gold-border);
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.22), rgba(170, 124, 17, 0.12));
+    border: 1.5px solid var(--gold-border);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
+    color: var(--gold-light);
+    font-size: 1.35rem;
     flex-shrink: 0;
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.15);
+    transition: var(--transition-fast);
+}
+
+.sidebar-user-box:hover .sidebar-user-avatar {
+    border-color: var(--gold-primary);
+    box-shadow: 0 0 16px var(--gold-glow);
+    color: #ffffff;
 }
 
 .sidebar-user-info {
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
     flex-grow: 1;
+    overflow: hidden;
 }
 
 .sidebar-user-name {
     font-weight: 700;
-    font-size: 0.92rem;
+    font-size: 0.95rem;
     color: var(--text-primary);
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    line-height: 1.2;
+    letter-spacing: 0.01em;
+    text-align: center;
 }
 
 .sidebar-user-role {
-    margin-top: 0.2rem;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.sidebar-user-role-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.2rem 0.95rem;
+    border-radius: 9999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1.3;
+    transition: var(--transition-fast);
+}
+
+.sidebar-user-role-pill.role-pill-manager {
+    background: rgba(212, 175, 55, 0.14);
+    border: 1.5px solid rgba(212, 175, 55, 0.65);
+    color: var(--gold-light);
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.22);
+}
+
+.sidebar-user-role-pill.role-pill-seller {
+    background: rgba(16, 185, 129, 0.14);
+    border: 1.5px solid rgba(16, 185, 129, 0.55);
+    color: #34d399;
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+}
+
+.sidebar-user-box:hover .sidebar-user-role-pill {
+    box-shadow: 0 0 16px var(--gold-glow);
+}
+
+[data-theme="light"] .sidebar-user-box {
+    background: #ffffff;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.07);
+    border-color: rgba(212, 175, 55, 0.4);
+}
+
+[data-theme="light"] .sidebar-user-name {
+    color: #0f172a;
+}
+
+[data-theme="light"] .sidebar-user-role-pill.role-pill-manager {
+    background: rgba(184, 134, 11, 0.12);
+    border-color: rgba(184, 134, 11, 0.5);
+    color: #8f6707;
+    box-shadow: 0 0 8px rgba(184, 134, 11, 0.15);
+}
+
+[data-theme="light"] .sidebar-user-role-pill.role-pill-seller {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.4);
+    color: #065f46;
 }
 
 /* Sidebar Navigation Items */
@@ -2172,121 +2253,6 @@ p.date > input {
 @keyframes liveSearchSpinnerRotate {
     0% { transform: translateY(-50%) rotate(0deg); }
     100% { transform: translateY(-50%) rotate(360deg); }
-}
-
-/* --------------------------------------------------------------------------
-   Dashboard Luxury User Profile Card (Matching Design Screenshot)
-   -------------------------------------------------------------------------- */
-.dashboard-user-profile-card {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.85rem;
-    padding: 0.55rem 1.15rem;
-    background: linear-gradient(145deg, rgba(14, 23, 42, 0.95), rgba(7, 13, 24, 0.95));
-    border: 1px solid var(--gold-border);
-    border-radius: 20px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 0.04);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    transition: var(--transition-smooth);
-}
-
-.dashboard-user-profile-card:hover {
-    border-color: var(--gold-border-hover);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 16px var(--gold-glow);
-    transform: translateY(-1px);
-}
-
-.user-profile-avatar {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.22), rgba(170, 124, 17, 0.12));
-    border: 1.5px solid var(--gold-border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--gold-light);
-    font-size: 1.35rem;
-    flex-shrink: 0;
-    box-shadow: 0 0 12px rgba(212, 175, 55, 0.15);
-    transition: var(--transition-fast);
-}
-
-.dashboard-user-profile-card:hover .user-profile-avatar {
-    border-color: var(--gold-primary);
-    box-shadow: 0 0 16px var(--gold-glow);
-    color: #ffffff;
-}
-
-.user-profile-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.25rem;
-}
-
-.user-profile-name {
-    font-size: 0.96rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    line-height: 1.2;
-    letter-spacing: 0.01em;
-}
-
-.user-profile-role-pill {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.45rem;
-    padding: 0.2rem 0.95rem;
-    border-radius: 9999px;
-    font-size: 0.82rem;
-    font-weight: 600;
-    line-height: 1.3;
-    transition: var(--transition-fast);
-}
-
-.user-profile-role-pill.role-pill-manager {
-    background: rgba(212, 175, 55, 0.14);
-    border: 1.5px solid rgba(212, 175, 55, 0.65);
-    color: var(--gold-light);
-    box-shadow: 0 0 12px rgba(212, 175, 55, 0.22);
-}
-
-.user-profile-role-pill.role-pill-seller {
-    background: rgba(16, 185, 129, 0.14);
-    border: 1.5px solid rgba(16, 185, 129, 0.55);
-    color: #34d399;
-    box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
-}
-
-.dashboard-user-profile-card:hover .user-profile-role-pill {
-    box-shadow: 0 0 16px var(--gold-glow);
-}
-
-[data-theme="light"] .dashboard-user-profile-card {
-    background: #ffffff;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.07);
-    border-color: rgba(212, 175, 55, 0.4);
-}
-
-[data-theme="light"] .user-profile-name {
-    color: #0f172a;
-}
-
-[data-theme="light"] .user-profile-role-pill.role-pill-manager {
-    background: rgba(184, 134, 11, 0.12);
-    border-color: rgba(184, 134, 11, 0.5);
-    color: #8f6707;
-    box-shadow: 0 0 8px rgba(184, 134, 11, 0.15);
-}
-
-[data-theme="light"] .user-profile-role-pill.role-pill-seller {
-    background: rgba(16, 185, 129, 0.1);
-    border-color: rgba(16, 185, 129, 0.4);
-    color: #065f46;
 }
 
 

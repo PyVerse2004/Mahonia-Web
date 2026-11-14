@@ -12,18 +12,10 @@
         </h2>
     </div>
     <div>
-        <div class="dashboard-user-profile-card">
-            <div class="user-profile-avatar">
-                <i class="bi bi-person-fill"></i>
-            </div>
-            <div class="user-profile-info">
-                <span class="user-profile-name">{{ user.get_full_name|default:user.get_username }}</span>
-                <span class="user-profile-role-pill {% if is_manager %}role-pill-manager{% else %}role-pill-seller{% endif %}">
-                    <i class="bi {% if is_manager %}bi-shield-check{% else %}bi-person-check{% endif %}"></i>
-                    <span>{{ active_role_display }}</span>
-                </span>
-            </div>
-        </div>
+        <span class="user-role-badge {% if is_manager %}role-manager{% else %}role-seller{% endif %}">
+            <i class="bi {% if is_manager %}bi-shield-check{% else %}bi-person-check{% endif %}"></i>
+            <span>نقش فعال: {{ active_role_display }}</span>
+        </span>
     </div>
 </div>
 
