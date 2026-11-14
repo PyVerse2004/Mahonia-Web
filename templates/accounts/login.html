@@ -57,7 +57,7 @@
                             <i class="bi bi-person login-field-icon"></i>
                         </div>
                         {% for error in form.username.errors %}
-                            <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle"></i> {{ error }}</div>
+                            <div class="login-field-error"><i class="bi bi-exclamation-circle"></i> <span>{{ error }}</span></div>
                         {% endfor %}
                     </div>
 
@@ -76,12 +76,12 @@
                                    autocomplete="current-password"
                                    required>
                             <i class="bi bi-lock login-field-icon"></i>
-                            <button type="button" class="btn-toggle-password" id="togglePasswordBtn" aria-label="نمایش رمز">
+                            <button type="button" class="btn-toggle-password" id="togglePasswordBtn" aria-label="نمایش رمز" title="نمایش یا پنهان‌سازی رمز عبور">
                                 <i class="bi bi-eye" id="togglePasswordIcon"></i>
                             </button>
                         </div>
                         {% for error in form.password.errors %}
-                            <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle"></i> {{ error }}</div>
+                            <div class="login-field-error"><i class="bi bi-exclamation-circle"></i> <span>{{ error }}</span></div>
                         {% endfor %}
                     </div>
 
