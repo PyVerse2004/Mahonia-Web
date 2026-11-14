@@ -165,11 +165,6 @@
                     <span class="theme-text d-none d-sm-inline">حالت تیره</span>
                 </button>
 
-                <span class="user-role-badge {% if is_manager %}role-manager{% else %}role-seller{% endif %} d-none d-sm-inline-flex">
-                    <i class="bi {% if is_manager %}bi-shield-check{% else %}bi-person{% endif %}"></i>
-                    <span>{{ user.get_username }} ({{ active_role_display }})</span>
-                </span>
-
                 <form method="post" action="{% url 'logout' %}" class="d-inline mb-0">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-sm btn-outline-secondary topbar-action-btn">
