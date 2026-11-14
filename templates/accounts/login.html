@@ -29,7 +29,7 @@
                 </div>
 
                 <!-- Actual Form -->
-                <form method="post" class="login-form">
+                <form method="post" class="login-form" novalidate>
                     {% csrf_token %}
 
                     {% if form.non_field_errors %}
@@ -40,21 +40,20 @@
                     {% endif %}
 
                     <!-- Username Field -->
-                    <div class="mb-3">
+                    <div class="login-field-wrap mb-3">
                         <label for="{{ form.username.id_for_label }}" class="form-label login-field-label">
-                            <i class="bi bi-person-fill text-gold"></i>
                             <span>نام کاربری</span>
                         </label>
                         <div class="login-input-group">
+                            <i class="bi bi-person login-field-icon" aria-hidden="true"></i>
                             <input type="text" 
                                    name="username" 
                                    id="{{ form.username.id_for_label }}" 
-                                   class="form-control login-input" 
-                                   placeholder="نام کاربری خود را وارد کنید" 
+                                   class="form-control login-input login-input-username" 
+                                   placeholder="نام کاربری خود را وارد نمایید" 
                                    autocomplete="username"
                                    required 
                                    autofocus>
-                            <i class="bi bi-person login-field-icon"></i>
                         </div>
                         {% for error in form.username.errors %}
                             <div class="login-field-error"><i class="bi bi-exclamation-circle"></i> <span>{{ error }}</span></div>
@@ -62,20 +61,19 @@
                     </div>
 
                     <!-- Password Field -->
-                    <div class="mb-4">
+                    <div class="login-field-wrap mb-4">
                         <label for="{{ form.password.id_for_label }}" class="form-label login-field-label">
-                            <i class="bi bi-shield-lock-fill text-gold"></i>
                             <span>کلمه عبور</span>
                         </label>
                         <div class="login-input-group">
+                            <i class="bi bi-lock login-field-icon" aria-hidden="true"></i>
                             <input type="password" 
                                    name="password" 
                                    id="{{ form.password.id_for_label }}" 
-                                   class="form-control login-input" 
-                                   placeholder="رمز عبور اختصاصی" 
+                                   class="form-control login-input login-input-password" 
+                                   placeholder="رمز عبور حساب کاربری" 
                                    autocomplete="current-password"
                                    required>
-                            <i class="bi bi-lock login-field-icon"></i>
                             <button type="button" class="btn-toggle-password" id="togglePasswordBtn" aria-label="نمایش رمز" title="نمایش یا پنهان‌سازی رمز عبور">
                                 <i class="bi bi-eye" id="togglePasswordIcon"></i>
                             </button>
@@ -126,11 +124,14 @@ document.addEventListener('DOMContentLoaded', function() {
         toggleBtn.addEventListener('click', function() {
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
+                passwordInput.classList.add('is-revealed');
                 toggleIcon.className = 'bi bi-eye-slash';
             } else {
                 passwordInput.type = 'password';
+                passwordInput.classList.remove('is-revealed');
                 toggleIcon.className = 'bi bi-eye';
             }
+            passwordInput.focus();
         });
     }
 });
