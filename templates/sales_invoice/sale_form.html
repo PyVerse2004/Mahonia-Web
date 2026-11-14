@@ -1,64 +1,85 @@
 {% extends "base.html" %}
 {% load humanize %}
 
-{% block title %}{% if object %}ویرایش فاکتور فروش{% else %}ثبت فاکتور فروش{% endif %}{% endblock %}
+{% block title %}{% if object %}ویرایش فاکتور فروش شماره {{ object.pk }} | ماهونیا{% else %}ثبت فاکتور فروش | ماهونیا{% endif %}{% endblock %}
 
 {% block head %}{{ form.media }}{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">{% if object %}ویرایش فاکتور فروش شماره {{ object.pk }}{% else %}ثبت فاکتور فروش{% endif %}</h2>
-
-<form method="post" class="bg-white border rounded p-3 p-md-4">
-    {% csrf_token %}
-
-    {% if form.non_field_errors %}
-    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
-    {% endif %}
-
-    <div class="row g-3">
-        {# تاریخ #}
-        <div class="col-12 col-md-6">
-            <label for="{{ form.date.id_for_label }}" class="form-label">{{ form.date.label }}</label>
-            <div class="d-flex align-items-start gap-2">
-                {{ form.date }}
-                <button type="button" class="btn btn-outline-secondary" id="date-today">امروز</button>
+<div class="row justify-content-center py-2">
+    <div class="col-12 col-md-10 col-lg-8">
+        <div class="card glass-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span class="fs-5 fw-bold text-gradient-gold">
+                    <i class="bi {% if object %}bi-pencil-square{% else %}bi-receipt-cutoff{% endif %}"></i>
+                    {% if object %}ویرایش فاکتور فروش شماره {{ object.pk }}{% else %}ثبت فاکتور فروش جدید{% endif %}
+                </span>
+                <a href="{% url 'sales_invoice:sale_list' %}" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-arrow-right"></i> بازگشت به لیست
+                </a>
             </div>
-            {% for error in form.date.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
-        </div>
 
-        {# محصول #}
-        <div class="col-12 col-md-6">
-            <label for="{{ form.product.id_for_label }}" class="form-label">{{ form.product.label }}</label>
-            {{ form.product }}
-            {% for error in form.product.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
-        </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
 
-        {# تعداد #}
-        <div class="col-12 col-md-4">
-            <label for="{{ form.quantity.id_for_label }}" class="form-label">{{ form.quantity.label }}</label>
-            {{ form.quantity }}
-            {% for error in form.quantity.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
-        </div>
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                    {% endif %}
 
-        {# مبلغ هر واحد #}
-        <div class="col-12 col-md-4">
-            <label for="{{ form.unit_price.id_for_label }}" class="form-label">{{ form.unit_price.label }}</label>
-            {{ form.unit_price }}
-            {% for error in form.unit_price.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
-        </div>
+                    <div class="row g-3">
+                        {# تاریخ #}
+                        <div class="col-12 col-md-6">
+                            <label for="{{ form.date.id_for_label }}" class="form-label">{{ form.date.label }}</label>
+                            <div class="d-flex align-items-start gap-2">
+                                {{ form.date }}
+                                <button type="button" class="btn btn-outline-secondary" id="date-today">امروز</button>
+                            </div>
+                            {% for error in form.date.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
 
-        {# مبلغ کل #}
-        <div class="col-12 col-md-4">
-            <label class="form-label" for="id_total_amount">مبلغ کل (تومان)</label>
-            <input id="id_total_amount" type="text" class="form-control bg-light fw-bold" value="0" readonly>
+                        {# محصول #}
+                        <div class="col-12 col-md-6">
+                            <label for="{{ form.product.id_for_label }}" class="form-label">{{ form.product.label }}</label>
+                            {{ form.product }}
+                            {% for error in form.product.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+
+                        {# تعداد #}
+                        <div class="col-12 col-md-4">
+                            <label for="{{ form.quantity.id_for_label }}" class="form-label">{{ form.quantity.label }}</label>
+                            {{ form.quantity }}
+                            {% for error in form.quantity.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+
+                        {# مبلغ هر واحد #}
+                        <div class="col-12 col-md-4">
+                            <label for="{{ form.unit_price.id_for_label }}" class="form-label">{{ form.unit_price.label }}</label>
+                            {{ form.unit_price }}
+                            {% for error in form.unit_price.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+
+                        {# مبلغ کل #}
+                        <div class="col-12 col-md-4">
+                            <label class="form-label" for="id_total_amount">مبلغ کل (تومان)</label>
+                            <input id="id_total_amount" type="text" class="form-control bg-light fw-bold" value="0" readonly>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 justify-content-end mt-4 pt-3 border-top">
+                        <a href="{% url 'sales_invoice:sale_list' %}" class="btn btn-outline-secondary px-4">
+                            <i class="bi bi-x-lg"></i> انصراف
+                        </a>
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-check-lg"></i>
+                            {% if object %}ذخیره تغییرات{% else %}ثبت فاکتور فروش{% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-
-    <div class="mt-4">
-        <button type="submit" class="btn btn-success">{% if object %}ذخیره تغییرات{% else %}ثبت فاکتور فروش{% endif %}</button>
-        <a href="{% url 'sales_invoice:sale_list' %}" class="btn btn-secondary">بازگشت</a>
-    </div>
-</form>
+</div>
 
 <script>
 (function () {

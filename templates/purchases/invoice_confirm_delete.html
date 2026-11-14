@@ -2,22 +2,36 @@
 {% load humanize %}
 {% load jalali_tags %}
 
-{% block title %}حذف فاکتور خرید{% endblock %}
+{% block title %}حذف فاکتور خرید شماره {{ object.pk }} | ماهونیا{% endblock %}
 
 {% block content %}
-<div class="col-12 col-md-8 col-lg-6 px-0">
-    <h2 class="mb-4">حذف فاکتور خرید شماره {{ object.pk }}</h2>
+<div class="row justify-content-center py-4">
+    <div class="col-12 col-md-8 col-lg-6">
+        <div class="card glass-card border-danger border-opacity-50">
+            <div class="card-header d-flex align-items-center gap-2 text-danger">
+                <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                <span class="fs-5 fw-bold">تایید حذف فاکتور خرید شماره {{ object.pk }}</span>
+            </div>
+            <div class="card-body p-4">
+                <p class="fs-6 mb-3">
+                    فاکتور تامین‌کننده «<strong>{{ object.supplier.name }}</strong>» به تاریخ <strong>{{ object.date|to_jalali:"%Y/%m/%d" }}</strong> با جمع کل <strong>{{ object.total_amount|intcomma:False }} تومان</strong> حذف می‌شود.
+                </p>
+                <div class="alert alert-warning d-flex align-items-center gap-2">
+                    <i class="bi bi-exclamation-circle-fill fs-5 flex-shrink-0"></i>
+                    <div>تعداد اقلام این فاکتور از موجودی انبار کسر و میانگین قیمت خرید کالاها مجدداً محاسبه خواهد شد. این عملیات قابل بازگشت نیست.</div>
+                </div>
 
-    <div class="alert alert-warning">
-        فاکتور {{ object.supplier.name }} به تاریخ {{ object.date|to_jalali:"%Y/%m/%d" }} با جمع کل
-        {{ object.total_amount|intcomma:False }} حذف می‌شود. تعداد این فاکتور از موجودی انبار کم
-        و میانگین قیمت خرید محصولات دوباره محاسبه می‌شود. این کار قابل بازگشت نیست.
+                <form method="post" class="d-flex gap-2 justify-content-end mt-4 pt-3 border-top">
+                    {% csrf_token %}
+                    <a href="{% url 'purchases:invoice_list' %}" class="btn btn-outline-secondary px-4">
+                        <i class="bi bi-x-lg"></i> انصراف
+                    </a>
+                    <button type="submit" class="btn btn-danger px-4">
+                        <i class="bi bi-trash3"></i> بله، حذف شود
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
-
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-danger">بله، حذف شود</button>
-        <a href="{% url 'purchases:invoice_list' %}" class="btn btn-secondary">انصراف</a>
-    </form>
 </div>
 {% endblock %}

@@ -2547,4 +2547,75 @@ p.date > input {
     100% { transform: translateY(-50%) rotate(360deg); }
 }
 
+/* --------------------------------------------------------------------------
+   17. Profit & Loss Report Luxury Stat Cards
+   -------------------------------------------------------------------------- */
+.profit-stat-card {
+    background: var(--bg-card);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--gold-border) !important;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    transition: var(--transition-smooth);
+}
+
+.profit-stat-card:hover {
+    border-color: var(--gold-primary) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px -6px var(--gold-glow);
+}
+
+.profit-stat-card.border-primary {
+    border-color: rgba(212, 175, 55, 0.4) !important;
+}
+
+.profit-stat-card.border-secondary {
+    border-color: rgba(148, 163, 184, 0.3) !important;
+}
+
+.profit-stat-card.border-info {
+    border-color: rgba(56, 189, 248, 0.35) !important;
+}
+
+.profit-stat-card.border-success,
+.profit-stat-card.bg-success-subtle {
+    border-color: rgba(16, 185, 129, 0.45) !important;
+    background: rgba(16, 185, 129, 0.08) !important;
+}
+
+.profit-stat-card.border-danger,
+.profit-stat-card.bg-danger-subtle {
+    border-color: rgba(244, 63, 94, 0.45) !important;
+    background: rgba(244, 63, 94, 0.08) !important;
+}
+
+/* --------------------------------------------------------------------------
+   18. Table Column Helpers & Empty State Sizing
+   -------------------------------------------------------------------------- */
+.col-id {
+    width: 70px;
+    text-align: center;
+}
+
+.col-product-select {
+    width: 40%;
+}
+
+.product-empty-state {
+    max-width: 480px;
+}
+
+/* --------------------------------------------------------------------------
+   19. Accessibility: Reduced Motion
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
 

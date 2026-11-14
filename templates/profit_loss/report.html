@@ -110,8 +110,12 @@
                 {% for error in filter_form.q.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
             </div>
             <div class="col-12 mt-3 d-flex gap-2">
-                <button type="submit" class="btn btn-primary">اعمال فیلتر</button>
-                <a href="{% url 'profit_loss:report' %}" class="btn btn-outline-secondary btn-clear-filter">پاک‌کردن فیلترها</a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-funnel"></i> اعمال فیلتر
+                </button>
+                <a href="{% url 'profit_loss:report' %}" class="btn btn-outline-secondary btn-clear-filter">
+                    <i class="bi bi-x-circle"></i> پاک‌کردن فیلترها
+                </a>
             </div>
         </form>
     </div>
@@ -123,7 +127,7 @@
     <table class="table table-bordered table-hover bg-white align-middle shadow-sm">
         <thead class="table-light">
             <tr>
-                <th style="width: 70px;">شماره</th>
+                <th class="col-id">شماره</th>
                 <th>تاریخ</th>
                 <th>نام محصول</th>
                 <th>تعداد</th>
