@@ -243,6 +243,45 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* --------------------------------------------------------------------------
+   2.1. Global Typographic Icon Alignment & Baseline Harmony (Vazirmatn RTL)
+   -------------------------------------------------------------------------- */
+i.bi, i[class^="bi-"], i[class*=" bi-"], .bi {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    line-height: 1;
+    position: relative;
+    top: -0.05em; /* Optical baseline correction for Persian Vazirmatn script */
+    flex-shrink: 0;
+}
+
+/* Standalone / Containerized Icons: strict geometric centering */
+.btn-icon i,
+.kpi-icon-box i,
+.sidebar-user-avatar i,
+.sidebar-icon,
+.recent-sale-placeholder,
+.product-placeholder-icon,
+.mahonia-modal-icon i,
+.product-upload-placeholder i,
+.login-field-icon,
+.theme-icon-dark,
+.theme-icon-light {
+    top: 0 !important;
+}
+
+/* Headings with inline icons */
+h1 > i, h2 > i, h3 > i, h4 > i, h5 > i, h6 > i,
+.card-header i, .card-title i, .modal-title i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    top: -0.05em;
+}
+
+/* --------------------------------------------------------------------------
    3. Right Sidebar (RTL) & App Layout
    -------------------------------------------------------------------------- */
 .app-sidebar {
@@ -483,10 +522,17 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .sidebar-icon {
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     font-size: 1.15rem;
     color: var(--gold-primary);
     opacity: 0.85;
     transition: var(--transition-fast);
+    flex-shrink: 0;
+    top: 0 !important;
 }
 
 .sidebar-nav-link:hover {
@@ -656,6 +702,12 @@ h1, h2, h3, h4, h5, h6 {
     box-sizing: border-box;
 }
 
+.theme-toggle-btn i {
+    font-size: 0.95rem;
+    top: 0 !important;
+    margin: 0 !important;
+}
+
 .theme-toggle-btn:hover {
     color: var(--gold-light) !important;
     border-color: var(--gold-primary) !important;
@@ -672,6 +724,13 @@ h1, h2, h3, h4, h5, h6 {
     text-align: center;
     font-size: 0.85rem !important;
     gap: 0.4rem;
+    line-height: 1;
+}
+
+.topbar-action-btn i {
+    font-size: 0.95rem;
+    top: 0 !important;
+    margin: 0 !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -1006,13 +1065,22 @@ h1, h2, h3, h4, h5, h6 {
 /* Themed Status Badges & Choice Indicators */
 .badge {
     font-weight: 600;
-    padding: 0.35rem 0.75rem;
+    padding: 0.32em 0.72em;
     border-radius: var(--radius-sm);
     letter-spacing: 0.01em;
     font-size: 0.8rem;
+    line-height: 1.3;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.35rem;
+    vertical-align: middle;
+}
+
+.badge i {
+    font-size: 0.9em;
+    margin: 0 !important;
+    top: 0;
 }
 
 .badge.text-bg-success {
@@ -1130,19 +1198,53 @@ p.date > input {
     border-radius: var(--radius-sm);
     font-weight: 600;
     font-size: 0.92rem;
-    padding: 0.5rem 1.15rem;
+    padding: 0.48rem 1.15rem;
     height: 42px;
+    min-height: 42px;
+    line-height: 1.4;
     transition: var(--transition-smooth);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.45rem;
+    gap: 0.48rem;
+    vertical-align: middle;
+}
+
+.btn i.bi, .btn i[class*="bi-"], .btn .bi {
+    font-size: 1.05em;
+    margin: 0 !important;
+    top: -0.04em;
+    flex-shrink: 0;
 }
 
 .btn-sm {
     height: 34px !important;
-    padding: 0.25rem 0.75rem !important;
+    min-height: 34px !important;
+    padding: 0.28rem 0.75rem !important;
     font-size: 0.82rem !important;
+    line-height: 1.3 !important;
+    gap: 0.38rem !important;
+}
+
+.btn-sm i.bi, .btn-sm i[class*="bi-"], .btn-sm .bi {
+    font-size: 0.95em;
+}
+
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: var(--radius-sm);
+    gap: 0 !important;
+}
+
+.btn-icon i {
+    top: 0 !important;
+    margin: 0 !important;
 }
 
 .btn-primary {
@@ -1756,6 +1858,113 @@ p.date > input {
     background-color: var(--table-row-hover) !important;
 }
 
+.table td .btn,
+.table td .btn-sm {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    white-space: nowrap;
+    padding: 0.28rem 0.65rem !important;
+    font-size: 0.82rem !important;
+    line-height: 1.3 !important;
+    margin: 0.15rem 0.1rem;
+    vertical-align: middle;
+}
+
+.table td .btn i,
+.table td .btn-sm i {
+    font-size: 0.92em;
+    margin: 0 !important;
+    top: -0.03em;
+}
+
+.table td .btn-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+/* --------------------------------------------------------------------------
+   11.1. Alerts & Notification Banners
+   -------------------------------------------------------------------------- */
+.alert {
+    background: var(--bg-surface-elevated);
+    border: 1px solid var(--gold-border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    padding: 0.85rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    margin-bottom: 1.25rem;
+    box-shadow: var(--shadow-card);
+}
+
+.alert i {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    top: 0 !important;
+    margin: 0 !important;
+}
+
+.alert .btn-close {
+    margin-right: auto !important;
+    margin-left: -0.5rem !important;
+    padding: 0.75rem;
+    align-self: center;
+}
+
+.alert-danger {
+    background: rgba(244, 63, 94, 0.12) !important;
+    border-color: rgba(244, 63, 94, 0.4) !important;
+    color: #fca5a5 !important;
+}
+
+.alert-success {
+    background: rgba(16, 185, 129, 0.12) !important;
+    border-color: rgba(16, 185, 129, 0.4) !important;
+    color: #86efac !important;
+}
+
+.alert-warning {
+    background: rgba(245, 158, 11, 0.12) !important;
+    border-color: rgba(245, 158, 11, 0.4) !important;
+    color: #fde047 !important;
+}
+
+.alert-info {
+    background: rgba(56, 189, 248, 0.12) !important;
+    border-color: rgba(56, 189, 248, 0.4) !important;
+    color: #7dd3fc !important;
+}
+
+[data-theme="light"] .alert-danger {
+    background: #fef2f2 !important;
+    border-color: #fecaca !important;
+    color: #991b1b !important;
+}
+
+[data-theme="light"] .alert-success {
+    background: #f0fdf4 !important;
+    border-color: #bbf7d0 !important;
+    color: #166534 !important;
+}
+
+[data-theme="light"] .alert-warning {
+    background: #fffbeb !important;
+    border-color: #fef3c7 !important;
+    color: #92400e !important;
+}
+
+[data-theme="light"] .alert-info {
+    background: #f0f9ff !important;
+    border-color: #bae6fd !important;
+    color: #075985 !important;
+}
+
 /* --------------------------------------------------------------------------
    12. Jalali Datepicker Dark & Light Customization
    -------------------------------------------------------------------------- */
@@ -2156,6 +2365,13 @@ p.date > input {
     font-weight: 600;
     text-decoration: none;
     transition: var(--transition-fast);
+    line-height: 1;
+}
+
+.pagination-btn i {
+    font-size: 0.9rem;
+    top: 0 !important;
+    margin: 0 !important;
 }
 
 .pagination-btn:hover {
