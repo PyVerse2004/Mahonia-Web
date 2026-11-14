@@ -26,7 +26,6 @@
                 <label for="id_q" class="form-label">جستجو در کالاها</label>
                 <div class="input-group">
                     <input id="id_q" type="search" name="q" value="{{ search_query }}" class="form-control" placeholder="نام محصول عطر، برند..." autocomplete="off">
-                    <button type="submit" class="btn btn-outline-primary">جستجو</button>
                     <a href="{% url 'inventory:product_list' %}" class="btn btn-outline-secondary btn-clear-filter">پاک‌کردن</a>
                 </div>
             </div>
