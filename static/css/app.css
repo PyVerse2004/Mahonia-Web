@@ -304,11 +304,14 @@ h1 > i, h2 > i, h3 > i, h4 > i, h5 > i, h6 > i,
 
 /* Sidebar Header & Brand */
 .sidebar-header {
-    padding: 1.25rem 1.25rem 1rem;
+    height: 64px;
+    padding: 0 1.25rem;
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: space-between;
     border-bottom: 1px solid var(--gold-border);
+    background-color: var(--bg-topbar);
 }
 
 .sidebar-brand-box {
@@ -318,12 +321,12 @@ h1 > i, h2 > i, h3 > i, h4 > i, h5 > i, h6 > i,
 }
 
 .sidebar-logo-img {
-    width: 44px;
-    height: 44px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid var(--gold-primary);
-    box-shadow: 0 0 12px var(--gold-glow);
+    box-shadow: 0 0 10px var(--gold-glow);
     flex-shrink: 0;
 }
 
@@ -333,14 +336,15 @@ h1 > i, h2 > i, h3 > i, h4 > i, h5 > i, h6 > i,
 }
 
 .sidebar-brand-title {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     font-weight: 800;
-    line-height: 1.2;
+    line-height: 1.15;
 }
 
 .sidebar-brand-desc {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: var(--text-muted);
+    line-height: 1.1;
 }
 
 /* Sidebar User Info (Matching Luxury UI Mockup) */
@@ -1693,17 +1697,17 @@ p.date > input {
 
 /* Dashboard 4 KPI Summary Cards (Prominent Luxury Mockup Design) */
 .dashboard-kpi-card {
-    background: var(--bg-card);
+    background: linear-gradient(145deg, rgba(14, 23, 42, 0.92), rgba(7, 13, 24, 0.96));
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--gold-border);
+    border: 1px solid rgba(212, 175, 55, 0.32);
     border-radius: var(--radius-xl);
     padding: 1.5rem 1.4rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    box-shadow: var(--shadow-card);
-    transition: var(--transition-smooth);
+    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.45), 0 0 16px rgba(212, 175, 55, 0.08);
+    transition: transform var(--transition-smooth), border-color var(--transition-smooth), box-shadow var(--transition-smooth);
     position: relative;
     overflow: hidden;
     min-height: 160px;
@@ -1718,28 +1722,158 @@ p.date > input {
     height: 100%;
     background: var(--gold-primary);
     border-radius: 0 var(--radius-xl) var(--radius-xl) 0;
+    transition: width var(--transition-smooth);
+}
+
+/* 1. تاریخ و زمان جاری */
+.dashboard-kpi-card.kpi-datetime {
+    border-color: rgba(212, 175, 55, 0.38);
+    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.45), 0 0 16px rgba(212, 175, 55, 0.1);
 }
 
 .dashboard-kpi-card.kpi-datetime::before {
-    background: var(--gold-primary);
-}
-
-.dashboard-kpi-card.kpi-products::before {
-    background: #38bdf8;
-}
-
-.dashboard-kpi-card.kpi-sales-count::before {
-    background: var(--accent-emerald);
-}
-
-.dashboard-kpi-card.kpi-sales-amount::before {
     background: linear-gradient(180deg, #f5d78e, #d4af37);
 }
 
+.kpi-datetime .kpi-icon-box {
+    color: var(--gold-primary);
+    background: rgba(212, 175, 55, 0.15);
+    border: 1.5px solid rgba(212, 175, 55, 0.4);
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.15);
+}
+
+/* 2. تعداد کل کالاها (هماهنگ با پالت طلایی و برنز لوکس) */
+.dashboard-kpi-card.kpi-products {
+    border-color: rgba(229, 193, 88, 0.35);
+    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.45), 0 0 16px rgba(229, 193, 88, 0.09);
+}
+
+.dashboard-kpi-card.kpi-products::before {
+    background: linear-gradient(180deg, #faebb9, #c5a059);
+}
+
+.kpi-products .kpi-icon-box {
+    color: #faebb9;
+    background: rgba(212, 175, 55, 0.12);
+    border: 1.5px solid rgba(212, 175, 55, 0.35);
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.12);
+}
+
+/* 3. مبلغ فروش امروز (طلا و شکوه مالیاتی ویژه) */
+.dashboard-kpi-card.kpi-sales-amount {
+    border-color: rgba(245, 215, 142, 0.5);
+    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.45), 0 0 20px rgba(212, 175, 55, 0.18);
+}
+
+.dashboard-kpi-card.kpi-sales-amount::before {
+    background: linear-gradient(180deg, #ffe599, #d4af37, #aa7c11);
+}
+
+.kpi-sales-amount .kpi-icon-box {
+    color: #ffd700;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.28), rgba(170, 124, 17, 0.15));
+    border: 1.5px solid var(--gold-primary);
+    box-shadow: 0 0 14px rgba(212, 175, 55, 0.25);
+}
+
+/* 4. تعداد فروش امروز (زمرد اشرافی متناسب با شیشه عطر ماهونیا) */
+.dashboard-kpi-card.kpi-sales-count {
+    border-color: rgba(16, 185, 129, 0.4);
+    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.45), 0 0 16px rgba(16, 185, 129, 0.12);
+}
+
+.dashboard-kpi-card.kpi-sales-count::before {
+    background: linear-gradient(180deg, #34d399, #059669);
+}
+
+.kpi-sales-count .kpi-icon-box {
+    color: #34d399;
+    background: rgba(16, 185, 129, 0.14);
+    border: 1.5px solid rgba(16, 185, 129, 0.4);
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+}
+
+/* Hover States */
 .dashboard-kpi-card:hover {
     transform: translateY(-4px);
-    border-color: var(--gold-primary);
-    box-shadow: 0 16px 36px -8px var(--gold-glow);
+    border-color: var(--gold-primary) !important;
+    box-shadow: 0 14px 34px -6px rgba(0, 0, 0, 0.55), 0 0 24px var(--gold-glow) !important;
+}
+
+.dashboard-kpi-card:hover::before {
+    width: 6px;
+}
+
+.dashboard-kpi-card:hover .kpi-icon-box {
+    transform: scale(1.08);
+}
+
+/* Light Theme Adaptations */
+[data-theme="light"] .dashboard-kpi-card {
+    background: #ffffff !important;
+    border: 1px solid rgba(184, 134, 11, 0.28) !important;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06) !important;
+}
+
+[data-theme="light"] .dashboard-kpi-card.kpi-datetime {
+    border-color: rgba(184, 134, 11, 0.35) !important;
+}
+
+[data-theme="light"] .kpi-datetime .kpi-icon-box {
+    background: rgba(184, 134, 11, 0.12);
+    border-color: rgba(184, 134, 11, 0.35);
+    color: #9a6f08;
+    box-shadow: none;
+}
+
+[data-theme="light"] .dashboard-kpi-card.kpi-products {
+    border-color: rgba(184, 134, 11, 0.3) !important;
+}
+
+[data-theme="light"] .dashboard-kpi-card.kpi-products::before {
+    background: linear-gradient(180deg, #d4af37, #9a6f08);
+}
+
+[data-theme="light"] .kpi-products .kpi-icon-box {
+    background: rgba(184, 134, 11, 0.1);
+    border-color: rgba(184, 134, 11, 0.3);
+    color: #9a6f08;
+    box-shadow: none;
+}
+
+[data-theme="light"] .dashboard-kpi-card.kpi-sales-amount {
+    border-color: rgba(184, 134, 11, 0.45) !important;
+}
+
+[data-theme="light"] .dashboard-kpi-card.kpi-sales-amount::before {
+    background: linear-gradient(180deg, #f59e0b, #b45309);
+}
+
+[data-theme="light"] .kpi-sales-amount .kpi-icon-box {
+    background: rgba(245, 158, 11, 0.14);
+    border-color: #b45309;
+    color: #b45309;
+    box-shadow: none;
+}
+
+[data-theme="light"] .dashboard-kpi-card.kpi-sales-count {
+    border-color: rgba(5, 150, 105, 0.35) !important;
+}
+
+[data-theme="light"] .dashboard-kpi-card.kpi-sales-count::before {
+    background: linear-gradient(180deg, #10b981, #047857);
+}
+
+[data-theme="light"] .kpi-sales-count .kpi-icon-box {
+    background: rgba(5, 150, 105, 0.1);
+    border-color: rgba(5, 150, 105, 0.35);
+    color: #047857;
+    box-shadow: none;
+}
+
+[data-theme="light"] .dashboard-kpi-card:hover {
+    border-color: var(--gold-primary) !important;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.1), 0 0 16px rgba(184, 134, 11, 0.2) !important;
 }
 
 .kpi-header {
@@ -1771,33 +1905,6 @@ p.date > input {
     color: var(--gold-light);
     flex-shrink: 0;
     transition: var(--transition-smooth);
-}
-
-.kpi-datetime .kpi-icon-box {
-    color: var(--gold-primary);
-    background: var(--gold-glow);
-}
-
-.kpi-products .kpi-icon-box {
-    color: #38bdf8;
-    background: rgba(56, 189, 248, 0.12);
-    border-color: rgba(56, 189, 248, 0.3);
-}
-
-.kpi-sales-count .kpi-icon-box {
-    color: var(--accent-emerald);
-    background: var(--accent-emerald-bg);
-    border-color: rgba(16, 185, 129, 0.35);
-}
-
-.kpi-sales-amount .kpi-icon-box {
-    color: #f5d78e;
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.25), rgba(170, 124, 17, 0.1));
-    border-color: var(--gold-primary);
-}
-
-.dashboard-kpi-card:hover .kpi-icon-box {
-    transform: scale(1.1);
 }
 
 .kpi-body {
