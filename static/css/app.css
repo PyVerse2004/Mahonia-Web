@@ -600,7 +600,62 @@ h1 > i, h2 > i, h3 > i, h4 > i, h5 > i, h6 > i,
     flex-grow: 1;
 }
 
-/* Mobile Sidebar Behavior */
+/* Sidebar Toggle Button (3-Line Hamburger with Motion) */
+.btn-sidebar-toggle {
+    width: 40px;
+    height: 40px;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: var(--bg-surface) !important;
+    border: 1px solid var(--gold-border) !important;
+    border-radius: var(--radius-sm) !important;
+    color: var(--gold-primary) !important;
+    cursor: pointer;
+    transition: var(--transition-smooth) !important;
+    padding: 0 !important;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.btn-sidebar-toggle:hover {
+    background: rgba(212, 175, 55, 0.14) !important;
+    border-color: var(--gold-primary) !important;
+    box-shadow: 0 0 14px var(--gold-glow);
+    transform: translateY(-1px);
+}
+
+.btn-sidebar-toggle:active {
+    transform: scale(0.95);
+}
+
+.btn-sidebar-toggle i {
+    font-size: 1.45rem !important;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+    margin: 0 !important;
+    top: 0 !important;
+    line-height: 1 !important;
+}
+
+body.sidebar-collapsed .btn-sidebar-toggle i,
+html.sidebar-collapsed .btn-sidebar-toggle i {
+    transform: rotate(180deg);
+}
+
+/* Desktop Sidebar Collapse (Screen Width >= 992px) */
+@media (min-width: 992px) {
+    body.sidebar-collapsed .app-sidebar,
+    html.sidebar-collapsed body .app-sidebar {
+        transform: translateX(100%);
+    }
+
+    body.sidebar-collapsed .app-main-layout,
+    html.sidebar-collapsed body .app-main-layout {
+        margin-right: 0 !important;
+    }
+}
+
+/* Mobile Sidebar Behavior (Screen Width < 992px) */
 .sidebar-backdrop {
     display: none;
     position: fixed;
@@ -680,37 +735,134 @@ h1 > i, h2 > i, h3 > i, h4 > i, h5 > i, h6 > i,
 }
 
 /* --------------------------------------------------------------------------
-   6. Theme Toggle Buttons
+   6. Theme Toggle Buttons with Fluid Micro-Interactions & Motion
    -------------------------------------------------------------------------- */
 .theme-toggle-btn {
     border-radius: 9999px !important;
-    height: 34px !important;
-    padding: 0 0.95rem !important;
+    height: 36px !important;
+    padding: 0 1rem !important;
     font-size: 0.85rem !important;
     font-weight: 600;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
     text-align: center;
-    gap: 0.45rem;
+    gap: 0.5rem;
     line-height: 1;
-    border-color: var(--gold-border) !important;
+    border: 1px solid var(--gold-border) !important;
     color: var(--text-secondary) !important;
     background: var(--bg-surface) !important;
-    transition: var(--transition-fast);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
     box-sizing: border-box;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.3s ease,
+                border-color 0.3s ease,
+                background 0.3s ease !important;
 }
 
-.theme-toggle-btn i {
-    font-size: 0.95rem;
-    top: 0 !important;
+.theme-icon-stage {
+    position: relative;
+    width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.theme-icon-stage i {
+    position: absolute !important;
+    inset: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1rem !important;
+    line-height: 1 !important;
     margin: 0 !important;
+    top: 0 !important;
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+                opacity 0.35s ease,
+                filter 0.35s ease !important;
+}
+
+/* Dark theme active: moon is visible and glowing, sun is rotated out */
+[data-theme="dark"] .theme-icon-dark {
+    opacity: 1 !important;
+    transform: rotate(0deg) scale(1) !important;
+    filter: drop-shadow(0 0 6px rgba(212, 175, 55, 0.5));
+}
+
+[data-theme="dark"] .theme-icon-light {
+    opacity: 0 !important;
+    transform: rotate(110deg) scale(0.2) !important;
+    pointer-events: none;
+}
+
+/* Light theme active: sun is visible and glowing, moon is rotated out */
+[data-theme="light"] .theme-icon-dark {
+    opacity: 0 !important;
+    transform: rotate(-110deg) scale(0.2) !important;
+    pointer-events: none;
+}
+
+[data-theme="light"] .theme-icon-light {
+    opacity: 1 !important;
+    transform: rotate(0deg) scale(1) !important;
+    filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.6));
 }
 
 .theme-toggle-btn:hover {
+    transform: translateY(-2px);
     color: var(--gold-light) !important;
     border-color: var(--gold-primary) !important;
-    box-shadow: 0 0 12px var(--gold-glow);
+    box-shadow: 0 4px 16px var(--gold-glow);
+}
+
+.theme-toggle-btn:hover .theme-icon-stage i {
+    animation: themeIconWobble 1.6s ease-in-out infinite alternate;
+}
+
+@keyframes themeIconWobble {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(14deg) scale(1.12); }
+    100% { transform: rotate(-8deg) scale(1.04); }
+}
+
+.theme-toggle-btn:active {
+    transform: translateY(0) scale(0.95);
+}
+
+/* Ripple / Pulse Wave on Theme Switch */
+.theme-toggle-btn.btn-theme-pulse {
+    animation: themeButtonPulse 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes themeButtonPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7);
+        transform: scale(0.93);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(212, 175, 55, 0);
+        transform: scale(1.04);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(212, 175, 55, 0);
+        transform: scale(1);
+    }
+}
+
+/* Global Smooth Cross-fade when Switching Themes */
+html.theme-transitioning,
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+    transition: background-color 0.4s ease,
+                border-color 0.4s ease,
+                color 0.4s ease,
+                box-shadow 0.4s ease !important;
 }
 
 .topbar-action-btn {
