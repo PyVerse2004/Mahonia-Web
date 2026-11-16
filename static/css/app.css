@@ -1735,23 +1735,32 @@ p.date > input {
     content: none !important;
 }
 
-/* 1. تاریخ و زمان جاری (Warm Imperial Gold Full Perimeter) */
+/* 1. تاریخ و زمان جاری (Sapphire Sky / Electric Cyan Full Perimeter) */
 .dashboard-kpi-card.kpi-datetime {
-    border: 1.5px solid rgba(212, 175, 55, 0.55) !important;
-    background: radial-gradient(120% 75% at 50% 0%, rgba(212, 175, 55, 0.14) 0%, rgba(14, 22, 39, 0.96) 65%) !important;
-    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.5), 0 0 22px -2px rgba(212, 175, 55, 0.22), inset 0 1px 0 rgba(245, 215, 142, 0.35) !important;
+    border: 1.5px solid rgba(56, 189, 248, 0.55) !important;
+    background: radial-gradient(120% 75% at 50% 0%, rgba(56, 189, 248, 0.14) 0%, rgba(14, 22, 39, 0.96) 65%) !important;
+    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.5), 0 0 22px -2px rgba(56, 189, 248, 0.22), inset 0 1px 0 rgba(125, 211, 252, 0.35) !important;
 }
 
 .kpi-datetime .kpi-icon-box {
-    color: var(--gold-light) !important;
-    background: rgba(212, 175, 55, 0.16) !important;
-    border: 1.5px solid rgba(212, 175, 55, 0.5) !important;
-    box-shadow: 0 0 14px rgba(212, 175, 55, 0.22) !important;
+    color: #38bdf8 !important;
+    background: rgba(56, 189, 248, 0.16) !important;
+    border: 1.5px solid rgba(56, 189, 248, 0.5) !important;
+    box-shadow: 0 0 14px rgba(56, 189, 248, 0.25) !important;
 }
 
 .dashboard-kpi-card.kpi-datetime:hover {
-    border-color: rgba(245, 215, 142, 0.9) !important;
-    box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.65), 0 0 32px rgba(212, 175, 55, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+    border-color: rgba(125, 211, 252, 0.9) !important;
+    box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.65), 0 0 32px rgba(56, 189, 248, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+.kpi-datetime .kpi-date-value {
+    color: #7dd3fc !important;
+}
+
+.kpi-datetime .kpi-subtext i,
+.kpi-datetime #liveDashboardClock {
+    color: #38bdf8 !important;
 }
 
 /* 2. تعداد کل کالاها (Champagne & Bronze Gold Full Perimeter) */
@@ -1773,42 +1782,42 @@ p.date > input {
     box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.65), 0 0 32px rgba(230, 195, 100, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
 }
 
-/* 3. مبلغ فروش امروز (Crown 24K Royal Gold Full Perimeter) */
+/* 3. مبلغ فروش امروز (Imperial Emerald Luxury Full Perimeter - معاوضه شده) */
 .dashboard-kpi-card.kpi-sales-amount {
-    border: 1.5px solid rgba(255, 215, 0, 0.6) !important;
-    background: radial-gradient(120% 75% at 50% 0%, rgba(255, 215, 0, 0.18) 0%, rgba(14, 22, 39, 0.96) 65%) !important;
-    box-shadow: 0 8px 26px -4px rgba(0, 0, 0, 0.55), 0 0 26px -2px rgba(255, 215, 0, 0.28), inset 0 1px 0 rgba(255, 235, 150, 0.45) !important;
-}
-
-.kpi-sales-amount .kpi-icon-box {
-    color: #ffd700 !important;
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.28), rgba(170, 124, 17, 0.18)) !important;
-    border: 1.5px solid #ffd700 !important;
-    box-shadow: 0 0 16px rgba(255, 215, 0, 0.32) !important;
-}
-
-.dashboard-kpi-card.kpi-sales-amount:hover {
-    border-color: #ffe599 !important;
-    box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.65), 0 0 36px rgba(255, 215, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
-}
-
-/* 4. تعداد فروش امروز (Imperial Emerald Luxury Full Perimeter) */
-.dashboard-kpi-card.kpi-sales-count {
     border: 1.5px solid rgba(16, 185, 129, 0.55) !important;
     background: radial-gradient(120% 75% at 50% 0%, rgba(16, 185, 129, 0.15) 0%, rgba(14, 22, 39, 0.96) 65%) !important;
     box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.5), 0 0 22px -2px rgba(16, 185, 129, 0.24), inset 0 1px 0 rgba(52, 211, 153, 0.4) !important;
 }
 
-.kpi-sales-count .kpi-icon-box {
+.kpi-sales-amount .kpi-icon-box {
     color: #34d399 !important;
     background: rgba(16, 185, 129, 0.16) !important;
     border: 1.5px solid rgba(16, 185, 129, 0.55) !important;
     box-shadow: 0 0 14px rgba(16, 185, 129, 0.25) !important;
 }
 
-.dashboard-kpi-card.kpi-sales-count:hover {
+.dashboard-kpi-card.kpi-sales-amount:hover {
     border-color: #6ee7b7 !important;
     box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.65), 0 0 32px rgba(16, 185, 129, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+/* 4. تعداد فروش امروز (Crown 24K Royal Gold Full Perimeter - معاوضه شده) */
+.dashboard-kpi-card.kpi-sales-count {
+    border: 1.5px solid rgba(255, 215, 0, 0.6) !important;
+    background: radial-gradient(120% 75% at 50% 0%, rgba(255, 215, 0, 0.18) 0%, rgba(14, 22, 39, 0.96) 65%) !important;
+    box-shadow: 0 8px 26px -4px rgba(0, 0, 0, 0.55), 0 0 26px -2px rgba(255, 215, 0, 0.28), inset 0 1px 0 rgba(255, 235, 150, 0.45) !important;
+}
+
+.kpi-sales-count .kpi-icon-box {
+    color: #ffd700 !important;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.28), rgba(170, 124, 17, 0.18)) !important;
+    border: 1.5px solid #ffd700 !important;
+    box-shadow: 0 0 16px rgba(255, 215, 0, 0.32) !important;
+}
+
+.dashboard-kpi-card.kpi-sales-count:hover {
+    border-color: #ffe599 !important;
+    box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.65), 0 0 36px rgba(255, 215, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
 }
 
 /* Hover Dynamics */
@@ -1827,16 +1836,22 @@ p.date > input {
 }
 
 [data-theme="light"] .dashboard-kpi-card.kpi-datetime {
-    border: 1.5px solid rgba(184, 134, 11, 0.45) !important;
-    background: radial-gradient(120% 75% at 50% 0%, rgba(184, 134, 11, 0.08) 0%, #ffffff 65%) !important;
-    box-shadow: 0 6px 20px rgba(184, 134, 11, 0.12) !important;
+    border: 1.5px solid rgba(2, 132, 199, 0.45) !important;
+    background: radial-gradient(120% 75% at 50% 0%, rgba(2, 132, 199, 0.08) 0%, #ffffff 65%) !important;
+    box-shadow: 0 6px 20px rgba(2, 132, 199, 0.12) !important;
 }
 
 [data-theme="light"] .kpi-datetime .kpi-icon-box {
-    background: rgba(184, 134, 11, 0.12) !important;
-    border-color: rgba(184, 134, 11, 0.45) !important;
-    color: #9a6f08 !important;
+    background: rgba(2, 132, 199, 0.12) !important;
+    border-color: rgba(2, 132, 199, 0.45) !important;
+    color: #0284c7 !important;
     box-shadow: none !important;
+}
+
+[data-theme="light"] .kpi-datetime .kpi-date-value,
+[data-theme="light"] .kpi-datetime .kpi-subtext i,
+[data-theme="light"] .kpi-datetime #liveDashboardClock {
+    color: #0284c7 !important;
 }
 
 [data-theme="light"] .dashboard-kpi-card.kpi-products {
@@ -1853,28 +1868,28 @@ p.date > input {
 }
 
 [data-theme="light"] .dashboard-kpi-card.kpi-sales-amount {
-    border: 1.5px solid rgba(245, 158, 11, 0.55) !important;
-    background: radial-gradient(120% 75% at 50% 0%, rgba(245, 158, 11, 0.1) 0%, #ffffff 65%) !important;
-    box-shadow: 0 6px 22px rgba(245, 158, 11, 0.15) !important;
-}
-
-[data-theme="light"] .kpi-sales-amount .kpi-icon-box {
-    background: rgba(245, 158, 11, 0.14) !important;
-    border-color: #b45309 !important;
-    color: #b45309 !important;
-    box-shadow: none !important;
-}
-
-[data-theme="light"] .dashboard-kpi-card.kpi-sales-count {
     border: 1.5px solid rgba(5, 150, 105, 0.5) !important;
     background: radial-gradient(120% 75% at 50% 0%, rgba(5, 150, 105, 0.08) 0%, #ffffff 65%) !important;
     box-shadow: 0 6px 20px rgba(5, 150, 105, 0.12) !important;
 }
 
-[data-theme="light"] .kpi-sales-count .kpi-icon-box {
+[data-theme="light"] .kpi-sales-amount .kpi-icon-box {
     background: rgba(5, 150, 105, 0.1) !important;
     border-color: rgba(5, 150, 105, 0.45) !important;
     color: #047857 !important;
+    box-shadow: none !important;
+}
+
+[data-theme="light"] .dashboard-kpi-card.kpi-sales-count {
+    border: 1.5px solid rgba(245, 158, 11, 0.55) !important;
+    background: radial-gradient(120% 75% at 50% 0%, rgba(245, 158, 11, 0.1) 0%, #ffffff 65%) !important;
+    box-shadow: 0 6px 22px rgba(245, 158, 11, 0.15) !important;
+}
+
+[data-theme="light"] .kpi-sales-count .kpi-icon-box {
+    background: rgba(245, 158, 11, 0.14) !important;
+    border-color: #b45309 !important;
+    color: #b45309 !important;
     box-shadow: none !important;
 }
 
@@ -1955,6 +1970,14 @@ p.date > input {
 
 .text-emerald {
     color: var(--accent-emerald) !important;
+}
+
+.text-cyan {
+    color: #38bdf8 !important;
+}
+
+[data-theme="light"] .text-cyan {
+    color: #0284c7 !important;
 }
 
 /* --------------------------------------------------------------------------
