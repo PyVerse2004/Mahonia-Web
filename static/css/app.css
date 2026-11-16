@@ -304,47 +304,57 @@ h1 > i, h2 > i, h3 > i, h4 > i, h5 > i, h6 > i,
 
 /* Sidebar Header & Brand */
 .sidebar-header {
-    height: 64px;
-    padding: 0 1.25rem;
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid var(--gold-border);
-    background-color: var(--bg-topbar);
+    height: 64px !important;
+    min-height: 64px !important;
+    max-height: 64px !important;
+    flex: 0 0 64px !important;
+    padding: 0 1.25rem !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    border-bottom: 1px solid var(--gold-border) !important;
+    background-color: var(--bg-topbar) !important;
+    overflow: hidden !important;
 }
 
 .sidebar-brand-box {
-    display: flex;
-    align-items: center;
-    gap: 0.85rem;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+    height: 100% !important;
 }
 
 .sidebar-logo-img {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid var(--gold-primary);
-    box-shadow: 0 0 10px var(--gold-glow);
-    flex-shrink: 0;
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    border: 2px solid var(--gold-primary) !important;
+    box-shadow: 0 0 10px var(--gold-glow) !important;
+    flex-shrink: 0 !important;
 }
 
 .sidebar-brand-text {
-    display: flex;
-    flex-direction: column;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    line-height: 1.1 !important;
 }
 
 .sidebar-brand-title {
-    font-size: 1.15rem;
-    font-weight: 800;
-    line-height: 1.15;
+    font-size: 1.1rem !important;
+    font-weight: 800 !important;
+    line-height: 1.15 !important;
+    margin: 0 !important;
 }
 
 .sidebar-brand-desc {
-    font-size: 0.72rem;
-    color: var(--text-muted);
-    line-height: 1.1;
+    font-size: 0.68rem !important;
+    color: var(--text-muted) !important;
+    line-height: 1.1 !important;
+    margin: 0 !important;
 }
 
 /* Sidebar User Info (Matching Luxury UI Mockup) */
@@ -585,19 +595,25 @@ h1 > i, h2 > i, h3 > i, h4 > i, h5 > i, h6 > i,
 }
 
 .app-topbar {
-    height: 64px;
-    background-color: var(--bg-topbar);
+    height: 64px !important;
+    min-height: 64px !important;
+    max-height: 64px !important;
+    flex: 0 0 64px !important;
+    box-sizing: border-box !important;
+    background-color: var(--bg-topbar) !important;
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
-    border-bottom: 1px solid var(--gold-border);
-    padding: 0 1.5rem;
-    position: sticky;
-    top: 0;
-    z-index: 1030;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border-bottom: 1px solid var(--gold-border) !important;
+    padding: 0 1.5rem !important;
+    margin: 0 !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1030 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+    overflow: hidden !important;
 }
 
 .app-main-content {
@@ -1695,185 +1711,176 @@ p.date > input {
     padding: 1rem 1.25rem;
 }
 
-/* Dashboard 4 KPI Summary Cards (Prominent Luxury Mockup Design) */
+/* Dashboard 4 KPI Summary Cards (Prominent Luxury Full-Perimeter Border & Ambient Glow) */
 .dashboard-kpi-card {
-    background: linear-gradient(145deg, rgba(14, 23, 42, 0.92), rgba(7, 13, 24, 0.96));
+    background: linear-gradient(145deg, rgba(16, 24, 40, 0.95), rgba(9, 14, 26, 0.98)) !important;
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
-    border: 1px solid rgba(212, 175, 55, 0.32);
-    border-radius: var(--radius-xl);
-    padding: 1.5rem 1.4rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.45), 0 0 16px rgba(212, 175, 55, 0.08);
-    transition: transform var(--transition-smooth), border-color var(--transition-smooth), box-shadow var(--transition-smooth);
-    position: relative;
-    overflow: hidden;
-    min-height: 160px;
+    border-radius: var(--radius-xl) !important;
+    padding: 1.5rem 1.4rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    position: relative !important;
+    overflow: hidden !important;
+    min-height: 165px !important;
+    box-sizing: border-box !important;
+    transition: transform var(--transition-smooth), border-color var(--transition-smooth), box-shadow var(--transition-smooth) !important;
 }
 
+/* Remove old blunt single-side vertical stripe completely */
 .dashboard-kpi-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 4px;
-    height: 100%;
-    background: var(--gold-primary);
-    border-radius: 0 var(--radius-xl) var(--radius-xl) 0;
-    transition: width var(--transition-smooth);
+    display: none !important;
+    width: 0 !important;
+    content: none !important;
 }
 
-/* 1. تاریخ و زمان جاری */
+/* 1. تاریخ و زمان جاری (Warm Imperial Gold Full Perimeter) */
 .dashboard-kpi-card.kpi-datetime {
-    border-color: rgba(212, 175, 55, 0.38);
-    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.45), 0 0 16px rgba(212, 175, 55, 0.1);
-}
-
-.dashboard-kpi-card.kpi-datetime::before {
-    background: linear-gradient(180deg, #f5d78e, #d4af37);
+    border: 1.5px solid rgba(212, 175, 55, 0.55) !important;
+    background: radial-gradient(120% 75% at 50% 0%, rgba(212, 175, 55, 0.14) 0%, rgba(14, 22, 39, 0.96) 65%) !important;
+    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.5), 0 0 22px -2px rgba(212, 175, 55, 0.22), inset 0 1px 0 rgba(245, 215, 142, 0.35) !important;
 }
 
 .kpi-datetime .kpi-icon-box {
-    color: var(--gold-primary);
-    background: rgba(212, 175, 55, 0.15);
-    border: 1.5px solid rgba(212, 175, 55, 0.4);
-    box-shadow: 0 0 12px rgba(212, 175, 55, 0.15);
+    color: var(--gold-light) !important;
+    background: rgba(212, 175, 55, 0.16) !important;
+    border: 1.5px solid rgba(212, 175, 55, 0.5) !important;
+    box-shadow: 0 0 14px rgba(212, 175, 55, 0.22) !important;
 }
 
-/* 2. تعداد کل کالاها (هماهنگ با پالت طلایی و برنز لوکس) */
+.dashboard-kpi-card.kpi-datetime:hover {
+    border-color: rgba(245, 215, 142, 0.9) !important;
+    box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.65), 0 0 32px rgba(212, 175, 55, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+/* 2. تعداد کل کالاها (Champagne & Bronze Gold Full Perimeter) */
 .dashboard-kpi-card.kpi-products {
-    border-color: rgba(229, 193, 88, 0.35);
-    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.45), 0 0 16px rgba(229, 193, 88, 0.09);
-}
-
-.dashboard-kpi-card.kpi-products::before {
-    background: linear-gradient(180deg, #faebb9, #c5a059);
+    border: 1.5px solid rgba(230, 195, 100, 0.5) !important;
+    background: radial-gradient(120% 75% at 50% 0%, rgba(230, 195, 100, 0.14) 0%, rgba(14, 22, 39, 0.96) 65%) !important;
+    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.5), 0 0 22px -2px rgba(230, 195, 100, 0.2), inset 0 1px 0 rgba(250, 235, 185, 0.35) !important;
 }
 
 .kpi-products .kpi-icon-box {
-    color: #faebb9;
-    background: rgba(212, 175, 55, 0.12);
-    border: 1.5px solid rgba(212, 175, 55, 0.35);
-    box-shadow: 0 0 12px rgba(212, 175, 55, 0.12);
+    color: #faebb9 !important;
+    background: rgba(230, 195, 100, 0.14) !important;
+    border: 1.5px solid rgba(230, 195, 100, 0.5) !important;
+    box-shadow: 0 0 14px rgba(230, 195, 100, 0.2) !important;
 }
 
-/* 3. مبلغ فروش امروز (طلا و شکوه مالیاتی ویژه) */
+.dashboard-kpi-card.kpi-products:hover {
+    border-color: rgba(250, 235, 185, 0.9) !important;
+    box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.65), 0 0 32px rgba(230, 195, 100, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+/* 3. مبلغ فروش امروز (Crown 24K Royal Gold Full Perimeter) */
 .dashboard-kpi-card.kpi-sales-amount {
-    border-color: rgba(245, 215, 142, 0.5);
-    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.45), 0 0 20px rgba(212, 175, 55, 0.18);
-}
-
-.dashboard-kpi-card.kpi-sales-amount::before {
-    background: linear-gradient(180deg, #ffe599, #d4af37, #aa7c11);
+    border: 1.5px solid rgba(255, 215, 0, 0.6) !important;
+    background: radial-gradient(120% 75% at 50% 0%, rgba(255, 215, 0, 0.18) 0%, rgba(14, 22, 39, 0.96) 65%) !important;
+    box-shadow: 0 8px 26px -4px rgba(0, 0, 0, 0.55), 0 0 26px -2px rgba(255, 215, 0, 0.28), inset 0 1px 0 rgba(255, 235, 150, 0.45) !important;
 }
 
 .kpi-sales-amount .kpi-icon-box {
-    color: #ffd700;
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.28), rgba(170, 124, 17, 0.15));
-    border: 1.5px solid var(--gold-primary);
-    box-shadow: 0 0 14px rgba(212, 175, 55, 0.25);
+    color: #ffd700 !important;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.28), rgba(170, 124, 17, 0.18)) !important;
+    border: 1.5px solid #ffd700 !important;
+    box-shadow: 0 0 16px rgba(255, 215, 0, 0.32) !important;
 }
 
-/* 4. تعداد فروش امروز (زمرد اشرافی متناسب با شیشه عطر ماهونیا) */
+.dashboard-kpi-card.kpi-sales-amount:hover {
+    border-color: #ffe599 !important;
+    box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.65), 0 0 36px rgba(255, 215, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+}
+
+/* 4. تعداد فروش امروز (Imperial Emerald Luxury Full Perimeter) */
 .dashboard-kpi-card.kpi-sales-count {
-    border-color: rgba(16, 185, 129, 0.4);
-    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.45), 0 0 16px rgba(16, 185, 129, 0.12);
-}
-
-.dashboard-kpi-card.kpi-sales-count::before {
-    background: linear-gradient(180deg, #34d399, #059669);
+    border: 1.5px solid rgba(16, 185, 129, 0.55) !important;
+    background: radial-gradient(120% 75% at 50% 0%, rgba(16, 185, 129, 0.15) 0%, rgba(14, 22, 39, 0.96) 65%) !important;
+    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.5), 0 0 22px -2px rgba(16, 185, 129, 0.24), inset 0 1px 0 rgba(52, 211, 153, 0.4) !important;
 }
 
 .kpi-sales-count .kpi-icon-box {
-    color: #34d399;
-    background: rgba(16, 185, 129, 0.14);
-    border: 1.5px solid rgba(16, 185, 129, 0.4);
-    box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+    color: #34d399 !important;
+    background: rgba(16, 185, 129, 0.16) !important;
+    border: 1.5px solid rgba(16, 185, 129, 0.55) !important;
+    box-shadow: 0 0 14px rgba(16, 185, 129, 0.25) !important;
 }
 
-/* Hover States */
+.dashboard-kpi-card.kpi-sales-count:hover {
+    border-color: #6ee7b7 !important;
+    box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.65), 0 0 32px rgba(16, 185, 129, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Hover Dynamics */
 .dashboard-kpi-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--gold-primary) !important;
-    box-shadow: 0 14px 34px -6px rgba(0, 0, 0, 0.55), 0 0 24px var(--gold-glow) !important;
-}
-
-.dashboard-kpi-card:hover::before {
-    width: 6px;
+    transform: translateY(-5px) !important;
 }
 
 .dashboard-kpi-card:hover .kpi-icon-box {
-    transform: scale(1.08);
+    transform: scale(1.1) !important;
 }
 
-/* Light Theme Adaptations */
+/* Light Theme Adaptations (Clean, crisp, full perimeter borders) */
 [data-theme="light"] .dashboard-kpi-card {
     background: #ffffff !important;
-    border: 1px solid rgba(184, 134, 11, 0.28) !important;
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06) !important;
 }
 
 [data-theme="light"] .dashboard-kpi-card.kpi-datetime {
-    border-color: rgba(184, 134, 11, 0.35) !important;
+    border: 1.5px solid rgba(184, 134, 11, 0.45) !important;
+    background: radial-gradient(120% 75% at 50% 0%, rgba(184, 134, 11, 0.08) 0%, #ffffff 65%) !important;
+    box-shadow: 0 6px 20px rgba(184, 134, 11, 0.12) !important;
 }
 
 [data-theme="light"] .kpi-datetime .kpi-icon-box {
-    background: rgba(184, 134, 11, 0.12);
-    border-color: rgba(184, 134, 11, 0.35);
-    color: #9a6f08;
-    box-shadow: none;
+    background: rgba(184, 134, 11, 0.12) !important;
+    border-color: rgba(184, 134, 11, 0.45) !important;
+    color: #9a6f08 !important;
+    box-shadow: none !important;
 }
 
 [data-theme="light"] .dashboard-kpi-card.kpi-products {
-    border-color: rgba(184, 134, 11, 0.3) !important;
-}
-
-[data-theme="light"] .dashboard-kpi-card.kpi-products::before {
-    background: linear-gradient(180deg, #d4af37, #9a6f08);
+    border: 1.5px solid rgba(184, 134, 11, 0.42) !important;
+    background: radial-gradient(120% 75% at 50% 0%, rgba(184, 134, 11, 0.07) 0%, #ffffff 65%) !important;
+    box-shadow: 0 6px 20px rgba(184, 134, 11, 0.1) !important;
 }
 
 [data-theme="light"] .kpi-products .kpi-icon-box {
-    background: rgba(184, 134, 11, 0.1);
-    border-color: rgba(184, 134, 11, 0.3);
-    color: #9a6f08;
-    box-shadow: none;
+    background: rgba(184, 134, 11, 0.1) !important;
+    border-color: rgba(184, 134, 11, 0.4) !important;
+    color: #9a6f08 !important;
+    box-shadow: none !important;
 }
 
 [data-theme="light"] .dashboard-kpi-card.kpi-sales-amount {
-    border-color: rgba(184, 134, 11, 0.45) !important;
-}
-
-[data-theme="light"] .dashboard-kpi-card.kpi-sales-amount::before {
-    background: linear-gradient(180deg, #f59e0b, #b45309);
+    border: 1.5px solid rgba(245, 158, 11, 0.55) !important;
+    background: radial-gradient(120% 75% at 50% 0%, rgba(245, 158, 11, 0.1) 0%, #ffffff 65%) !important;
+    box-shadow: 0 6px 22px rgba(245, 158, 11, 0.15) !important;
 }
 
 [data-theme="light"] .kpi-sales-amount .kpi-icon-box {
-    background: rgba(245, 158, 11, 0.14);
-    border-color: #b45309;
-    color: #b45309;
-    box-shadow: none;
+    background: rgba(245, 158, 11, 0.14) !important;
+    border-color: #b45309 !important;
+    color: #b45309 !important;
+    box-shadow: none !important;
 }
 
 [data-theme="light"] .dashboard-kpi-card.kpi-sales-count {
-    border-color: rgba(5, 150, 105, 0.35) !important;
-}
-
-[data-theme="light"] .dashboard-kpi-card.kpi-sales-count::before {
-    background: linear-gradient(180deg, #10b981, #047857);
+    border: 1.5px solid rgba(5, 150, 105, 0.5) !important;
+    background: radial-gradient(120% 75% at 50% 0%, rgba(5, 150, 105, 0.08) 0%, #ffffff 65%) !important;
+    box-shadow: 0 6px 20px rgba(5, 150, 105, 0.12) !important;
 }
 
 [data-theme="light"] .kpi-sales-count .kpi-icon-box {
-    background: rgba(5, 150, 105, 0.1);
-    border-color: rgba(5, 150, 105, 0.35);
-    color: #047857;
-    box-shadow: none;
+    background: rgba(5, 150, 105, 0.1) !important;
+    border-color: rgba(5, 150, 105, 0.45) !important;
+    color: #047857 !important;
+    box-shadow: none !important;
 }
 
 [data-theme="light"] .dashboard-kpi-card:hover {
-    border-color: var(--gold-primary) !important;
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.1), 0 0 16px rgba(184, 134, 11, 0.2) !important;
+    transform: translateY(-5px) !important;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12) !important;
 }
 
 .kpi-header {
