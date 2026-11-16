@@ -114,7 +114,7 @@
                     // 4. Update browser URL without full reload
                     window.history.replaceState(null, "", url);
 
-                    // Re-bind pagination clicks in freshly loaded HTML
+                    // Re-bind pagination and pill remove clicks in freshly loaded HTML
                     bindPagination();
                 })
                 .catch(err => {
@@ -130,8 +130,8 @@
 
             const debouncedFilter = debounce(() => executeFilter(), 320);
 
-            // 1. Live text & search input typing
-            form.querySelectorAll("input[type='text'], input[type='search'], input[name='q']").forEach(input => {
+            // 1. Live text & search & price inputs typing
+            form.querySelectorAll("input[type='text'], input[type='search'], input[type='number'], input[name='q'], input[name='min_price'], input[name='max_price']").forEach(input => {
                 input.addEventListener("input", function () {
                     debouncedFilter();
                 });
@@ -172,7 +172,7 @@
                 executeFilter();
             });
 
-            // 5. Intercept pagination links inside results container
+            // 5. Intercept pagination & filter pill links inside results container
             function bindPagination() {
                 resultsContainer.querySelectorAll(".mahonia-pagination a, nav[aria-label='صفحه‌بندی'] a").forEach(link => {
                     link.addEventListener("click", function (e) {
@@ -181,6 +181,24 @@
                         if (href && href !== "#") {
                             executeFilter(href);
                             resultsContainer.scrollIntoView({ behavior: "smooth", block: "start" });
+                        }
+                    });
+                });
+
+                resultsContainer.querySelectorAll(".filter-pill-remove, .active-filters-bar a").forEach(link => {
+                    link.addEventListener("click", function (e) {
+                        e.preventDefault();
+                        const href = this.getAttribute("href");
+                        if (href) {
+                            try {
+                                const targetUrl = new URL(href, window.location.origin);
+                                form.querySelectorAll("input[name]").forEach(input => {
+                                    if (input.type !== "hidden") {
+                                        input.value = targetUrl.searchParams.get(input.name) || "";
+                                    }
+                                });
+                            } catch (err) {}
+                            executeFilter(href);
                         }
                     });
                 });

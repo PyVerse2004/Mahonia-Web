@@ -1,4 +1,5 @@
 from datetime import datetime, time, timedelta
+from decimal import Decimal, InvalidOperation
 
 from django.contrib import messages
 from django.contrib.auth.mixins import PermissionRequiredMixin
@@ -13,6 +14,25 @@ from .models import Product, StockMovement
 from .services import change_stock
 
 
+def _clean_price_filter(value: str):
+    """تبدیل رشته ورودی قیمت به عدد اعشاری بدون کاما و تبدیل اعداد فارسی/عربی."""
+    if not value:
+        return None
+    val_str = str(value)
+    persian_digits = "۰۱۲۳۴۵۶۷۸۹"
+    arabic_digits = "٠١٢٣٤٥٦٧٨٩"
+    for i, d in enumerate(persian_digits):
+        val_str = val_str.replace(d, str(i))
+    for i, d in enumerate(arabic_digits):
+        val_str = val_str.replace(d, str(i))
+    val_str = val_str.replace(",", "").replace("،", "").replace(" ", "").strip()
+    try:
+        dec = Decimal(val_str)
+        return dec if dec >= 0 else None
+    except (InvalidOperation, ValueError):
+        return None
+
+
 class ProductListView(PermissionRequiredMixin, ListView):
     permission_required = "inventory.view_product"
     model = Product
@@ -25,11 +45,23 @@ class ProductListView(PermissionRequiredMixin, ListView):
         query = self.request.GET.get("q", "").strip()
         if query:
             queryset = queryset.filter(name__icontains=query)
+
+        # فیلتر اختصاصی و انحصاری بر اساس «قیمت فروش» (sale_price) - قیمت خرید هیچ اثری ندارد
+        min_price = _clean_price_filter(self.request.GET.get("min_price"))
+        if min_price is not None:
+            queryset = queryset.filter(sale_price__gte=min_price)
+
+        max_price = _clean_price_filter(self.request.GET.get("max_price"))
+        if max_price is not None:
+            queryset = queryset.filter(sale_price__lte=max_price)
+
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["search_query"] = self.request.GET.get("q", "").strip()
+        context["min_price"] = self.request.GET.get("min_price", "").strip()
+        context["max_price"] = self.request.GET.get("max_price", "").strip()
         return context
 
 

@@ -18,22 +18,92 @@
     {% endif %}
 </div>
 
-<!-- Search Filter Card -->
+<!-- Search & Price Range Filter Card -->
 <div class="card filter-card mb-4">
-    <div class="card-body p-3">
-        <form method="get" class="row g-2 align-items-end live-filter-form">
-            <div class="col-12 col-md-8 col-lg-6">
-                <label for="id_q" class="form-label">جستجو در کالاها</label>
+    <div class="card-body p-3 p-md-4">
+        <form method="get" class="row g-3 align-items-end live-filter-form">
+            <!-- 1. جستجو بر اساس نام محصول یا برند -->
+            <div class="col-12 col-md-6 col-lg-5">
+                <label for="id_q" class="form-label fw-semibold d-flex align-items-center gap-1">
+                    <i class="bi bi-search text-gold"></i>
+                    <span>جستجو در کالاها</span>
+                </label>
                 <div class="input-group">
-                    <input id="id_q" type="search" name="q" value="{{ search_query }}" class="form-control" placeholder="نام محصول عطر، برند..." autocomplete="off">
-                    <a href="{% url 'inventory:product_list' %}" class="btn btn-outline-secondary btn-clear-filter">پاک‌کردن</a>
+                    <input id="id_q" type="search" name="q" value="{{ search_query }}" class="form-control" placeholder="نام عطر، برند، ادکلن..." autocomplete="off">
                 </div>
+            </div>
+
+            <!-- 2. حداقل قیمت فروش (تومان) -->
+            <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+                <label for="id_min_price" class="form-label fw-semibold d-flex align-items-center gap-1">
+                    <i class="bi bi-tag text-emerald"></i>
+                    <span>حداقل قیمت فروش (تومان)</span>
+                </label>
+                <div class="input-group">
+                    <input id="id_min_price" type="number" name="min_price" value="{{ min_price }}" class="form-control" placeholder="از مبلغ (مثلاً ۱۰۰,۰۰۰)" min="0" step="1000">
+                </div>
+            </div>
+
+            <!-- 3. حداکثر قیمت فروش (تومان) -->
+            <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+                <label for="id_max_price" class="form-label fw-semibold d-flex align-items-center gap-1">
+                    <i class="bi bi-tag-fill text-gold"></i>
+                    <span>حداکثر قیمت فروش (تومان)</span>
+                </label>
+                <div class="input-group">
+                    <input id="id_max_price" type="number" name="max_price" value="{{ max_price }}" class="form-control" placeholder="تا مبلغ (مثلاً ۵,۰۰۰,۰۰۰)" min="0" step="1000">
+                </div>
+            </div>
+
+            <!-- 4. دکمه‌های فیلتر و پاک‌کردن -->
+            <div class="col-12 col-md-12 col-lg-1 d-flex gap-2">
+                <button type="submit" class="btn btn-primary flex-fill d-flex align-items-center justify-content-center gap-1" title="اعمال فیلتر">
+                    <i class="bi bi-funnel-fill"></i>
+                    <span class="d-lg-none">فیلتر</span>
+                </button>
+                {% if search_query or min_price or max_price %}
+                <a href="{% url 'inventory:product_list' %}" class="btn btn-outline-secondary btn-clear-filter d-flex align-items-center justify-content-center gap-1" title="پاک‌کردن فیلترها">
+                    <i class="bi bi-x-lg"></i>
+                    <span class="d-lg-none">حذف</span>
+                </a>
+                {% endif %}
             </div>
         </form>
     </div>
 </div>
 
 <div id="liveResultsContainer" class="live-results-wrapper">
+    <!-- Active Filter Chips / Badges -->
+    {% if search_query or min_price or max_price %}
+    <div class="active-filters-bar d-flex align-items-center gap-2 flex-wrap mb-4">
+        <span class="small text-muted d-flex align-items-center gap-1">
+            <i class="bi bi-funnel text-gold"></i>
+            <span>فیلترهای فعال:</span>
+        </span>
+        {% if search_query %}
+        <span class="filter-pill">
+            <span>نام: «{{ search_query }}»</span>
+            <a href="?{% url_replace q='' page=1 %}" class="filter-pill-remove" title="حذف این فیلتر"><i class="bi bi-x"></i></a>
+        </span>
+        {% endif %}
+        {% if min_price %}
+        <span class="filter-pill">
+            <span>حداقل قیمت فروش: {{ min_price|intcomma:False }} تومان</span>
+            <a href="?{% url_replace min_price='' page=1 %}" class="filter-pill-remove" title="حذف حداقل قیمت"><i class="bi bi-x"></i></a>
+        </span>
+        {% endif %}
+        {% if max_price %}
+        <span class="filter-pill">
+            <span>حداکثر قیمت فروش: {{ max_price|intcomma:False }} تومان</span>
+            <a href="?{% url_replace max_price='' page=1 %}" class="filter-pill-remove" title="حذف حداکثر قیمت"><i class="bi bi-x"></i></a>
+        </span>
+        {% endif %}
+        <a href="{% url 'inventory:product_list' %}" class="small text-gold text-decoration-none ms-auto d-flex align-items-center gap-1">
+            <i class="bi bi-trash3"></i>
+            <span>پاک‌کردن همه</span>
+        </a>
+    </div>
+    {% endif %}
 <!-- Products Grid View -->
 <div class="product-catalog-grid">
     {% for product in products %}
@@ -109,19 +179,24 @@
             <i class="bi bi-boxes fs-1 text-gold mb-3"></i>
             <h4 class="fw-bold">محصولی یافت نشد</h4>
             <p class="text-muted mb-4">
-                {% if search_query %}
-                محصولی با مشخصات «{{ search_query }}» در انبار پیدا نشد.
+                {% if search_query or min_price or max_price %}
+                هیچ محصولی با مشخصات و محدوده قیمت فروش انتخابی در انبار یافت نشد.
                 {% else %}
                 هنوز محصولی در سامانه انبارداری ثبت نشده است.
                 {% endif %}
             </p>
-            {% if is_manager and perms.inventory.add_product %}
-            <div>
-                <a href="{% url 'inventory:product_create' %}" class="btn btn-primary">
-                    <i class="bi bi-plus-lg"></i> افزودن اولین محصول
+            <div class="d-flex justify-content-center gap-2 flex-wrap">
+                {% if search_query or min_price or max_price %}
+                <a href="{% url 'inventory:product_list' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-x-circle"></i> پاک‌کردن فیلترها و نمایش همه
                 </a>
+                {% endif %}
+                {% if is_manager and perms.inventory.add_product %}
+                <a href="{% url 'inventory:product_create' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-lg"></i> افزودن محصول
+                </a>
+                {% endif %}
             </div>
-            {% endif %}
         </div>
     </div>
     {% endfor %}

@@ -1326,6 +1326,54 @@ html.theme-transitioning *::after {
     box-shadow: var(--shadow-card);
 }
 
+/* Active Filter Chips / Badges */
+.active-filters-bar {
+    padding: 0.65rem 1rem;
+    background: rgba(14, 22, 39, 0.7);
+    border: 1px dashed var(--gold-border);
+    border-radius: var(--radius-md);
+}
+
+.filter-pill {
+    background: rgba(212, 175, 55, 0.14) !important;
+    border: 1px solid var(--gold-border-hover) !important;
+    color: var(--gold-light) !important;
+    font-size: 0.82rem !important;
+    font-weight: 500 !important;
+    padding: 0.35rem 0.75rem !important;
+    border-radius: 9999px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.4rem !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.filter-pill-remove {
+    color: var(--text-muted) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+    transition: color var(--transition-fast) !important;
+    cursor: pointer;
+}
+
+.filter-pill-remove:hover {
+    color: var(--accent-rose) !important;
+}
+
+[data-theme="light"] .active-filters-bar {
+    background: rgba(248, 250, 252, 0.9);
+    border-color: rgba(184, 134, 11, 0.3);
+}
+
+[data-theme="light"] .filter-pill {
+    background: rgba(184, 134, 11, 0.12) !important;
+    border-color: rgba(184, 134, 11, 0.35) !important;
+    color: #785404 !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
 .form-control, .form-select, input[type="text"], input[type="password"], input[type="number"], input[type="search"], textarea {
     background-color: var(--input-bg) !important;
     border: 1px solid var(--input-border) !important;
