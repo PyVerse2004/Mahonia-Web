@@ -139,7 +139,7 @@ class SaleForm(forms.ModelForm):
                 if quantity > available_stock:
                     self.add_error(
                         "quantity",
-                        f"موجودی دکانت «{decant.perfume_name} ({decant.get_volume_display()})» کافی نیست. موجودی انبار: {available_stock} عدد",
+                        f"موجودی دکانت «{decant.perfume_name} ({decant.volume})» کافی نیست. موجودی انبار: {available_stock} عدد",
                     )
         else:
             if not product:

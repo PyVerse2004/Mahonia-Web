@@ -74,7 +74,7 @@ class DecantAdmin(admin.ModelAdmin):
                 if diff != 0:
                     StockMovement.objects.create(
                         decant=obj,
-                        product_name=f"دکانت {obj.perfume_name} ({obj.get_volume_display()})",
+                        product_name=f"دکانت {obj.perfume_name} ({obj.volume})",
                         quantity_change=diff,
                         stock_before=old_decant.stock_quantity,
                         stock_after=obj.stock_quantity,

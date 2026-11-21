@@ -43,7 +43,7 @@
                     <span>حجم دکانت</span>
                 </label>
                 <select id="id_volume" name="volume" class="form-select">
-                    <option value="">همه حجم‌ها (۵ و ۱۰ میل)</option>
+                    <option value="">همه حجم‌ها</option>
                     {% for vol_val, vol_label in volume_choices %}
                     <option value="{{ vol_val }}" {% if selected_volume == vol_val %}selected{% endif %}>{{ vol_label }}</option>
                     {% endfor %}
@@ -83,7 +83,7 @@
         {% endif %}
         {% if selected_volume %}
         <span class="filter-pill">
-            <span>حجم: {% if selected_volume == '5ml' %}۵ میل (5ml){% elif selected_volume == '10ml' %}۱۰ میل (10ml){% else %}{{ selected_volume }}{% endif %}</span>
+            <span>حجم: {{ selected_volume }}</span>
             <a href="?{% url_replace volume='' page=1 %}" class="filter-pill-remove" title="حذف فیلتر حجم"><i class="bi bi-x"></i></a>
         </span>
         {% endif %}
@@ -103,7 +103,7 @@
                 <div class="product-card-placeholder decant-placeholder">
                     <i class="bi bi-eyedropper product-placeholder-icon text-gold"></i>
                     <span class="decant-volume-badge {% if decant.volume == '5ml' %}badge-vol-5ml{% else %}badge-vol-10ml{% endif %}">
-                        {{ decant.get_volume_display }}
+                        {{ decant.volume }}
                     </span>
                 </div>
 

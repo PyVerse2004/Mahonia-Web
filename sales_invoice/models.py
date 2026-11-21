@@ -92,7 +92,7 @@ class Sale(models.Model):
     def save(self, *args, **kwargs):
         if self.item_type == self.ITEM_TYPE_DECANT and self.decant_id:
             self.product = None
-            self.product_name = f"دکانت {self.decant.perfume_name} ({self.decant.get_volume_display()})"
+            self.product_name = f"دکانت {self.decant.perfume_name} ({self.decant.volume})"
             if self.purchase_unit_price is None:
                 self.purchase_unit_price = Decimal("0")
         elif self.product_id:

@@ -51,8 +51,8 @@ class Decant(models.Model):
     VOLUME_5ML = "5ml"
     VOLUME_10ML = "10ml"
     VOLUME_CHOICES = [
-        (VOLUME_5ML, "۵ میل (5ml)"),
-        (VOLUME_10ML, "۱۰ میل (10ml)"),
+        (VOLUME_5ML, "5ml"),
+        (VOLUME_10ML, "10ml"),
     ]
 
     perfume_name = models.CharField(max_length=200, verbose_name="نام عطر")
@@ -87,7 +87,7 @@ class Decant(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.perfume_name} - {self.get_volume_display()}"
+        return f"{self.perfume_name} ({self.volume})"
 
 
 class StockMovement(models.Model):

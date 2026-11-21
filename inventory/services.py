@@ -105,7 +105,7 @@ def change_decant_stock(decant_id, delta, reason="اصلاح موجودی دکا
     before = decant.stock_quantity
     after = before + delta
     if after < 0:
-        raise StockError(f"موجودی دکانت «{decant.perfume_name} ({decant.get_volume_display()})» برای این تغییر کافی نیست.")
+        raise StockError(f"موجودی دکانت «{decant.perfume_name} ({decant.volume})» برای این تغییر کافی نیست.")
 
     updated = Decant.objects.filter(
         pk=decant_id, stock_quantity__gte=-delta
@@ -113,11 +113,11 @@ def change_decant_stock(decant_id, delta, reason="اصلاح موجودی دکا
         stock_quantity=F("stock_quantity") + delta, updated_at=timezone.now()
     )
     if not updated:
-        raise StockError(f"موجودی دکانت «{decant.perfume_name} ({decant.get_volume_display()})» برای این تغییر کافی نیست.")
+        raise StockError(f"موجودی دکانت «{decant.perfume_name} ({decant.volume})» برای این تغییر کافی نیست.")
 
     StockMovement.objects.create(
         decant=decant,
-        product_name=f"دکانت {decant.perfume_name} ({decant.get_volume_display()})",
+        product_name=f"دکانت {decant.perfume_name} ({decant.volume})",
         quantity_change=delta,
         stock_before=before,
         stock_after=after,
