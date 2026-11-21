@@ -4,7 +4,7 @@ from jalali_date import date2jalali
 from jalali_date.fields import JalaliDateField
 
 from mahonia.widgets import JalaliDateInput
-from .models import Product
+from .models import Decant, Product
 
 
 class StockMovementFilterForm(forms.Form):
@@ -73,3 +73,37 @@ class ProductForm(forms.ModelForm):
             price = self.fields["purchase_price"]
             price.disabled = True
             price.help_text = "میانگین قیمت خرید در فاکتورهای خرید است."
+
+
+class DecantFilterForm(forms.Form):
+    q = forms.CharField(
+        required=False,
+        label="جستجو در نام عطر",
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "نام عطر، برند...", "id": "id_q"}
+        ),
+    )
+    volume = forms.ChoiceField(
+        choices=[("", "همه حجم‌ها")] + Decant.VOLUME_CHOICES,
+        required=False,
+        label="میل عطر",
+        widget=forms.Select(attrs={"class": "form-select", "id": "id_volume"}),
+    )
+
+
+class DecantForm(forms.ModelForm):
+    class Meta:
+        model = Decant
+        fields = ["perfume_name", "volume", "stock_quantity", "sale_price"]
+        widgets = {
+            "perfume_name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "نام عطر (مثلاً ساواج، کرید اونتوس...)"}
+            ),
+            "volume": forms.Select(attrs={"class": "form-select"}),
+            "stock_quantity": forms.NumberInput(
+                attrs={"class": "form-control", "min": 0, "placeholder": "تعداد موجودی دکانت"}
+            ),
+            "sale_price": forms.NumberInput(
+                attrs={"class": "form-control", "min": 0, "step": 1000, "placeholder": "قیمت فروش (تومان)"}
+            ),
+        }

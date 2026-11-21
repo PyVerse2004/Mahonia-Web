@@ -9,9 +9,9 @@ from django.utils import timezone
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
-from .forms import ProductForm, StockMovementFilterForm
-from .models import Product, StockMovement
-from .services import change_stock
+from .forms import DecantFilterForm, DecantForm, ProductForm, StockMovementFilterForm
+from .models import Decant, Product, StockMovement
+from .services import change_decant_stock, change_stock
 
 
 def _clean_price_filter(value: str):
@@ -149,3 +149,89 @@ class StockMovementListView(PermissionRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context["filter_form"] = self.get_filter_form()
         return context
+
+
+# ==============================================================================
+# دکانت‌های عطر (Decants CRUD & Live Filter)
+# ==============================================================================
+
+class DecantListView(PermissionRequiredMixin, ListView):
+    permission_required = "inventory.view_decant"
+    model = Decant
+    template_name = "inventory/decant_list.html"
+    context_object_name = "decants"
+    paginate_by = 24
+
+    def get_filter_form(self):
+        if not hasattr(self, "_filter_form"):
+            self._filter_form = DecantFilterForm(self.request.GET)
+        return self._filter_form
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        form = self.get_filter_form()
+        if not form.is_valid():
+            return queryset
+
+        query = (form.cleaned_data.get("q") or "").strip()
+        volume = form.cleaned_data.get("volume")
+
+        if query:
+            queryset = queryset.filter(perfume_name__icontains=query)
+        if volume:
+            queryset = queryset.filter(volume=volume)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        form = self.get_filter_form()
+        context["filter_form"] = form
+        context["search_query"] = self.request.GET.get("q", "").strip()
+        context["selected_volume"] = self.request.GET.get("volume", "").strip()
+        context["volume_choices"] = Decant.VOLUME_CHOICES
+        return context
+
+
+class DecantCreateView(PermissionRequiredMixin, SuccessMessageMixin, CreateView):
+    permission_required = "inventory.add_decant"
+    model = Decant
+    form_class = DecantForm
+    template_name = "inventory/decant_form.html"
+    success_url = reverse_lazy("inventory:decant_list")
+    success_message = "دکانت «%(perfume_name)s (%(volume)s)» با موفقیت افزوده شد."
+
+    @transaction.atomic
+    def form_valid(self, form):
+        initial_stock = form.cleaned_data.get("stock_quantity") or 0
+        form.instance.stock_quantity = 0
+        response = super().form_valid(form)
+        if initial_stock > 0:
+            change_decant_stock(
+                self.object.pk,
+                initial_stock,
+                reason="ثبت موجودی اولیه دکانت",
+            )
+        return response
+
+
+class DecantUpdateView(PermissionRequiredMixin, SuccessMessageMixin, UpdateView):
+    permission_required = "inventory.change_decant"
+    model = Decant
+    form_class = DecantForm
+    template_name = "inventory/decant_form.html"
+    success_url = reverse_lazy("inventory:decant_list")
+    success_message = "دکانت «%(perfume_name)s (%(volume)s)» با موفقیت ویرایش شد."
+
+
+class DecantDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = "inventory.delete_decant"
+    model = Decant
+    template_name = "inventory/decant_confirm_delete.html"
+    success_url = reverse_lazy("inventory:decant_list")
+
+    def form_valid(self, form):
+        name = str(self.object)
+        response = super().form_valid(form)
+        messages.success(self.request, f"دکانت «{name}» حذف شد.")
+        return response

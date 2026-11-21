@@ -28,9 +28,30 @@
                     {% endif %}
 
                     <div class="row g-3">
+                        {# نوع قلم فاکتور: کالا یا دکانت عطر #}
+                        <div class="col-12">
+                            <label class="form-label fw-bold d-block mb-2">
+                                <i class="bi bi-tags text-gold"></i> نوع قلم فروش
+                            </label>
+                            <div class="btn-group w-100 sale-type-selector" role="group">
+                                <input type="radio" class="btn-check" name="item_type" id="type_product" value="product" {% if form.item_type.value != 'decant' %}checked{% endif %}>
+                                <label class="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2 py-2" for="type_product">
+                                    <i class="bi bi-box-seam-fill"></i>
+                                    <span>کالا (شیشه کامل)</span>
+                                </label>
+
+                                <input type="radio" class="btn-check" name="item_type" id="type_decant" value="decant" {% if form.item_type.value == 'decant' %}checked{% endif %}>
+                                <label class="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2 py-2" for="type_decant">
+                                    <i class="bi bi-eyedropper text-gold"></i>
+                                    <span>دکانت عطر (۵ و ۱۰ میل)</span>
+                                </label>
+                            </div>
+                            {% for error in form.item_type.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+
                         {# تاریخ #}
                         <div class="col-12 col-md-6">
-                            <label for="{{ form.date.id_for_label }}" class="form-label">{{ form.date.label }}</label>
+                            <label for="{{ form.date.id_for_label }}" class="form-label fw-semibold">{{ form.date.label }}</label>
                             <div class="d-flex align-items-start gap-2">
                                 {{ form.date }}
                                 <button type="button" class="btn btn-outline-secondary" id="date-today">امروز</button>
@@ -38,31 +59,48 @@
                             {% for error in form.date.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
                         </div>
 
-                        {# محصول #}
-                        <div class="col-12 col-md-6">
-                            <label for="{{ form.product.id_for_label }}" class="form-label">{{ form.product.label }}</label>
+                        {# انتخاب کالا #}
+                        <div class="col-12 col-md-6" id="productFieldBox">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label for="{{ form.product.id_for_label }}" class="form-label fw-semibold mb-0">
+                                    <i class="bi bi-box-seam text-info"></i> {{ form.product.label }}
+                                </label>
+                                <span id="productStockBadge" class="badge text-bg-secondary d-none"></span>
+                            </div>
                             {{ form.product }}
                             {% for error in form.product.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
                         </div>
 
+                        {# انتخاب دکانت عطر #}
+                        <div class="col-12 col-md-6" id="decantFieldBox">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label for="{{ form.decant.id_for_label }}" class="form-label fw-semibold mb-0">
+                                    <i class="bi bi-eyedropper text-gold"></i> {{ form.decant.label }}
+                                </label>
+                                <span id="decantStockBadge" class="badge text-bg-secondary d-none"></span>
+                            </div>
+                            {{ form.decant }}
+                            {% for error in form.decant.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+
                         {# تعداد #}
                         <div class="col-12 col-md-4">
-                            <label for="{{ form.quantity.id_for_label }}" class="form-label">{{ form.quantity.label }}</label>
+                            <label for="{{ form.quantity.id_for_label }}" class="form-label fw-semibold">{{ form.quantity.label }}</label>
                             {{ form.quantity }}
                             {% for error in form.quantity.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
                         </div>
 
                         {# مبلغ هر واحد #}
                         <div class="col-12 col-md-4">
-                            <label for="{{ form.unit_price.id_for_label }}" class="form-label">{{ form.unit_price.label }}</label>
+                            <label for="{{ form.unit_price.id_for_label }}" class="form-label fw-semibold">{{ form.unit_price.label }}</label>
                             {{ form.unit_price }}
                             {% for error in form.unit_price.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
                         </div>
 
                         {# مبلغ کل #}
                         <div class="col-12 col-md-4">
-                            <label class="form-label" for="id_total_amount">مبلغ کل (تومان)</label>
-                            <input id="id_total_amount" type="text" class="form-control bg-light fw-bold" value="0" readonly>
+                            <label class="form-label fw-semibold" for="id_total_amount">مبلغ کل (تومان)</label>
+                            <input id="id_total_amount" type="text" class="form-control bg-light fw-bold text-gradient-gold" value="0" readonly>
                         </div>
                     </div>
 
@@ -89,6 +127,25 @@
     const saleDate = document.getElementById("id_date");
     const todayButton = document.getElementById("date-today");
 
+    const productFieldBox = document.getElementById("productFieldBox");
+    const decantFieldBox = document.getElementById("decantFieldBox");
+    const productSelect = document.getElementById("id_product");
+    const decantSelect = document.getElementById("id_decant");
+    const productStockBadge = document.getElementById("productStockBadge");
+    const decantStockBadge = document.getElementById("decantStockBadge");
+
+    const productMap = {
+        {% for p in form.fields.product.queryset %}
+        "{{ p.pk }}": { price: {{ p.sale_price|default:0 }}, stock: {{ p.stock_quantity|default:0 }} },
+        {% endfor %}
+    };
+
+    const decantMap = {
+        {% for d in form.fields.decant.queryset %}
+        "{{ d.pk }}": { price: {{ d.sale_price|default:0 }}, stock: {{ d.stock_quantity|default:0 }} },
+        {% endfor %}
+    };
+
     function formatNumber(n) {
         return Math.round(n).toLocaleString("en-US");
     }
@@ -100,6 +157,58 @@
         totalInput.value = formatNumber(total) + " تومان";
     }
 
+    function syncTypeUI() {
+        const isDecant = document.getElementById("type_decant")?.checked;
+        if (isDecant) {
+            productFieldBox.classList.add("d-none");
+            decantFieldBox.classList.remove("d-none");
+            onDecantChange();
+        } else {
+            decantFieldBox.classList.add("d-none");
+            productFieldBox.classList.remove("d-none");
+            onProductChange();
+        }
+    }
+
+    function onProductChange() {
+        const pid = productSelect?.value;
+        if (pid && productMap[pid]) {
+            const item = productMap[pid];
+            productStockBadge.textContent = "موجودی انبار: " + formatNumber(item.stock) + " عدد";
+            productStockBadge.className = "badge " + (item.stock > 1 ? "text-bg-success" : (item.stock === 1 ? "text-bg-warning" : "text-bg-danger"));
+            productStockBadge.classList.remove("d-none");
+            if (!unitPrice.value || unitPrice.value === "0") {
+                unitPrice.value = item.price;
+                recalculate();
+            }
+        } else {
+            productStockBadge.classList.add("d-none");
+        }
+    }
+
+    function onDecantChange() {
+        const did = decantSelect?.value;
+        if (did && decantMap[did]) {
+            const item = decantMap[did];
+            decantStockBadge.textContent = "موجودی انبار: " + formatNumber(item.stock) + " عدد";
+            decantStockBadge.className = "badge " + (item.stock > 1 ? "text-bg-success" : (item.stock === 1 ? "text-bg-warning" : "text-bg-danger"));
+            decantStockBadge.classList.remove("d-none");
+            if (!unitPrice.value || unitPrice.value === "0") {
+                unitPrice.value = item.price;
+                recalculate();
+            }
+        } else {
+            decantStockBadge.classList.add("d-none");
+        }
+    }
+
+    document.querySelectorAll("input[name='item_type']").forEach(radio => {
+        radio.addEventListener("change", syncTypeUI);
+    });
+
+    if (productSelect) productSelect.addEventListener("change", onProductChange);
+    if (decantSelect) decantSelect.addEventListener("change", onDecantChange);
+
     if (todayButton && saleDate) {
         todayButton.addEventListener("click", () => {
             saleDate.value = saleDate.dataset.today;
@@ -110,6 +219,7 @@
     quantity.addEventListener("input", recalculate);
     unitPrice.addEventListener("input", recalculate);
 
+    syncTypeUI();
     recalculate();
 })();
 </script>

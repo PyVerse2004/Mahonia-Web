@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}حذف دکانت عطر | ماهونیا{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+    <div class="col-12 col-md-8 col-lg-5">
+        <div class="card glass-card border-danger">
+            <div class="card-header bg-danger bg-opacity-10 text-danger d-flex align-items-center gap-2">
+                <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                <span class="fw-bold">تایید حذف دکانت عطر</span>
+            </div>
+            <div class="card-body p-4 text-center">
+                <div class="mb-3">
+                    <div class="avatar-lg bg-danger bg-opacity-10 text-danger rounded-circle d-inline-flex align-items-center justify-content-center p-3 mb-2">
+                        <i class="bi bi-eyedropper fs-1"></i>
+                    </div>
+                </div>
+                <h4 class="fw-bold mb-3">آیا از حذف این دکانت اطمینان دارید؟</h4>
+                <div class="alert alert-secondary p-3 mb-4 text-start">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="text-muted">نام عطر:</span>
+                        <strong class="text-gradient-gold">{{ object.perfume_name }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="text-muted">حجم:</span>
+                        <span>{{ object.get_volume_display }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="text-muted">موجودی فعلی:</span>
+                        <span>{{ object.stock_quantity }} عدد</span>
+                    </div>
+                </div>
+                <p class="text-muted small mb-4">
+                    با حذف این دکانت، اطلاعات آن از لیست کاتالوگ دکانت‌ها پاک خواهد شد.
+                </p>
+
+                <form method="post" class="d-flex gap-2 justify-content-center">
+                    {% csrf_token %}
+                    <a href="{% url 'inventory:decant_list' %}" class="btn btn-outline-secondary px-4">
+                        <i class="bi bi-x-lg"></i> انصراف
+                    </a>
+                    <button type="submit" class="btn btn-danger px-4">
+                        <i class="bi bi-trash3"></i> بله، حذف شود
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

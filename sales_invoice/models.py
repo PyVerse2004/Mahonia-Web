@@ -7,15 +7,37 @@ from jalali_date import date2jalali
 
 
 class Sale(models.Model):
+    ITEM_TYPE_PRODUCT = "product"
+    ITEM_TYPE_DECANT = "decant"
+    ITEM_TYPE_CHOICES = [
+        (ITEM_TYPE_PRODUCT, "کالا (شیشه کامل)"),
+        (ITEM_TYPE_DECANT, "دکانت عطر"),
+    ]
+
     date = models.DateField(default=timezone.localdate, verbose_name="تاریخ فاکتور")
+    item_type = models.CharField(
+        max_length=20,
+        choices=ITEM_TYPE_CHOICES,
+        default=ITEM_TYPE_PRODUCT,
+        verbose_name="نوع قلم",
+    )
     product = models.ForeignKey(
         "inventory.Product",
         on_delete=models.SET_NULL,
         null=True,
+        blank=True,
         related_name="sales",
         verbose_name="محصول",
     )
-    product_name = models.CharField(max_length=200, verbose_name="نام محصول")
+    decant = models.ForeignKey(
+        "inventory.Decant",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="sales",
+        verbose_name="دکانت عطر",
+    )
+    product_name = models.CharField(max_length=200, verbose_name="نام محصول یا دکانت")
     quantity = models.PositiveIntegerField(
         validators=[MinValueValidator(1)], verbose_name="تعداد"
     )
@@ -68,7 +90,13 @@ class Sale(models.Model):
         return date2jalali(self.date).strftime("%Y/%m/%d")
 
     def save(self, *args, **kwargs):
-        if self.product_id:
+        if self.item_type == self.ITEM_TYPE_DECANT and self.decant_id:
+            self.product = None
+            self.product_name = f"دکانت {self.decant.perfume_name} ({self.decant.get_volume_display()})"
+            if self.purchase_unit_price is None:
+                self.purchase_unit_price = Decimal("0")
+        elif self.product_id:
+            self.decant = None
             self.product_name = self.product.name
             if (self.purchase_unit_price is None or self.purchase_unit_price == 0) and self.product.purchase_price:
                 self.purchase_unit_price = self.product.purchase_price

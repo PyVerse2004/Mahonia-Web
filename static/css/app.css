@@ -3028,6 +3028,107 @@ p.date > input {
     background: var(--bg-surface);
 }
 
+/* --------------------------------------------------------------------------
+   Decants Luxury Catalog & Badges
+   -------------------------------------------------------------------------- */
+.decant-card {
+    border-color: rgba(212, 175, 55, 0.3) !important;
+}
+
+.decant-image-box {
+    padding-top: 65% !important;
+    background: radial-gradient(circle at 50% 30%, rgba(212, 175, 55, 0.12) 0%, rgba(10, 16, 28, 0.85) 100%) !important;
+}
+
+.decant-placeholder {
+    gap: 0.5rem;
+}
+
+.decant-volume-badge {
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    letter-spacing: 0.02em;
+    backdrop-filter: blur(6px);
+}
+
+.badge-vol-5ml {
+    background: rgba(168, 85, 247, 0.18) !important;
+    border: 1px solid rgba(168, 85, 247, 0.45) !important;
+    color: #d8b4fe !important;
+    box-shadow: 0 0 12px rgba(168, 85, 247, 0.25);
+}
+
+.badge-vol-10ml {
+    background: rgba(16, 185, 129, 0.18) !important;
+    border: 1px solid rgba(16, 185, 129, 0.45) !important;
+    color: #6ee7b7 !important;
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+}
+
+[data-theme="light"] .decant-image-box {
+    background: radial-gradient(circle at 50% 30%, rgba(212, 175, 55, 0.15) 0%, rgba(241, 245, 249, 0.95) 100%) !important;
+}
+
+[data-theme="light"] .badge-vol-5ml {
+    background: #f3e8ff !important;
+    border-color: #d8b4fe !important;
+    color: #6b21a8 !important;
+}
+
+[data-theme="light"] .badge-vol-10ml {
+    background: #ecfdf5 !important;
+    border-color: #a7f3d0 !important;
+    color: #065f46 !important;
+}
+
+/* Sale Invoice Badges for Item Type */
+.badge-decant-pill {
+    background: rgba(212, 175, 55, 0.18) !important;
+    border: 1px solid var(--gold-border-hover) !important;
+    color: var(--gold-light) !important;
+    font-weight: 600;
+    font-size: 0.75rem;
+    padding: 0.22rem 0.55rem;
+}
+
+.badge-product-pill {
+    background: rgba(56, 189, 248, 0.15) !important;
+    border: 1px solid rgba(56, 189, 248, 0.35) !important;
+    color: #7dd3fc !important;
+    font-weight: 600;
+    font-size: 0.75rem;
+    padding: 0.22rem 0.55rem;
+}
+
+[data-theme="light"] .badge-decant-pill {
+    background: rgba(184, 134, 11, 0.12) !important;
+    border-color: rgba(184, 134, 11, 0.35) !important;
+    color: #785404 !important;
+}
+
+[data-theme="light"] .badge-product-pill {
+    background: #e0f2fe !important;
+    border-color: #bae6fd !important;
+    color: #0369a1 !important;
+}
+
+/* Sale Form Type Segmented Switch */
+.sale-type-selector .btn-check:checked + .btn-outline-secondary {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.22) 0%, rgba(184, 134, 11, 0.3) 100%) !important;
+    border-color: var(--gold-primary) !important;
+    color: var(--gold-light) !important;
+    font-weight: 700;
+    box-shadow: 0 0 15px var(--gold-glow);
+}
+
+[data-theme="light"] .sale-type-selector .btn-check:checked + .btn-outline-secondary {
+    background: linear-gradient(135deg, rgba(184, 134, 11, 0.18) 0%, rgba(212, 175, 55, 0.25) 100%) !important;
+    border-color: #b88628 !important;
+    color: #785404 !important;
+}
+
 /* Image Upload Preview Box (Product Form) */
 .product-image-upload-wrapper {
     display: inline-block;

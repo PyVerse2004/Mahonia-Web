@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.db import transaction
 
-from .models import Product, StockMovement
-from .services import change_stock
+from .models import Decant, Product, StockMovement
+from .services import change_decant_stock, change_stock
 
 
 @admin.register(Product)
@@ -56,3 +56,41 @@ class StockMovementAdmin(admin.ModelAdmin):
     list_filter = ("reason", "created_at")
     search_fields = ("product_name", "reference")
     readonly_fields = ("created_at",)
+
+
+@admin.register(Decant)
+class DecantAdmin(admin.ModelAdmin):
+    list_display = ("perfume_name", "volume", "stock_quantity", "sale_price", "created_at")
+    list_filter = ("volume",)
+    search_fields = ("perfume_name",)
+
+    @transaction.atomic
+    def save_model(self, request, obj, form, change):
+        if change:
+            if "stock_quantity" in form.changed_data:
+                old_decant = Decant.objects.select_for_update().get(pk=obj.pk)
+                diff = obj.stock_quantity - old_decant.stock_quantity
+                super().save_model(request, obj, form, change)
+                if diff != 0:
+                    StockMovement.objects.create(
+                        decant=obj,
+                        product_name=f"دکانت {obj.perfume_name} ({obj.get_volume_display()})",
+                        quantity_change=diff,
+                        stock_before=old_decant.stock_quantity,
+                        stock_after=obj.stock_quantity,
+                        reason="اصلاح موجودی دکانت از پنل ادمین",
+                        reference="پنل ادمین",
+                    )
+            else:
+                super().save_model(request, obj, form, change)
+        else:
+            initial_stock = obj.stock_quantity
+            obj.stock_quantity = 0
+            super().save_model(request, obj, form, change)
+            if initial_stock > 0:
+                change_decant_stock(
+                    obj.pk,
+                    initial_stock,
+                    reason="ثبت موجودی اولیه دکانت از پنل ادمین",
+                    reference="پنل ادمین",
+                )

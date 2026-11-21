@@ -4,7 +4,7 @@ from django.db import transaction
 from django.db.models import F, Sum, DecimalField
 from django.utils import timezone
 
-from .models import Product, StockMovement
+from .models import Decant, Product, StockMovement
 
 
 class StockError(Exception):
@@ -87,3 +87,41 @@ def get_or_create_product(name):
     if product:
         return product
     return Product.objects.create(name=name)
+
+
+@transaction.atomic
+def change_decant_stock(decant_id, delta, reason="اصلاح موجودی دکانت", reference=""):
+    """موجودی دکانت را به اندازه‌ی delta زیاد (یا کم) می‌کند.
+
+    کاهش فقط زمانی انجام می‌شود که موجودی کافی باشد و یک ثبت گردش انبار ایجاد می‌کند.
+    """
+    if not delta:
+        return
+
+    decant = Decant.objects.select_for_update().filter(pk=decant_id).first()
+    if decant is None:
+        raise StockError("دکانت موردنظر برای تغییر موجودی پیدا نشد.")
+
+    before = decant.stock_quantity
+    after = before + delta
+    if after < 0:
+        raise StockError(f"موجودی دکانت «{decant.perfume_name} ({decant.get_volume_display()})» برای این تغییر کافی نیست.")
+
+    updated = Decant.objects.filter(
+        pk=decant_id, stock_quantity__gte=-delta
+    ).update(
+        stock_quantity=F("stock_quantity") + delta, updated_at=timezone.now()
+    )
+    if not updated:
+        raise StockError(f"موجودی دکانت «{decant.perfume_name} ({decant.get_volume_display()})» برای این تغییر کافی نیست.")
+
+    StockMovement.objects.create(
+        decant=decant,
+        product_name=f"دکانت {decant.perfume_name} ({decant.get_volume_display()})",
+        quantity_change=delta,
+        stock_before=before,
+        stock_after=after,
+        reason=reason,
+        reference=reference,
+    )
+

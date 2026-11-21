@@ -25,7 +25,7 @@ class SaleListView(PermissionRequiredMixin, ListView):
         return self._filter_form
 
     def get_queryset(self):
-        sales = Sale.objects.select_related("product")
+        sales = Sale.objects.select_related("product", "decant")
         form = self.get_filter_form()
         if not form.is_valid():
             return sales.none()
@@ -33,9 +33,12 @@ class SaleListView(PermissionRequiredMixin, ListView):
         query = (form.cleaned_data.get("q") or "").strip()
         selected_date = form.cleaned_data.get("date")
         is_active = form.cleaned_data.get("is_active")
+        item_type = form.cleaned_data.get("item_type")
 
         if query:
             sales = sales.filter(product_name__icontains=query)
+        if item_type:
+            sales = sales.filter(item_type=item_type)
         if selected_date:
             sales = sales.filter(date=selected_date)
         if is_active == "1":

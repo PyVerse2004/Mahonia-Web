@@ -64,6 +64,7 @@ def sync_user_role_permissions(user, role):
             "delete_person",
             # inventory
             "view_product",
+            "view_decant",
             "view_stockmovement",
         ]
         seller_perms = Permission.objects.filter(codename__in=seller_permission_codenames)

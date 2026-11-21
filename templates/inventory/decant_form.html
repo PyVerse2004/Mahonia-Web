@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}
+{% if object %}ویرایش دکانت {{ object.perfume_name }} | ماهونیا{% else %}افزودن دکانت جدید | ماهونیا{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-2">
+    <div class="col-12 col-md-8 col-lg-6">
+        <div class="card glass-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span class="fs-5 fw-bold text-gradient-gold">
+                    <i class="bi {% if object %}bi-pencil-square{% else %}bi-eyedropper{% endif %}"></i>
+                    {% if object %}ویرایش دکانت «{{ object.perfume_name }}»{% else %}افزودن دکانت عطر جدید{% endif %}
+                </span>
+                <a href="{% url 'inventory:decant_list' %}" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-arrow-right"></i> بازگشت به لیست
+                </a>
+            </div>
+
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                    {% endif %}
+
+                    <div class="row g-3">
+                        {# نام عطر #}
+                        <div class="col-12">
+                            <label for="{{ form.perfume_name.id_for_label }}" class="form-label fw-semibold">
+                                <i class="bi bi-tag text-gold"></i> {{ form.perfume_name.label }}
+                            </label>
+                            {{ form.perfume_name }}
+                            {% for error in form.perfume_name.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                            <div class="form-text small text-muted">نام عطر یا ادکلن موردنظر را به طور کامل بنویسید (مثلاً ساواج دیور، بلک افغان، اونتوس).</div>
+                        </div>
+
+                        {# میل عطر #}
+                        <div class="col-12 col-sm-6">
+                            <label for="{{ form.volume.id_for_label }}" class="form-label fw-semibold">
+                                <i class="bi bi-droplet-half text-emerald"></i> {{ form.volume.label }}
+                            </label>
+                            {{ form.volume }}
+                            {% for error in form.volume.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+
+                        {# تعداد موجودی #}
+                        <div class="col-12 col-sm-6">
+                            <label for="{{ form.stock_quantity.id_for_label }}" class="form-label fw-semibold">
+                                <i class="bi bi-boxes text-info"></i> {{ form.stock_quantity.label }}
+                            </label>
+                            {{ form.stock_quantity }}
+                            {% for error in form.stock_quantity.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+
+                        {# قیمت فروش #}
+                        <div class="col-12">
+                            <label for="{{ form.sale_price.id_for_label }}" class="form-label fw-semibold">
+                                <i class="bi bi-cash-stack text-gold"></i> {{ form.sale_price.label }}
+                            </label>
+                            <div class="input-group">
+                                {{ form.sale_price }}
+                                <span class="input-group-text bg-surface text-muted">تومان</span>
+                            </div>
+                            {% for error in form.sale_price.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                            <div id="pricePreview" class="form-text small text-gold mt-1 fw-medium"></div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 justify-content-end mt-4 pt-3 border-top">
+                        <a href="{% url 'inventory:decant_list' %}" class="btn btn-outline-secondary px-4">
+                            <i class="bi bi-x-lg"></i> انصراف
+                        </a>
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-check-lg"></i>
+                            {% if object %}ذخیره تغییرات دکانت{% else %}ثبت دکانت جدید{% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    const salePriceInput = document.getElementById("{{ form.sale_price.id_for_label }}");
+    const preview = document.getElementById("pricePreview");
+
+    function updatePreview() {
+        if (!salePriceInput || !preview) return;
+        const val = Number(salePriceInput.value) || 0;
+        if (val > 0) {
+            preview.textContent = "قیمت نمایشی: " + val.toLocaleString("en-US") + " تومان";
+        } else {
+            preview.textContent = "";
+        }
+    }
+
+    if (salePriceInput) {
+        salePriceInput.addEventListener("input", updatePreview);
+        updatePreview();
+    }
+})();
+</script>
+{% endblock %}
