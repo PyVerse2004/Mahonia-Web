@@ -46,7 +46,7 @@
                                     <i class="bi bi-cloud-arrow-up"></i>
                                     {% if object and object.image %}تغییر تصویر محصول{% else %}انتخاب تصویر محصول{% endif %}
                                 </label>
-                                <input type="file" name="image" id="id_image" class="d-none" accept="image/*">
+                                <input type="file" name="image" id="id_image" class="d-none" accept="image/webp,image/*">
                                 {% for error in form.image.errors %}
                                     <div class="text-danger small mt-1">{{ error }}</div>
                                 {% endfor %}

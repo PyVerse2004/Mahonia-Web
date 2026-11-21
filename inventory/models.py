@@ -46,6 +46,18 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if self.image:
+            filename = getattr(self.image, "name", "")
+            is_committed = getattr(self.image, "_committed", True)
+            if not is_committed or not filename.lower().endswith(".webp"):
+                from mahonia.utils import convert_image_to_webp
+
+                converted = convert_image_to_webp(self.image)
+                if converted is not self.image:
+                    self.image = converted
+        super().save(*args, **kwargs)
+
 
 class Decant(models.Model):
     VOLUME_5ML = "5ml"

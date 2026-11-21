@@ -257,6 +257,7 @@ class ProductCrudTests(TestCase):
         created = Product.objects.get(name="عطر مگاماره")
         self.assertTrue(bool(created.image))
         self.assertIn("perfume", created.image.name)
+        self.assertTrue(created.image.name.lower().endswith(".webp"))
 
         # بررسی در لیست محصولات (گرید ویو)
         list_response = self.client.get(reverse("inventory:product_list"))

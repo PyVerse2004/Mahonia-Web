@@ -47,7 +47,7 @@ class ProductForm(forms.ModelForm):
                 attrs={"class": "form-control", "placeholder": "نام محصول"}
             ),
             "image": forms.FileInput(
-                attrs={"class": "form-control", "accept": "image/*", "id": "id_image"}
+                attrs={"class": "form-control", "accept": "image/webp,image/*", "id": "id_image"}
             ),
             "stock_quantity": forms.NumberInput(
                 attrs={"class": "form-control", "min": 0}
