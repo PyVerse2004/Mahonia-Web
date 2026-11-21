@@ -5,6 +5,78 @@
 (function () {
     "use strict";
 
+    let activeFilterRequests = 0;
+    let loaderStartTime = 0;
+    let hideTimer = null;
+
+    function getOrCreateGlobalLoader() {
+        let loader = document.getElementById("liveFilterGlobalLoader");
+        if (!loader) {
+            loader = document.createElement("div");
+            loader.id = "liveFilterGlobalLoader";
+            loader.className = "live-filter-global-overlay";
+            loader.setAttribute("aria-hidden", "true");
+            loader.setAttribute("role", "status");
+            loader.setAttribute("aria-live", "polite");
+            loader.innerHTML = `
+                <div class="live-filter-center-card">
+                    <div class="live-filter-orb-wrapper">
+                        <div class="live-filter-spinner-outer"></div>
+                        <div class="live-filter-spinner-inner"></div>
+                        <div class="live-filter-orb-glow"></div>
+                        <div class="live-filter-orb-core">
+                            <i class="bi bi-arrow-repeat live-filter-core-icon"></i>
+                        </div>
+                    </div>
+                    <div class="live-filter-text-group">
+                        <div class="live-filter-title text-gradient-gold">در حال به‌روزرسانی اطلاعات...</div>
+                        <div class="live-filter-subtitle">جستجو و فیلتر لحظه‌ای ماهونیا</div>
+                    </div>
+                    <div class="live-filter-dots">
+                        <span class="live-filter-dot dot-1"></span>
+                        <span class="live-filter-dot dot-2"></span>
+                        <span class="live-filter-dot dot-3"></span>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(loader);
+        }
+        return loader;
+    }
+
+    function showCenterLoader() {
+        if (hideTimer) {
+            clearTimeout(hideTimer);
+            hideTimer = null;
+        }
+        activeFilterRequests++;
+        const loader = getOrCreateGlobalLoader();
+        loaderStartTime = Date.now();
+        loader.classList.add("is-active");
+        loader.setAttribute("aria-hidden", "false");
+        document.body.classList.add("is-live-filtering");
+    }
+
+    function hideCenterLoader() {
+        activeFilterRequests = Math.max(0, activeFilterRequests - 1);
+        if (activeFilterRequests > 0) {
+            return;
+        }
+
+        const loader = getOrCreateGlobalLoader();
+        const elapsed = Date.now() - loaderStartTime;
+        const delay = Math.max(0, 220 - elapsed);
+
+        hideTimer = setTimeout(() => {
+            if (activeFilterRequests === 0) {
+                loader.classList.remove("is-active");
+                loader.setAttribute("aria-hidden", "true");
+                document.body.classList.remove("is-live-filtering");
+            }
+            hideTimer = null;
+        }, delay);
+    }
+
     function debounce(fn, delay) {
         let timer = null;
         return function (...args) {
@@ -69,6 +141,7 @@
                 }
                 currentController = new AbortController();
 
+                showCenterLoader();
                 resultsContainer.classList.add("is-loading");
                 form.classList.add("is-searching");
 
@@ -125,6 +198,7 @@
                 .finally(() => {
                     resultsContainer.classList.remove("is-loading");
                     form.classList.remove("is-searching");
+                    hideCenterLoader();
                 });
             }
 

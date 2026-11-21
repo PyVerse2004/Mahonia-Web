@@ -2988,6 +2988,234 @@ p.date > input {
 }
 
 /* --------------------------------------------------------------------------
+   Fixed Central Live Filter & Reload Overlay (Mahonia Luxury UI/UX)
+   -------------------------------------------------------------------------- */
+.live-filter-global-overlay {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(4, 7, 14, 0.48);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    overflow: hidden;
+    transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                visibility 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.live-filter-global-overlay.is-active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+[data-theme="light"] .live-filter-global-overlay {
+    background: rgba(235, 241, 248, 0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+/* Floating Center Card */
+.live-filter-center-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 250px;
+    max-width: 320px;
+    padding: 1.85rem 2.2rem;
+    border-radius: 22px;
+    text-align: center;
+    background: linear-gradient(145deg, rgba(13, 21, 37, 0.95) 0%, rgba(6, 10, 18, 0.97) 100%);
+    border: 1px solid var(--gold-border-hover);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75),
+                0 0 40px rgba(212, 175, 55, 0.28),
+                inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    transform: scale(0.88) translateY(10px);
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.28s ease;
+    user-select: none;
+}
+
+.live-filter-global-overlay.is-active .live-filter-center-card {
+    transform: scale(1) translateY(0);
+}
+
+[data-theme="light"] .live-filter-center-card {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.96) 0%, rgba(248, 250, 252, 0.98) 100%);
+    border-color: rgba(184, 134, 11, 0.38);
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18),
+                0 0 35px rgba(212, 175, 55, 0.22),
+                inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+/* Luxury Orb & Dual Orbital Spinners */
+.live-filter-orb-wrapper {
+    position: relative;
+    width: 72px;
+    height: 72px;
+    margin-bottom: 1.15rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.live-filter-spinner-outer {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: var(--gold-light);
+    border-right-color: var(--gold-primary);
+    filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.55));
+    animation: liveOrbRotateCW 0.9s cubic-bezier(0.5, 0.1, 0.49, 0.9) infinite;
+}
+
+.live-filter-spinner-inner {
+    position: absolute;
+    inset: 7px;
+    border-radius: 50%;
+    border: 2px dashed rgba(212, 175, 55, 0.55);
+    animation: liveOrbRotateCCW 1.4s linear infinite;
+}
+
+.live-filter-orb-glow {
+    position: absolute;
+    inset: 12px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(212, 175, 55, 0.38) 0%, transparent 72%);
+    animation: liveOrbPulse 1.8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.live-filter-orb-core {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.live-filter-core-icon {
+    font-size: 1.6rem;
+    color: var(--gold-light);
+    display: inline-block;
+    animation: liveIconRotate 1.25s linear infinite;
+    filter: drop-shadow(0 0 6px rgba(212, 175, 55, 0.6));
+}
+
+[data-theme="light"] .live-filter-spinner-outer {
+    border-top-color: #b88628;
+    border-right-color: #dfb76c;
+}
+
+[data-theme="light"] .live-filter-spinner-inner {
+    border-color: rgba(184, 134, 11, 0.45);
+}
+
+[data-theme="light"] .live-filter-core-icon {
+    color: #b88628;
+    filter: drop-shadow(0 0 5px rgba(184, 134, 11, 0.45));
+}
+
+/* Typography */
+.live-filter-text-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.live-filter-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.4;
+}
+
+.live-filter-subtitle {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+[data-theme="light"] .live-filter-title {
+    color: #785404;
+}
+
+/* Pulsing Progress Dots */
+.live-filter-dots {
+    display: flex;
+    gap: 7px;
+    margin-top: 1rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.live-filter-dot {
+    width: 6.5px;
+    height: 6.5px;
+    border-radius: 50%;
+    background: var(--gold-primary);
+    opacity: 0.3;
+    animation: liveDotPulse 1.2s infinite ease-in-out;
+}
+
+.live-filter-dot.dot-1 {
+    animation-delay: 0s;
+}
+
+.live-filter-dot.dot-2 {
+    animation-delay: 0.22s;
+}
+
+.live-filter-dot.dot-3 {
+    animation-delay: 0.44s;
+}
+
+/* Keyframes */
+@keyframes liveOrbRotateCW {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes liveOrbRotateCCW {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(-360deg); }
+}
+
+@keyframes liveOrbPulse {
+    0%, 100% { opacity: 0.35; transform: scale(0.92); }
+    50% { opacity: 0.9; transform: scale(1.18); }
+}
+
+@keyframes liveIconRotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes liveDotPulse {
+    0%, 100% {
+        opacity: 0.25;
+        transform: scale(0.85);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.3);
+        background: var(--gold-light);
+        box-shadow: 0 0 10px var(--gold-glow);
+    }
+}
+
+/* --------------------------------------------------------------------------
    17. Profit & Loss Report Luxury Stat Cards
    -------------------------------------------------------------------------- */
 .profit-stat-card {
