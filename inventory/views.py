@@ -15,7 +15,7 @@ from .services import change_decant_stock, change_stock
 
 
 def _clean_price_filter(value: str):
-    """تبدیل رشته ورودی قیمت به عدد اعشاری بدون کاما و تبدیل اعداد فارسی/عربی."""
+    """Clean string price input: normalize Persian/Arabic digits, strip commas, return Decimal or None."""
     if not value:
         return None
     val_str = str(value)
@@ -46,7 +46,7 @@ class ProductListView(PermissionRequiredMixin, ListView):
         if query:
             queryset = queryset.filter(name__icontains=query)
 
-        # فیلتر اختصاصی و انحصاری بر اساس «قیمت فروش» (sale_price) - قیمت خرید هیچ اثری ندارد
+        # Exclusive filter by sale price (purchase price is deliberately excluded)
         min_price = _clean_price_filter(self.request.GET.get("min_price"))
         if min_price is not None:
             queryset = queryset.filter(sale_price__gte=min_price)
@@ -97,7 +97,7 @@ class ProductUpdateView(PermissionRequiredMixin, SuccessMessageMixin, UpdateView
 
 
 class ProductDeleteView(PermissionRequiredMixin, DeleteView):
-    """محصول را برای همیشه از دیتابیس حذف می‌کند."""
+    """Permanently delete product from the database."""
 
     permission_required = "inventory.delete_product"
     model = Product
@@ -152,7 +152,7 @@ class StockMovementListView(PermissionRequiredMixin, ListView):
 
 
 # ==============================================================================
-# دکانت‌های عطر (Decants CRUD & Live Filter)
+# Perfume Decants (CRUD & Live Filter)
 # ==============================================================================
 
 class DecantListView(PermissionRequiredMixin, ListView):

@@ -62,9 +62,9 @@ class ProductForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # موجودی و قیمت خرید فقط هنگام ساخت محصول (به‌عنوان مقدار اولیه) وارد
-        # می‌شوند. بعد از آن موجودی با فاکتور خرید و فروش تغییر می‌کند و قیمت خرید
-        # میانگین فاکتورهای خرید است.
+        # Initial stock and purchase price are only specified upon product creation.
+        # Afterwards, stock moves via purchase and sales invoices, and purchase price
+        # reflects weighted average cost.
         if self.instance.pk:
             stock = self.fields["stock_quantity"]
             stock.disabled = True

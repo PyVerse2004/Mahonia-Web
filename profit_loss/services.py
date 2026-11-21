@@ -9,7 +9,7 @@ from sales_invoice.models import Sale
 
 def get_jalali_date_range(year, month=None):
     """
-    سال و ماه شمسی را دریافت کرده و بازه متناظر میلادی (start_date, end_date) را برمی‌گرداند.
+    Calculate corresponding Gregorian (start_date, end_date) for given Jalali year and optional month.
     """
     year = int(year)
     if month:
@@ -30,14 +30,14 @@ def get_jalali_date_range(year, month=None):
 
 def get_profit_loss_report(year=None, month=None, product_id=None, query=None):
     """
-    فاکتورهای فروش فعال را طبق فیلترها پالایش کرده و گزارش خلاصه سود و زیان را تولید می‌کند.
+    Filter active sales invoices according to criteria and generate profit & loss summary metrics.
     """
     sales = Sale.objects.filter(is_active=True).select_related("product")
 
     selected_year = year
     selected_month = month
 
-    # اگر فقط ماه انتخاب شده باشد و سال خالی باشد، سال جاری شمسی در نظر گرفته می‌شود
+    # If only month is specified, default to the current Jalali year
     if selected_month and not selected_year:
         selected_year = jdatetime.date.today().year
 

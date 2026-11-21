@@ -21,10 +21,11 @@ def make_product(name="Legend", stock=0, price=0):
 
 
 def invoice_data(supplier, rows, existing=None, date="1405-08-09"):
-    """داده‌ی POST برای فرم فاکتور و formset ردیف‌ها.
+    """
+    Generate POST payload for invoice header form and items formset.
 
-    rows: لیست (product یا نام محصول، quantity, unit_price)
-    existing: برای ویرایش، فاکتوری که ردیف‌هایش به همین ترتیب قبلاً ثبت شده‌اند.
+    rows: list of (product instance or name, quantity, unit_price)
+    existing: for editing, existing invoice instance with matching rows.
     """
     data = {
         "date": date,
@@ -210,7 +211,7 @@ class UpdateInvoiceTests(PurchaseTestCase):
         self.assertEqual(self.refresh(self.hawas).stock_quantity, 0)
 
     def test_edit_that_would_make_stock_negative_is_rolled_back(self):
-        # بعد از خرید، ۸ عدد فروخته شده است (فروش هنوز ثبت نمی‌شود؛ مستقیم کم می‌کنیم).
+        # After purchase, 8 units were sold (direct reduction to simulate prior sale)
         change_stock(self.legend.pk, -8)
 
         response = self.post_update([(self.legend, 5, 4000000), (self.hawas, 5, 3000000)])

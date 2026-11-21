@@ -66,17 +66,17 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         now = timezone.localtime()
         today = now.date()
 
-        # 1. تاریخ و ساعت امروز (شمسی با روز هفته و زمان رسمی)
+        # 1. Current Jalali date and time (with Persian weekday and month names)
         j_date = date2jalali(today)
         weekday_name = PERSIAN_WEEKDAYS.get(now.weekday(), "")
         month_name = PERSIAN_MONTHS.get(j_date.month, "")
         formatted_jalali_date = f"{j_date.day} {month_name} {j_date.year}"
         numeric_jalali_date = f"{j_date.year:04d}/{j_date.month:02d}/{j_date.day:02d}"
 
-        # 2. تعداد کل محصولات در انبار
+        # 2. Total active products count in catalog
         total_products = Product.objects.count()
 
-        # 3. تعداد فروش و جمع کل مبلغ فروش امروز (روزانه)
+        # 3. Today's sales count and aggregate daily revenue
         today_sales = Sale.objects.filter(date=today, is_active=True)
         sales_metrics = today_sales.aggregate(
             total_amount=Sum(F("quantity") * F("unit_price")),
@@ -86,7 +86,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         today_sales_quantity = sales_metrics["total_quantity"] or 0
         today_sales_amount = sales_metrics["total_amount"] or Decimal("0")
 
-        # 4. آخرین فروش‌ها (نمایش ۳ مورد آخر مطابق نیاز کاربر)
+        # 4. Recent sales (latest 3 active items for dashboard display)
         recent_sales = (
             Sale.objects.filter(is_active=True)
             .select_related("product")

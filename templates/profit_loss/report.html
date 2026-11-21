@@ -21,9 +21,9 @@
     </div>
 </div>
 
-{# کارت‌های جمع و خلاصه در بالای لیست گزارش #}
+{# KPI Summary Cards at top of report #}
 <div id="reportSummaryCards" class="row g-3 mb-4">
-    {# جمع کل فروش #}
+    {# Total Sales #}
     <div class="col-12 col-sm-6 col-xl-3">
         <div class="card profit-stat-card shadow-sm border-primary h-100">
             <div class="card-body">
@@ -36,7 +36,7 @@
         </div>
     </div>
 
-    {# جمع کل بهای تمام‌شده خرید #}
+    {# Cost of Goods Sold (COGS) #}
     <div class="col-12 col-sm-6 col-xl-3">
         <div class="card profit-stat-card shadow-sm border-secondary h-100">
             <div class="card-body">
@@ -49,7 +49,7 @@
         </div>
     </div>
 
-    {# میزان سود یا زیان خالص #}
+    {# Net Profit / Loss #}
     <div class="col-12 col-sm-6 col-xl-3">
         <div class="card profit-stat-card shadow-sm {% if summary.is_profitable %}border-success bg-success-subtle{% else %}border-danger bg-danger-subtle{% endif %} h-100">
             <div class="card-body">
@@ -71,7 +71,7 @@
         </div>
     </div>
 
-    {# تعداد اقلام فروخته‌شده #}
+    {# Total Sold Quantity #}
     <div class="col-12 col-sm-6 col-xl-3">
         <div class="card profit-stat-card shadow-sm border-info h-100">
             <div class="card-body">
@@ -85,7 +85,7 @@
     </div>
 </div>
 
-{# فرم فیلتر بر اساس ماه و سال و کالا #}
+{# Filter form by year, month, and product #}
 <div class="card shadow-sm mb-4">
     <div class="card-body p-3">
         <form method="get" class="row g-2 align-items-end live-filter-form">
@@ -122,7 +122,7 @@
 </div>
 
 <div id="liveResultsContainer" class="live-results-wrapper">
-{# جدول لیست فاکتورهای فروش و سود هر فاکتور #}
+{# Sales Invoices Table with Margin & Profit #}
 <div class="table-responsive">
     <table class="table table-bordered table-hover bg-white align-middle shadow-sm">
         <thead class="table-light">

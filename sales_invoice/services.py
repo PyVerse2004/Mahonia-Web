@@ -63,9 +63,9 @@ def update_sale(form):
     sale.save()
     reference = _stock_reference(sale)
 
-    # فقط اگر فاکتور فعال است، تغییرات روی موجودی انبار اعمال می‌شود
+    # Stock adjustments are only applied when invoice was and remains active
     if old_is_active and sale.is_active:
-        # ۱. بازگرداندن موجودی قلم قبلی
+        # 1. Restore previous item stock
         if old_item_type == Sale.ITEM_TYPE_DECANT and old_decant_id is not None:
             if sale.item_type == Sale.ITEM_TYPE_DECANT and old_decant_id == sale.decant_id:
                 change_decant_stock(
@@ -99,7 +99,7 @@ def update_sale(form):
                     reference=reference,
                 )
 
-        # ۲. کسر موجودی قلم جدید
+        # 2. Deduct new item stock
         if sale.item_type == Sale.ITEM_TYPE_DECANT:
             change_decant_stock(
                 sale.decant_id,
@@ -123,7 +123,7 @@ def toggle_sale_active(sale):
     reference = _stock_reference(sale)
 
     if sale.is_active:
-        # غیرفعال کردن فاکتور: کالا یا دکانت به انبار بازمی‌گردد
+        # Deactivate invoice: return product or decant quantity back to stock
         if sale.item_type == Sale.ITEM_TYPE_DECANT and sale.decant_id is not None:
             change_decant_stock(
                 sale.decant_id,
@@ -140,7 +140,7 @@ def toggle_sale_active(sale):
             )
         sale.is_active = False
     else:
-        # فعال‌سازی مجدد فاکتور: کالا یا دکانت دوباره از انبار کسر می‌شود
+        # Reactivate invoice: deduct product or decant quantity from stock again
         if sale.item_type == Sale.ITEM_TYPE_DECANT and sale.decant_id is not None:
             change_decant_stock(
                 sale.decant_id,

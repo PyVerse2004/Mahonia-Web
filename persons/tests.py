@@ -1,4 +1,3 @@
-from decimal import Decimal
 import jdatetime
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
@@ -6,7 +5,7 @@ from django.test import RequestFactory, TestCase
 from django.urls import reverse
 
 from .admin import PersonAdmin
-from .forms import PersonFilterForm, PersonForm
+from .forms import PersonForm
 from .models import Person
 
 
@@ -175,7 +174,7 @@ class PersonViewsTests(TestCase):
         self.client.force_login(self.user)
 
     def test_person_list_renders(self):
-        p1 = Person.objects.create(
+        Person.objects.create(
             date="2026-11-03",
             debtor_name="علی علوی",
             product_name="کالای ۱",

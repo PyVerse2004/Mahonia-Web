@@ -28,7 +28,7 @@
                     {% endif %}
 
                     <div class="row g-3">
-                        {# نوع قلم فاکتور: کالا یا دکانت عطر #}
+                        {# Invoice Item Type: Product or Decant #}
                         <div class="col-12">
                             <label class="form-label fw-bold d-block mb-2">
                                 <i class="bi bi-tags text-gold"></i> نوع قلم فروش
@@ -49,7 +49,7 @@
                             {% for error in form.item_type.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
                         </div>
 
-                        {# تاریخ #}
+                        {# Invoice Date #}
                         <div class="col-12 col-md-6">
                             <label for="{{ form.date.id_for_label }}" class="form-label fw-semibold">{{ form.date.label }}</label>
                             <div class="d-flex align-items-start gap-2">
@@ -59,7 +59,7 @@
                             {% for error in form.date.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
                         </div>
 
-                        {# انتخاب کالا #}
+                        {# Product Selection #}
                         <div class="col-12 col-md-6" id="productFieldBox">
                             <div class="d-flex justify-content-between align-items-center mb-1">
                                 <label for="{{ form.product.id_for_label }}" class="form-label fw-semibold mb-0">
@@ -71,7 +71,7 @@
                             {% for error in form.product.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
                         </div>
 
-                        {# انتخاب دکانت عطر #}
+                        {# Decant Selection #}
                         <div class="col-12 col-md-6" id="decantFieldBox">
                             <div class="d-flex justify-content-between align-items-center mb-1">
                                 <label for="{{ form.decant.id_for_label }}" class="form-label fw-semibold mb-0">
@@ -83,21 +83,21 @@
                             {% for error in form.decant.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
                         </div>
 
-                        {# تعداد #}
+                        {# Quantity #}
                         <div class="col-12 col-md-4">
                             <label for="{{ form.quantity.id_for_label }}" class="form-label fw-semibold">{{ form.quantity.label }}</label>
                             {{ form.quantity }}
                             {% for error in form.quantity.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
                         </div>
 
-                        {# مبلغ هر واحد #}
+                        {# Unit Price #}
                         <div class="col-12 col-md-4">
                             <label for="{{ form.unit_price.id_for_label }}" class="form-label fw-semibold">{{ form.unit_price.label }}</label>
                             {{ form.unit_price }}
                             {% for error in form.unit_price.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
                         </div>
 
-                        {# مبلغ کل #}
+                        {# Total Amount #}
                         <div class="col-12 col-md-4">
                             <label class="form-label fw-semibold" for="id_total_amount">مبلغ کل (تومان)</label>
                             <input id="id_total_amount" type="text" class="form-control bg-light fw-bold text-gradient-gold" value="0" readonly>

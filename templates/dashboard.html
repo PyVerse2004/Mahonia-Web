@@ -21,7 +21,7 @@
 
 <!-- 4 Main KPI Cards (Enlarged & Prominent Inspired by UI Mockup) -->
 <div class="row g-3 mb-4">
-    <!-- 1. تاریخ و ساعت امروز (تاریخ و زمان جاری در سمت راست صفحه) -->
+    <!-- 1. Current Jalali Date & Time (Top right position in Persian RTL layout) -->
     <div class="col-12 col-sm-6 col-xl-3">
         <div class="dashboard-kpi-card kpi-datetime">
             <div class="kpi-header">
@@ -40,7 +40,7 @@
         </div>
     </div>
 
-    <!-- 2. تعداد کل محصولات -->
+    <!-- 2. Total Catalog Products Count -->
     <div class="col-12 col-sm-6 col-xl-3">
         <div class="dashboard-kpi-card kpi-products">
             <div class="kpi-header">
@@ -56,7 +56,7 @@
         </div>
     </div>
 
-    <!-- 3. مبلغ فروش امروز (روزانه - رنگ سبز زمردی) -->
+    <!-- 3. Today's Total Sales Revenue (Emerald Green) -->
     <div class="col-12 col-sm-6 col-xl-3">
         <div class="dashboard-kpi-card kpi-sales-amount">
             <div class="kpi-header">
@@ -72,7 +72,7 @@
         </div>
     </div>
 
-    <!-- 4. تعداد فروش امروز (رنگ طلای سلطنتی) -->
+    <!-- 4. Today's Sales Count (Royal Gold) -->
     <div class="col-12 col-sm-6 col-xl-3">
         <div class="dashboard-kpi-card kpi-sales-count">
             <div class="kpi-header">
@@ -89,7 +89,7 @@
     </div>
 </div>
 
-<!-- آخرین فروش‌ها (مشابه تصویر موکاپ) -->
+<!-- Recent Sales (Edge-to-edge luxury table) -->
 {% if perms.sales_invoice.view_sale or is_manager %}
 <div class="card dashboard-recent-sales-card mb-4">
     <div class="card-header d-flex justify-content-between align-items-center">

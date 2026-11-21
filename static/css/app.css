@@ -972,7 +972,7 @@ html.theme-transitioning *::after {
     align-items: stretch;
 }
 
-/* --- RIGHT SIDE: Login Form & Credentials (در سمت راست) --- */
+/* --- RIGHT SIDE: Login Form & Credentials --- */
 .login-form-side {
     background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(8, 12, 22, 0.98) 100%);
     border-left: 1px solid var(--gold-border);
@@ -1276,7 +1276,7 @@ html.theme-transitioning *::after {
     margin: 0 !important;
 }
 
-/* --- LEFT SIDE: Full Edge-to-Edge Perfume Image (در سمت چپ - فقط عکس کامل ادکلن) --- */
+/* --- LEFT SIDE: Full Edge-to-Edge Perfume Image --- */
 .login-perfume-side {
     position: relative;
     background: #020408;
@@ -1824,7 +1824,7 @@ p.date > input {
     content: none !important;
 }
 
-/* 1. تاریخ و زمان جاری (Sapphire Sky / Electric Cyan Full Perimeter) */
+/* 1. Current Date & Time (Sapphire Sky / Electric Cyan Full Perimeter) */
 .dashboard-kpi-card.kpi-datetime {
     border: 1.5px solid rgba(56, 189, 248, 0.55) !important;
     background: radial-gradient(120% 75% at 50% 0%, rgba(56, 189, 248, 0.14) 0%, rgba(14, 22, 39, 0.96) 65%) !important;
@@ -1852,7 +1852,7 @@ p.date > input {
     color: #38bdf8 !important;
 }
 
-/* 2. تعداد کل کالاها (Champagne & Bronze Gold Full Perimeter) */
+/* 2. Total Products Count (Champagne & Bronze Gold Full Perimeter) */
 .dashboard-kpi-card.kpi-products {
     border: 1.5px solid rgba(230, 195, 100, 0.5) !important;
     background: radial-gradient(120% 75% at 50% 0%, rgba(230, 195, 100, 0.14) 0%, rgba(14, 22, 39, 0.96) 65%) !important;
@@ -1871,7 +1871,7 @@ p.date > input {
     box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.65), 0 0 32px rgba(230, 195, 100, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
 }
 
-/* 3. مبلغ فروش امروز (Imperial Emerald Luxury Full Perimeter - معاوضه شده) */
+/* 3. Today's Revenue (Imperial Emerald Luxury Full Perimeter) */
 .dashboard-kpi-card.kpi-sales-amount {
     border: 1.5px solid rgba(16, 185, 129, 0.55) !important;
     background: radial-gradient(120% 75% at 50% 0%, rgba(16, 185, 129, 0.15) 0%, rgba(14, 22, 39, 0.96) 65%) !important;
@@ -1890,7 +1890,7 @@ p.date > input {
     box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.65), 0 0 32px rgba(16, 185, 129, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
 }
 
-/* 4. تعداد فروش امروز (Crown 24K Royal Gold Full Perimeter - معاوضه شده) */
+/* 4. Today's Sales Count (Crown 24K Royal Gold Full Perimeter) */
 .dashboard-kpi-card.kpi-sales-count {
     border: 1.5px solid rgba(255, 215, 0, 0.6) !important;
     background: radial-gradient(120% 75% at 50% 0%, rgba(255, 215, 0, 0.18) 0%, rgba(14, 22, 39, 0.96) 65%) !important;

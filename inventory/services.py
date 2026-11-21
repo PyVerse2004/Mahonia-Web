@@ -1,22 +1,23 @@
 from decimal import ROUND_HALF_UP, Decimal
 
 from django.db import transaction
-from django.db.models import F, Sum, DecimalField
+from django.db.models import DecimalField, F, Sum
 from django.utils import timezone
 
 from .models import Decant, Product, StockMovement
 
 
 class StockError(Exception):
-    """موجودی انبار برای انجام عملیات کافی نیست."""
+    """Raised when warehouse stock is insufficient for the requested operation."""
 
 
 @transaction.atomic
 def change_stock(product_id, delta, reason="اصلاح موجودی", reference=""):
-    """موجودی محصول را به اندازه‌ی delta زیاد (یا کم) می‌کند.
+    """
+    Increase or decrease product stock quantity by delta atomically while recording a cardex entry.
 
-    کاهش فقط وقتی انجام می‌شود که موجودی کافی باشد. تغییر موجودی و ثبت کاردکس
-    در یک تراکنش انجام می‌شوند تا گزارش با موجودی واقعی هماهنگ بماند.
+    Reductions are only permitted if sufficient stock exists. Both balance update and
+    movement logging execute within a single transaction to ensure consistency.
     """
     if not delta:
         return
@@ -50,11 +51,11 @@ def change_stock(product_id, delta, reason="اصلاح موجودی", reference=
 
 
 def recalculate_purchase_price(product_id):
-    """قیمت خرید محصول را برابر میانگین موزون همه‌ی ردیف‌های فاکتور خرید می‌گذارد.
+    """
+    Recalculate weighted average purchase price for a product across all purchase invoice rows.
 
-        میانگین = مجموع (تعداد × قیمت) / مجموع تعداد
-
-    اگر محصول هیچ ردیف فاکتوری نداشته باشد، قیمت فعلی بدون تغییر می‌ماند.
+    Weighted Average = Total Cost / Total Quantity.
+    If the product has no purchase invoice rows, current purchase price remains unchanged.
     """
     product = Product.objects.get(pk=product_id)
 
@@ -76,12 +77,12 @@ def recalculate_purchase_price(product_id):
     )
 
 
-
 def get_or_create_product(name):
-    """محصولی با این نام (بدون حساسیت به بزرگی و کوچکی حروف) را برمی‌گرداند؛ اگر نبود می‌سازد.
+    """
+    Retrieve existing product case-insensitively or create a new one with zero initial stock.
 
-    محصول تازه با موجودی و قیمت صفر ساخته می‌شود. موجودی و قیمت خرید را فاکتور
-    خرید تعیین می‌کند و قیمت فروش را بعداً از صفحه‌ی ویرایش محصول می‌گذاری.
+    Initial stock and purchase cost are determined by incoming purchase invoices, while
+    sale price can be configured from product management views.
     """
     product = Product.objects.filter(name__iexact=name).first()
     if product:
@@ -91,9 +92,10 @@ def get_or_create_product(name):
 
 @transaction.atomic
 def change_decant_stock(decant_id, delta, reason="اصلاح موجودی دکانت", reference=""):
-    """موجودی دکانت را به اندازه‌ی delta زیاد (یا کم) می‌کند.
+    """
+    Increase or decrease decant stock quantity by delta atomically while recording a cardex entry.
 
-    کاهش فقط زمانی انجام می‌شود که موجودی کافی باشد و یک ثبت گردش انبار ایجاد می‌کند.
+    Reductions are only permitted if sufficient stock is present in inventory.
     """
     if not delta:
         return
@@ -124,4 +126,3 @@ def change_decant_stock(decant_id, delta, reason="اصلاح موجودی دکا
         reason=reason,
         reference=reference,
     )
-

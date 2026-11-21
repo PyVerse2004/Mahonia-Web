@@ -1,3 +1,5 @@
-from django.db import models
+"""Database models for profit and loss reporting.
 
-# Create your models here.
+Profit & Loss operates as an analytics service aggregating Sale and Product
+records, requiring no dedicated persistent database tables.
+"""

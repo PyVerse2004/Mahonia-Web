@@ -50,7 +50,7 @@ class PurchaseInvoiceForm(forms.ModelForm):
 
 
 class PurchaseItemForm(forms.ModelForm):
-    # نام محصول: یا یکی از محصولات موجود یا نام یک محصول جدید.
+    # Product name: selects an existing product or designates a new product name.
     product_text = forms.CharField(
         max_length=200,
         label="محصول",
@@ -79,8 +79,7 @@ class PurchaseItemForm(forms.ModelForm):
     def __init__(self, *args, can_create_products=False, **kwargs):
         super().__init__(*args, **kwargs)
         self.can_create_products = can_create_products
-        # اگر نام وارد‌شده محصول جدیدی باشد، اینجا نگه داشته می‌شود تا هنگام ذخیره‌ی
-        # فاکتور ساخته شود. محصول در مرحله‌ی اعتبارسنجی ساخته نمی‌شود.
+        # Holds newly designated product name to be created atomically during invoice persistence.
         self.new_product_name = None
 
         item = self.instance
@@ -90,7 +89,7 @@ class PurchaseItemForm(forms.ModelForm):
             )
 
     def clean_product_text(self):
-        # فاصله‌های اضافه حذف می‌شوند تا «Legend » و «Legend» یکی حساب شوند.
+        # Strip redundant whitespace so that "Legend " and "Legend" are treated identically.
         return " ".join(self.cleaned_data["product_text"].split())
 
     def clean(self):
@@ -107,7 +106,7 @@ class PurchaseItemForm(forms.ModelForm):
             and not self.instance.product_id
             and name == self.instance.product_name
         ):
-            # ردیف قدیمی که محصولش بعداً حذف شده؛ دست‌نخورده می‌ماند.
+            # Legacy row whose linked product was subsequently deleted; leave untouched.
             pass
         elif self.can_create_products:
             self.new_product_name = name
@@ -119,7 +118,7 @@ class PurchaseItemForm(forms.ModelForm):
         return cleaned_data
 
 
-# حداقل یک ردیف لازم است؛ ردیف جدید با جاوااسکریپت اضافه می‌شود.
+# At least one item row is required; additional rows are added dynamically via JS.
 PurchaseItemFormSet = inlineformset_factory(
     PurchaseInvoice,
     PurchaseItem,

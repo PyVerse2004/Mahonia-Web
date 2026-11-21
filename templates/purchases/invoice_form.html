@@ -27,7 +27,7 @@
                 <div class="alert alert-danger">{{ formset.non_form_errors }}</div>
             {% endif %}
 
-            {# بالای فاکتور: تاریخ و تامین‌کننده #}
+            {# Invoice Header: Date and Supplier #}
             <div class="row g-3 mb-4">
                 <div class="col-12 col-md-4">
                     <label for="{{ form.date.id_for_label }}" class="form-label">{{ form.date.label }}</label>
@@ -44,7 +44,7 @@
                 </div>
             </div>
 
-            {# ردیف‌های فاکتور #}
+            {# Invoice Line Items #}
             {{ formset.management_form }}
             <div class="table-responsive">
                 <table class="table table-bordered bg-white align-middle">
@@ -89,12 +89,12 @@
     </div>
 </div>
 
-{# پیشنهاد نام محصولات موجود برای فیلد محصول #}
+{# Datalist suggesting existing catalog products #}
 <datalist id="product-options">
     {% for name in product_names %}<option value="{{ name }}">{% endfor %}
 </datalist>
 
-{# قالب ردیف خالی که دکمه‌ی «افزودن ردیف» کپی می‌کند #}
+{# Empty row template cloned by 'Add Row' button #}
 <template id="empty-row">
     {% include "purchases/_item_row.html" with form=formset.empty_form %}
 </template>
@@ -113,8 +113,8 @@
         )
     );
 
-    // اگر نام وارد‌شده بین محصولات موجود نباشد، پیام «محصول جدید» نشان داده می‌شود
-    // تا اشتباه تایپی قبل از ذخیره دیده شود.
+    // If entered product name does not exist, display 'New Product' badge
+    // to catch typos prior to form submission.
     function updateProductHint(row) {
         const name = row
             .querySelector('input[name$="-product_text"]')
@@ -127,7 +127,7 @@
         );
     }
 
-    // فقط برای نمایش؛ مقدار نهایی را سرور دوباره حساب می‌کند.
+    // Display only: server recomputes canonical totals on save.
     function recalc() {
         let quantity = 0;
         let amount = 0;

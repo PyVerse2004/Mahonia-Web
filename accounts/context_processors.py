@@ -1,10 +1,10 @@
 def user_role(request):
     """
-    متغیرهای مربوط به نقش کاربر برای استفاده در قالب‌ها:
-    - is_manager: آیا کاربر فعلی مدیر است یا خیر
-    - is_seller: آیا کاربر فعلی فروشنده است یا خیر
-    - active_role: شناسه نقش ('manager' یا 'seller')
-    - active_role_display: عنوان فارسی نقش ('مدیر' یا 'فروشنده')
+    Context processor providing user role flags and identifiers for templates:
+    - is_manager: True if the current user has manager privileges or is superuser
+    - is_seller: True if the current user is restricted to seller role
+    - active_role: Role identifier ('manager' or 'seller')
+    - active_role_display: Persian display label ('مدیر' or 'فروشنده')
     """
     if not hasattr(request, "user") or not request.user.is_authenticated:
         return {

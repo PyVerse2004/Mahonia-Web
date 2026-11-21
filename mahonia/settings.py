@@ -19,8 +19,8 @@ from django.core.exceptions import ImproperlyConfigured
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# مقادیر حساس از متغیر محیطی خوانده می‌شوند.
-# در توسعه بدون تنظیم چیزی هم اجرا می‌شود؛ در production حتماً باید تنظیم شوند:
+# Sensitive settings are loaded from environment variables.
+# In development, default fallback values are used. In production, configure:
 #   DJANGO_SECRET_KEY, DJANGO_DEBUG=0, DJANGO_ALLOWED_HOSTS=example.com,www.example.com
 _DEV_SECRET_KEY = "django-insecure-dev-only-do-not-use-in-production"
 
@@ -69,7 +69,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'mahonia.urls'
 
-# بعد از یک ساعت بی‌فعالیتی از حساب خارج می‌شود (با هر درخواست تمدید می‌شود).
+# Sessions expire after 1 hour of inactivity (renewed on every active request).
 SESSION_COOKIE_AGE = 60 * 60
 
 SESSION_SAVE_EVERY_REQUEST = True

@@ -1,3 +1,5 @@
-from django.contrib import admin
+"""Admin configuration for profit and loss reporting.
 
-# Register your models here.
+Profit & Loss uses aggregated analytics over sales and inventory models
+without standalone database models to register in admin.
+"""

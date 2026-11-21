@@ -259,7 +259,7 @@ class ProductCrudTests(TestCase):
         self.assertIn("perfume", created.image.name)
         self.assertTrue(created.image.name.lower().endswith(".webp"))
 
-        # بررسی در لیست محصولات (گرید ویو)
+        # Verify product presence in catalog list
         list_response = self.client.get(reverse("inventory:product_list"))
         self.assertContains(list_response, "عطر مگاماره")
         self.assertContains(list_response, created.image.url)
@@ -313,6 +313,7 @@ class ProductCrudTests(TestCase):
         self.assertEqual(len(response.context["products"]), 20)
         response = self.client.get(reverse("inventory:product_list") + "?page=2")
         self.assertEqual(len(response.context["products"]), 5)
+
 
 class ProductAdminTests(TestCase):
     def test_product_admin_allows_editing_stock_and_records_movement(self):

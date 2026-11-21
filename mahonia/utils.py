@@ -6,8 +6,8 @@ from PIL import Image
 
 def convert_image_to_webp(image_file, quality=90):
     """
-    هر فایل تصویری ارسال‌شده یا آپلود‌شده (JPG, PNG, GIF, BMP و ...)
-    را به‌صورت خودکار به فرمت بهینه و فشرده WebP تبدیل می‌کند.
+    Convert any uploaded or given image file (JPG, PNG, GIF, BMP, etc.)
+    to optimized WebP format with preserved alpha channel and high compression efficiency.
     """
     if not image_file:
         return image_file
@@ -23,7 +23,7 @@ def convert_image_to_webp(image_file, quality=90):
 
         img = Image.open(image_file)
 
-        # مدیریت کانال رنگی و ترنسپرنسی
+        # Handle color mode and transparency preservation
         if img.mode in ("RGBA", "LA") or (img.mode == "P" and "transparency" in img.info):
             img = img.convert("RGBA")
         else:

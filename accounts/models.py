@@ -43,9 +43,10 @@ class UserProfile(models.Model):
 
 def sync_user_role_permissions(user, role):
     """
-    همگام‌سازی دسترسی‌ها و گروه‌ها بر اساس نقش:
-    - نقش فروشنده: فاکتور فروش، اشخاص، مشاهده انبار و کالا. بدون دسترسی به فاکتور خرید، تامین‌کنندگان و سود و زیان.
-    - نقش مدیر: دسترسی کامل به تمامی بخش‌های سامانه.
+    Synchronize user permissions and groups according to role:
+    - Seller: sales invoices, persons, read-only inventory/products.
+      No access to purchases, suppliers, or profit & loss reports.
+    - Manager: full access across all application modules.
     """
     try:
         manager_group, _ = Group.objects.get_or_create(name="مدیران")
@@ -87,7 +88,7 @@ def sync_user_role_permissions(user, role):
         if not user.is_superuser and user.is_staff != is_staff_val:
             User.objects.filter(pk=user.pk).update(is_staff=is_staff_val)
     except Exception:
-        # در زمان اجرای اولیه‌ی مایگریشن‌ها یا شرایطی که جداول پر نشده‌اند
+        # Ignore errors during initial database migrations or when auth tables are unpopulated
         pass
 
 

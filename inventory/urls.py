@@ -20,7 +20,7 @@ urlpatterns = [
     path("create/", ProductCreateView.as_view(), name="product_create"),
     path("<int:pk>/edit/", ProductUpdateView.as_view(), name="product_update"),
     path("<int:pk>/delete/", ProductDeleteView.as_view(), name="product_delete"),
-    # دکانت‌های عطر
+    # Perfume decants
     path("decants/", DecantListView.as_view(), name="decant_list"),
     path("decants/create/", DecantCreateView.as_view(), name="decant_create"),
     path("decants/<int:pk>/edit/", DecantUpdateView.as_view(), name="decant_update"),

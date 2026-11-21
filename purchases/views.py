@@ -13,7 +13,7 @@ from .forms import PurchaseInvoiceForm, PurchaseItemFormSet, SupplierForm
 from .models import PurchaseInvoice, Supplier
 
 
-# ---------- تامین‌کننده ----------
+# ---------- Supplier ----------
 
 
 class SupplierListView(PermissionRequiredMixin, ListView):
@@ -42,7 +42,7 @@ class SupplierUpdateView(PermissionRequiredMixin, SuccessMessageMixin, UpdateVie
     success_message = "تامین‌کننده «%(name)s» ویرایش شد."
 
 
-# ---------- فاکتور خرید ----------
+# ---------- Purchase Invoice ----------
 
 
 class InvoiceListView(PermissionRequiredMixin, ListView):
@@ -54,7 +54,7 @@ class InvoiceListView(PermissionRequiredMixin, ListView):
 
 
 class InvoiceEditMixin(PermissionRequiredMixin):
-    """منطق مشترک ساخت و ویرایش: یک فرم فاکتور + یک formset برای ردیف‌ها."""
+    """Shared mixin for invoice creation and editing: invoice form + items formset."""
 
     model = PurchaseInvoice
     form_class = PurchaseInvoiceForm

@@ -1,5 +1,4 @@
 from decimal import Decimal
-import jdatetime
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.test import TestCase

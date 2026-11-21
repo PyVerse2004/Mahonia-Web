@@ -93,12 +93,16 @@ class SaleToggleActiveView(PermissionRequiredMixin, View):
     permission_required = "sales_invoice.delete_sale"
 
     def get(self, request, pk):
-        sale = get_object_or_404(Sale, pk=pk)
+        get_object_or_404(Sale, pk=pk)
         return redirect("sales_invoice:sale_list")
 
     def post(self, request, pk):
         sale = get_object_or_404(Sale, pk=pk)
-        is_ajax = request.headers.get("x-requested-with") == "XMLHttpRequest" or "application/json" in request.headers.get("accept", "")
+        accept_header = request.headers.get("accept", "")
+        is_ajax = (
+            request.headers.get("x-requested-with") == "XMLHttpRequest"
+            or "application/json" in accept_header
+        )
         try:
             is_active = toggle_sale_active(sale)
         except StockError as error:

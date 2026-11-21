@@ -9,7 +9,7 @@ from inventory.services import (
 
 
 def _quantities(invoice):
-    """تعداد خریداری‌شده‌ی هر محصول در فاکتور، به شکل {product_id: quantity}."""
+    """Dictionary of product quantities on invoice: {product_id: total_quantity}."""
     if not invoice.pk:
         return {}
     rows = (
@@ -21,7 +21,7 @@ def _quantities(invoice):
 
 
 def _sync_inventory(before, after, reason, reference):
-    """اختلاف تعداد قبل و بعد را روی موجودی اعمال و قیمت خرید را دوباره محاسبه می‌کند."""
+    """Apply quantity deltas to inventory and recalculate weighted average purchase prices."""
     for product_id in before.keys() | after.keys():
         change_stock(
             product_id,
@@ -33,7 +33,7 @@ def _sync_inventory(before, after, reason, reference):
 
 
 def _assign_new_products(formset):
-    """برای ردیف‌هایی که نام محصول جدید دارند، محصول را می‌سازد (یا پیدا می‌کند)."""
+    """Resolve or create product instances for rows specifying new product names."""
     deleted = formset.deleted_forms
     for item_form in formset.forms:
         if item_form.new_product_name and item_form not in deleted:
@@ -42,9 +42,10 @@ def _assign_new_products(formset):
 
 @transaction.atomic
 def save_invoice(form, formset):
-    """فاکتور و ردیف‌هایش را ذخیره می‌کند و انبار را به‌روز می‌کند.
+    """
+    Persist invoice and items atomically while updating warehouse stock and average costs.
 
-    همه‌ی مراحل در یک تراکنش‌اند؛ اگر StockError پیش بیاید هیچ تغییری ذخیره نمی‌شود.
+    All steps execute in a single transaction; if StockError occurs, all changes roll back.
     """
     is_new = form.instance.pk is None
     before = _quantities(form.instance)
@@ -68,5 +69,5 @@ def save_invoice(form, formset):
 def delete_invoice(invoice):
     reference = f"فاکتور خرید شماره {invoice.pk}"
     before = _quantities(invoice)
-    invoice.delete()  # ردیف‌ها با CASCADE حذف می‌شوند
+    invoice.delete()  # Items cascade with deletion
     _sync_inventory(before, {}, reason="حذف فاکتور خرید", reference=reference)

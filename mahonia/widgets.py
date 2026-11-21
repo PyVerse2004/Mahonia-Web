@@ -3,8 +3,8 @@ from jalali_date.widgets import AdminJalaliDateWidget
 
 class JalaliDateInput(AdminJalaliDateWidget):
     """
-    ویجت تاریخ جلالی اختصاصی بدون تگ پوشاننده <p class="date"> جنگو ادمین
-    جهت هم‌ترازسازی دقیق پیکسلی در سطرهای فیلتر و گروه‌های ورودی بوت‌استرپ.
+    Custom Jalali date widget omitting Django admin's wrapper <p class="date">
+    for pixel-perfect alignment in Bootstrap form controls and filter bars.
     """
-    template_name = "django/forms/widgets/input.html"
 
+    template_name = "django/forms/widgets/input.html"

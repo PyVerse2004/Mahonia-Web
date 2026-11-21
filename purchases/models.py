@@ -28,14 +28,14 @@ class Supplier(models.Model):
 
 class PurchaseInvoice(models.Model):
     date = models.DateField(default=timezone.localdate, verbose_name="تاریخ فاکتور")
-    # تامین‌کننده‌ای که فاکتور دارد نباید حذف شود.
+    # Suppliers associated with existing invoices cannot be deleted.
     supplier = models.ForeignKey(
         Supplier,
         on_delete=models.PROTECT,
         related_name="invoices",
         verbose_name="تامین‌کننده",
     )
-    # این دو فیلد دستی وارد نمی‌شوند؛ بعد از هر ذخیره از روی ردیف‌ها محاسبه می‌شوند.
+    # Computed automatically from items after save (not manually entered).
     total_quantity = models.PositiveIntegerField(
         default=0, editable=False, verbose_name="تعداد کل"
     )
@@ -71,7 +71,7 @@ class PurchaseItem(models.Model):
         related_name="items",
         verbose_name="فاکتور",
     )
-    # اگر محصول از انبار حذف شود، ردیف فاکتور می‌ماند و نام محصول در product_name.
+    # If a product is deleted from catalog, invoice item retains product_name snapshot.
     product = models.ForeignKey(
         "inventory.Product",
         on_delete=models.SET_NULL,

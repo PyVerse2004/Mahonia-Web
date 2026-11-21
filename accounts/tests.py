@@ -50,8 +50,8 @@ class AccountsTests(TestCase):
 
     def test_dashboard_kpi_metrics(self):
         """
-        داشبورد باید آمار ۴ گانه شامل تعداد کل محصولات، تعداد فروش امروز،
-        مبلغ فروش روزانه و تاریخ و ساعت را نمایش دهد.
+        Dashboard should display the 4 core KPI metrics: total products,
+        today's sales count, today's total revenue, and current date/time.
         """
         from datetime import timedelta
         from decimal import Decimal
@@ -65,7 +65,7 @@ class AccountsTests(TestCase):
         p1 = Product.objects.create(name="عطر تام فورد", stock_quantity=15, sale_price=Decimal("2000000"))
         p2 = Product.objects.create(name="عطر کرید اونتوس", stock_quantity=8, sale_price=Decimal("3500000"))
 
-        # فروش امروز
+        # Sales made today
         Sale.objects.create(
             date=today,
             product=p1,
@@ -75,7 +75,7 @@ class AccountsTests(TestCase):
             purchase_unit_price=Decimal("1500000"),
             is_active=True,
         )
-        # فروش دیروز (نباید در آمار امروز بیاید)
+        # Sales made yesterday (must not count towards today's metrics)
         Sale.objects.create(
             date=yesterday,
             product=p2,
@@ -90,7 +90,7 @@ class AccountsTests(TestCase):
         response = self.client.get(reverse("dashboard"))
         self.assertEqual(response.status_code, 200)
 
-        # بررسی متغیرهای Context
+        # Verify context metrics
         self.assertEqual(response.context["total_products"], 2)
         self.assertEqual(response.context["today_sales_count"], 1)
         self.assertEqual(response.context["today_sales_quantity"], 2)
@@ -98,16 +98,16 @@ class AccountsTests(TestCase):
         self.assertIn("today_jalali_date", response.context)
         self.assertIn("current_time", response.context)
 
-        # بررسی محتوای رندر شده HTML
-        self.assertContains(response, "تعداد کل محصولات")
+        # Verify rendered HTML content
+        self.assertContains(response, "تعداد کل کالاها")
         self.assertContains(response, "تعداد فروش امروز")
-        self.assertContains(response, "مبلغ فروش امروز (روزانه)")
-        self.assertContains(response, "تاریخ و ساعت امروز")
+        self.assertContains(response, "مبلغ فروش امروز")
+        self.assertContains(response, "تاریخ و زمان جاری")
         self.assertContains(response, "4,000,000")
 
     def test_dashboard_recent_sales_list(self):
         """
-        داشبورد باید جدول آخرین فروش‌ها را شامل نام کالا، تصویر، تعداد، مبلغ کل و تاریخ نمایش دهد.
+        Dashboard should render the recent sales table with product name, quantity, total price, and date.
         """
         from decimal import Decimal
         from django.utils import timezone
@@ -135,11 +135,11 @@ class AccountsTests(TestCase):
         response = self.client.get(reverse("dashboard"))
         self.assertEqual(response.status_code, 200)
 
-        # بررسی کانتکست
+        # Verify context
         self.assertIn("recent_sales", response.context)
         self.assertIn(sale, response.context["recent_sales"])
 
-        # بررسی رندر المان‌های کارت آخرین فروش‌ها
+        # Verify rendered elements
         self.assertContains(response, "آخرین فروش‌ها")
         self.assertContains(response, "مشاهده همه")
         self.assertContains(response, "عطر دیور ساواج")
@@ -147,14 +147,14 @@ class AccountsTests(TestCase):
         self.assertContains(response, "13,500,000 تومان")
         self.assertContains(response, sale.jalali_date)
 
-        # عدم نمایش فیلدهای شماره فاکتور و عملیات طبق درخواست کاربر
+        # Invoice number and action columns should remain omitted per design requirements
         self.assertNotContains(response, "<th>شماره فاکتور</th>")
         self.assertNotContains(response, "<th>عملیات</th>")
         self.assertNotContains(response, f"#FS-{sale.pk:04d}")
 
     def test_dashboard_recent_sales_limit_three(self):
         """
-        تعداد آیتم‌های آخرین فروش‌ها باید حداکثر ۳ عدد باشد.
+        Recent sales count on the dashboard should be capped at 3 items.
         """
         from decimal import Decimal
         from django.utils import timezone
@@ -207,7 +207,7 @@ class RoleBasedAccessControlTests(TestCase):
 
     def test_login_page_does_not_contain_role_selection(self):
         """
-        صفحه لاگین نباید فیلد انتخاب نقش داشته باشد.
+        Login page should not contain a role selection dropdown.
         """
         response = self.client.get(reverse("login"))
         self.assertEqual(response.status_code, 200)
@@ -216,7 +216,7 @@ class RoleBasedAccessControlTests(TestCase):
 
     def test_seller_login_automatically_assigns_seller_role(self):
         """
-        فروشنده با لاگین عادی بر اساس نقش تعریف‌شده در ادمین وارد می‌شود.
+        Seller logging in receives the seller role and corresponding permissions.
         """
         response = self.client.post(
             reverse("login"),
@@ -227,7 +227,7 @@ class RoleBasedAccessControlTests(TestCase):
 
     def test_manager_login_automatically_assigns_manager_role(self):
         """
-        مدیر با لاگین عادی بر اساس نقش تعریف‌شده در ادمین وارد می‌شود.
+        Manager logging in receives the manager role and corresponding permissions.
         """
         response = self.client.post(
             reverse("login"),
@@ -238,8 +238,8 @@ class RoleBasedAccessControlTests(TestCase):
 
     def test_seller_views_restrictions(self):
         """
-        فروشنده نباید به فاکتورهای خرید، تامین‌کنندگان و سود و زیان دسترسی داشته باشد.
-        اما باید به فاکتور فروش، اشخاص و کالا و انبار دسترسی داشته باشد.
+        Seller should not access purchases, suppliers, or profit/loss reports,
+        but should access sales invoices, persons, and inventory list.
         """
         self.client.force_login(self.seller_user)
 
@@ -255,7 +255,7 @@ class RoleBasedAccessControlTests(TestCase):
 
     def test_manager_views_access(self):
         """
-        مدیر به تمام بخش‌ها دسترسی دارد.
+        Manager should have access to all system sections.
         """
         self.client.force_login(self.manager_user)
         self.assertEqual(self.client.get(reverse("purchases:invoice_list")).status_code, 200)
@@ -267,7 +267,7 @@ class RoleBasedAccessControlTests(TestCase):
 
     def test_dashboard_and_navbar_elements_for_seller(self):
         """
-        منوی فروشنده نباید فاکتورهای خرید، تامین‌کنندگان و سود و زیان را نمایش دهد.
+        Sidebar menu for seller should exclude purchases, suppliers, and profit/loss.
         """
         self.client.force_login(self.seller_user)
         response = self.client.get(reverse("dashboard"))
@@ -281,7 +281,7 @@ class RoleBasedAccessControlTests(TestCase):
 
     def test_dashboard_and_navbar_elements_for_manager(self):
         """
-        منوی مدیر تمامی موارد را نمایش می‌دهد.
+        Sidebar menu for manager should show all sections.
         """
         self.client.force_login(self.manager_user)
         response = self.client.get(reverse("dashboard"))
@@ -295,8 +295,8 @@ class RoleBasedAccessControlTests(TestCase):
 
     def test_inventory_product_list_elements_for_seller_and_manager(self):
         """
-        فروشنده در لیست انبار نباید قیمت خرید میانگین و ستون عملیات را ببیند.
-        اما مدیر باید هر دو را ببیند.
+        Seller in inventory list should not see average purchase price or actions column,
+        whereas manager should see both.
         """
         from decimal import Decimal
         from inventory.models import Product
@@ -308,7 +308,7 @@ class RoleBasedAccessControlTests(TestCase):
             sale_price=Decimal("1800000"),
         )
 
-        # بررسی برای نقش فروشنده
+        # Verify seller view
         self.client.force_login(self.seller_user)
         resp_seller = self.client.get(reverse("inventory:product_list"))
         self.assertEqual(resp_seller.status_code, 200)
@@ -319,7 +319,7 @@ class RoleBasedAccessControlTests(TestCase):
         self.assertNotContains(resp_seller, "<th>عملیات</th>")
         self.assertNotContains(resp_seller, "افزودن محصول")
 
-        # بررسی برای نقش مدیر
+        # Verify manager view
         self.client.force_login(self.manager_user)
         resp_manager = self.client.get(reverse("inventory:product_list"))
         self.assertEqual(resp_manager.status_code, 200)

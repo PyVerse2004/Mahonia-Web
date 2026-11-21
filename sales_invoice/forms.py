@@ -73,6 +73,7 @@ class SaleForm(forms.ModelForm):
 
     item_type = forms.ChoiceField(
         choices=Sale.ITEM_TYPE_CHOICES,
+        required=False,
         label="نوع فروش",
         widget=forms.RadioSelect(attrs={"class": "btn-check"}),
         initial=Sale.ITEM_TYPE_PRODUCT,
@@ -121,9 +122,13 @@ class SaleForm(forms.ModelForm):
             timezone.localdate()
         ).strftime("%Y-%m-%d")
 
+    def clean_item_type(self):
+        return self.cleaned_data.get("item_type") or Sale.ITEM_TYPE_PRODUCT
+
     def clean(self):
         cleaned_data = super().clean()
-        item_type = cleaned_data.get("item_type")
+        item_type = cleaned_data.get("item_type") or Sale.ITEM_TYPE_PRODUCT
+        cleaned_data["item_type"] = item_type
         product = cleaned_data.get("product")
         decant = cleaned_data.get("decant")
         quantity = cleaned_data.get("quantity") or 0
@@ -132,20 +137,21 @@ class SaleForm(forms.ModelForm):
             if not decant:
                 self.add_error("decant", "لطفاً یک دکانت عطر را انتخاب کنید.")
             else:
-                # بررسی موجودی دکانت
+                # Verify decant stock availability
                 available_stock = decant.stock_quantity
                 if self.instance and self.instance.pk and self.instance.decant_id == decant.pk:
                     available_stock += self.instance.quantity
                 if quantity > available_stock:
+                    decant_name = f"{decant.perfume_name} ({decant.volume})"
                     self.add_error(
                         "quantity",
-                        f"موجودی دکانت «{decant.perfume_name} ({decant.volume})» کافی نیست. موجودی انبار: {available_stock} عدد",
+                        f"موجودی دکانت «{decant_name}» کافی نیست. موجودی انبار: {available_stock} عدد",
                     )
         else:
             if not product:
                 self.add_error("product", "لطفاً یک محصول را انتخاب کنید.")
             else:
-                # بررسی موجودی کالا
+                # Verify product stock availability
                 available_stock = product.stock_quantity
                 if self.instance and self.instance.pk and self.instance.product_id == product.pk:
                     available_stock += self.instance.quantity

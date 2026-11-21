@@ -28,7 +28,7 @@
                     {% endif %}
 
                     <div class="row g-3">
-                        {# نام عطر #}
+                        {# Perfume Name #}
                         <div class="col-12">
                             <label for="{{ form.perfume_name.id_for_label }}" class="form-label fw-semibold">
                                 <i class="bi bi-tag text-gold"></i> {{ form.perfume_name.label }}
@@ -38,7 +38,7 @@
                             <div class="form-text small text-muted">نام عطر یا ادکلن موردنظر را به طور کامل بنویسید (مثلاً ساواج دیور، بلک افغان، اونتوس).</div>
                         </div>
 
-                        {# میل عطر #}
+                        {# Decant Volume #}
                         <div class="col-12 col-sm-6">
                             <label for="{{ form.volume.id_for_label }}" class="form-label fw-semibold">
                                 <i class="bi bi-droplet-half text-emerald"></i> {{ form.volume.label }}
@@ -47,7 +47,7 @@
                             {% for error in form.volume.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
                         </div>
 
-                        {# تعداد موجودی #}
+                        {# Stock Quantity #}
                         <div class="col-12 col-sm-6">
                             <label for="{{ form.stock_quantity.id_for_label }}" class="form-label fw-semibold">
                                 <i class="bi bi-boxes text-info"></i> {{ form.stock_quantity.label }}
@@ -56,7 +56,7 @@
                             {% for error in form.stock_quantity.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
                         </div>
 
-                        {# قیمت فروش #}
+                        {# Sale Price #}
                         <div class="col-12">
                             <label for="{{ form.sale_price.id_for_label }}" class="form-label fw-semibold">
                                 <i class="bi bi-cash-stack text-gold"></i> {{ form.sale_price.label }}
