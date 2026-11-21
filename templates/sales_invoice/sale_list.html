@@ -253,7 +253,11 @@
             .catch(error => {
                 modalSpinner.classList.add("d-none");
                 modalConfirmBtn.disabled = false;
-                alert(error.message);
+                if (window.showMahoniaToast) {
+                    window.showMahoniaToast(error.message, "error", 3000);
+                } else {
+                    alert(error.message);
+                }
             });
         });
     }

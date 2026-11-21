@@ -2391,6 +2391,349 @@ p.date > input {
 /* --------------------------------------------------------------------------
    11.1. Alerts & Notification Banners
    -------------------------------------------------------------------------- */
+.mahonia-toast-container {
+    position: fixed;
+    top: 1.25rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2500;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 480px;
+    padding: 0 1rem;
+    pointer-events: none;
+}
+
+.mahonia-toast {
+    position: relative;
+    pointer-events: auto;
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    padding: 0.95rem 1.15rem 1.05rem 1rem;
+    border-radius: 16px;
+    overflow: hidden;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    background: linear-gradient(145deg, rgba(14, 22, 38, 0.95) 0%, rgba(7, 11, 20, 0.98) 100%);
+    border: 1px solid var(--gold-border-hover);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 25px rgba(212, 175, 55, 0.2);
+    animation: mahoniaToastSlideInDown 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.mahonia-toast:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.75), 0 0 35px rgba(212, 175, 55, 0.3);
+}
+
+.mahonia-toast.toast-hiding {
+    animation: mahoniaToastSlideOutUp 0.32s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+}
+
+[data-theme="light"] .mahonia-toast {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.97) 0%, rgba(248, 250, 252, 0.99) 100%);
+    border-color: rgba(184, 134, 11, 0.35);
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.14), 0 0 25px rgba(212, 175, 55, 0.18);
+}
+
+/* Toast Icon Wrapper */
+.mahonia-toast-icon-wrapper {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    position: relative;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+}
+
+.mahonia-toast-icon-wrapper i {
+    position: relative;
+    z-index: 1;
+    animation: mahoniaToastIconPulse 2s infinite ease-in-out;
+}
+
+/* Toast Content */
+.mahonia-toast-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.mahonia-toast-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.mahonia-toast-badge {
+    font-size: 0.76rem;
+    font-weight: 700;
+    padding: 0.18rem 0.55rem;
+    border-radius: 9999px;
+    letter-spacing: -0.01em;
+}
+
+.mahonia-toast-time {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.mahonia-toast-message {
+    font-size: 0.92rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+/* Toast Close Button */
+.mahonia-toast-close {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: -0.25rem -0.25rem 0 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.85rem;
+}
+
+.mahonia-toast-close:hover {
+    color: var(--gold-light);
+    background: rgba(212, 175, 55, 0.15);
+    transform: rotate(90deg);
+}
+
+[data-theme="light"] .mahonia-toast-close:hover {
+    color: #785404;
+    background: rgba(184, 134, 11, 0.15);
+}
+
+/* Timer Progress Bar */
+.mahonia-toast-timer-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3.5px;
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+}
+
+[data-theme="light"] .mahonia-toast-timer-bar {
+    background: rgba(0, 0, 0, 0.06);
+}
+
+.mahonia-toast-timer-progress {
+    height: 100%;
+    width: 100%;
+    transform-origin: right center;
+    animation: mahoniaToastTimerCountdown 2s linear forwards;
+}
+
+.mahonia-toast:hover .mahonia-toast-timer-progress {
+    animation-play-state: paused;
+}
+
+/* Type Variants: Success (Database changes, additions, edits, deletions) */
+.mahonia-toast-success {
+    border-color: rgba(16, 185, 129, 0.45);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 25px rgba(16, 185, 129, 0.22);
+}
+
+.mahonia-toast-success .mahonia-toast-icon-wrapper {
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    color: #34d399;
+    box-shadow: 0 0 16px rgba(16, 185, 129, 0.35);
+}
+
+.mahonia-toast-success .mahonia-toast-badge {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.mahonia-toast-success .mahonia-toast-timer-progress {
+    background: linear-gradient(90deg, #10b981 0%, #34d399 50%, #d4af37 100%);
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+}
+
+[data-theme="light"] .mahonia-toast-success {
+    border-color: rgba(16, 185, 129, 0.4);
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12), 0 0 25px rgba(16, 185, 129, 0.18);
+}
+
+[data-theme="light"] .mahonia-toast-success .mahonia-toast-badge {
+    background: #ecfdf5;
+    color: #065f46;
+    border-color: #a7f3d0;
+}
+
+/* Type Variants: Error / Danger */
+.mahonia-toast-error, .mahonia-toast-danger {
+    border-color: rgba(244, 63, 94, 0.45);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 25px rgba(244, 63, 94, 0.22);
+}
+
+.mahonia-toast-error .mahonia-toast-icon-wrapper,
+.mahonia-toast-danger .mahonia-toast-icon-wrapper {
+    background: rgba(244, 63, 94, 0.15);
+    border: 1px solid rgba(244, 63, 94, 0.35);
+    color: #fb7185;
+    box-shadow: 0 0 16px rgba(244, 63, 94, 0.35);
+}
+
+.mahonia-toast-error .mahonia-toast-badge,
+.mahonia-toast-danger .mahonia-toast-badge {
+    background: rgba(244, 63, 94, 0.15);
+    color: #fb7185;
+    border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.mahonia-toast-error .mahonia-toast-timer-progress,
+.mahonia-toast-danger .mahonia-toast-timer-progress {
+    background: linear-gradient(90deg, #f43f5e 0%, #fb7185 50%, #fda4af 100%);
+    box-shadow: 0 0 8px rgba(244, 63, 94, 0.6);
+}
+
+[data-theme="light"] .mahonia-toast-error .mahonia-toast-badge,
+[data-theme="light"] .mahonia-toast-danger .mahonia-toast-badge {
+    background: #fff1f2;
+    color: #9f1239;
+    border-color: #fecdd3;
+}
+
+/* Type Variants: Warning */
+.mahonia-toast-warning {
+    border-color: rgba(245, 158, 11, 0.45);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 25px rgba(245, 158, 11, 0.22);
+}
+
+.mahonia-toast-warning .mahonia-toast-icon-wrapper {
+    background: rgba(245, 158, 11, 0.15);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    color: #fde047;
+    box-shadow: 0 0 16px rgba(245, 158, 11, 0.35);
+}
+
+.mahonia-toast-warning .mahonia-toast-badge {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fde047;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.mahonia-toast-warning .mahonia-toast-timer-progress {
+    background: linear-gradient(90deg, #f59e0b 0%, #fbbf24 50%, #d4af37 100%);
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
+}
+
+[data-theme="light"] .mahonia-toast-warning .mahonia-toast-badge {
+    background: #fffbeb;
+    color: #92400e;
+    border-color: #fde68a;
+}
+
+/* Type Variants: Info */
+.mahonia-toast-info {
+    border-color: rgba(56, 189, 248, 0.45);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 25px rgba(56, 189, 248, 0.22);
+}
+
+.mahonia-toast-info .mahonia-toast-icon-wrapper {
+    background: rgba(56, 189, 248, 0.15);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    color: #7dd3fc;
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.35);
+}
+
+.mahonia-toast-info .mahonia-toast-badge {
+    background: rgba(56, 189, 248, 0.15);
+    color: #7dd3fc;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.mahonia-toast-info .mahonia-toast-timer-progress {
+    background: linear-gradient(90deg, #0284c7 0%, #38bdf8 50%, #d4af37 100%);
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+}
+
+[data-theme="light"] .mahonia-toast-info .mahonia-toast-badge {
+    background: #f0f9ff;
+    color: #075985;
+    border-color: #bae6fd;
+}
+
+/* Animations */
+@keyframes mahoniaToastSlideInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-28px) scale(0.92);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes mahoniaToastSlideOutUp {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        max-height: 120px;
+        margin-bottom: 0.75rem;
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.92);
+        max-height: 0;
+        margin-bottom: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+}
+
+@keyframes mahoniaToastTimerCountdown {
+    0% {
+        width: 100%;
+    }
+    100% {
+        width: 0%;
+    }
+}
+
+@keyframes mahoniaToastIconPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.12);
+    }
+}
+
 .alert {
     background: var(--bg-surface-elevated);
     border: 1px solid var(--gold-border);
