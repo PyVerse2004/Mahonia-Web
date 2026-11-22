@@ -3730,4 +3730,65 @@ p.date > input {
     }
 }
 
+/* --------------------------------------------------------------------------
+   20. Dashboard Page: Remove Scrollbar Without Changing Element Sizes
+   -------------------------------------------------------------------------- */
+/* Hide scrollbar completely on the dashboard page while keeping 100% original sizes */
+html:has(.dashboard-page-marker),
+body:has(.dashboard-page-marker),
+html.dashboard-page,
+body.dashboard-page,
+body.dashboard-page .app-main-layout,
+body.dashboard-page .app-main-content,
+body.dashboard-page .table-responsive,
+.app-main-layout:has(.dashboard-page-marker),
+.app-main-content:has(.dashboard-page-marker) {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+}
+
+html:has(.dashboard-page-marker)::-webkit-scrollbar,
+body:has(.dashboard-page-marker)::-webkit-scrollbar,
+html.dashboard-page::-webkit-scrollbar,
+body.dashboard-page::-webkit-scrollbar,
+body.dashboard-page .app-main-layout::-webkit-scrollbar,
+body.dashboard-page .app-main-content::-webkit-scrollbar,
+body.dashboard-page .table-responsive::-webkit-scrollbar,
+.app-main-layout:has(.dashboard-page-marker)::-webkit-scrollbar,
+.app-main-content:has(.dashboard-page-marker)::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+}
+
+/* Eliminate empty dead space at the bottom of the dashboard without resizing elements */
+body.dashboard-page .dashboard-recent-sales-card,
+body:has(.dashboard-page-marker) .dashboard-recent-sales-card {
+    margin-bottom: 0 !important;
+}
+
+@media (min-width: 992px) {
+    body.dashboard-page .app-main-content,
+    body:has(.dashboard-page-marker) .app-main-content {
+        padding-top: 1.15rem !important;
+        padding-bottom: 0.85rem !important;
+    }
+}
+
+/* Ensure sidebar scrollbar remains completely untouched */
+body.dashboard-page .app-sidebar,
+body.dashboard-page .sidebar-nav-container,
+body:has(.dashboard-page-marker) .app-sidebar,
+body:has(.dashboard-page-marker) .sidebar-nav-container {
+    scrollbar-width: auto !important;
+}
+
+body.dashboard-page .sidebar-nav-container::-webkit-scrollbar,
+body:has(.dashboard-page-marker) .sidebar-nav-container::-webkit-scrollbar {
+    display: block !important;
+    width: 6px !important;
+}
+
+
 
